@@ -2,6 +2,9 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
+import { useAuth } from "./auth-context"
+import type { TicketDTO } from "./support"
+import * as SupportAPI from "./support"
 
 export interface Product {
   id: string
@@ -50,6 +53,8 @@ export interface Transaction {
 export interface SupportTicket {
   id: string
   userId: string
+  username?: string
+  useremail?: string
   subject: string
   message: string
   status: "open" | "in-progress" | "resolved"
@@ -68,8 +73,8 @@ interface DataContextType {
   updateAd: (id: string, updates: Partial<Ad>) => void
   addRating: (rating: Rating) => void
   addTransaction: (transaction: Transaction) => void
-  addTicket: (ticket: SupportTicket) => void
-  replyToTicket: (ticketId: string, message: string, isAdmin: boolean) => void
+  addTicket: (ticket: SupportTicket) => Promise<void>
+  replyToTicket: (ticketId: string, message: string, isAdmin: boolean) => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -341,6 +346,7 @@ const MOCK_ADS: Ad[] = [
 ]
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth()
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS)
   const [ads, setAds] = useState<Ad[]>(MOCK_ADS)
   const [ratings, setRatings] = useState<Rating[]>([])
@@ -367,6 +373,50 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       saveData(MOCK_ADS, [], [], [])
     }
   }, [])
+
+  // Map backend TicketDTO -> frontend SupportTicket type
+  const mapTicket = (t: TicketDTO): SupportTicket => ({
+    id: t.id,
+    userId: t.userId,
+    username: t.username || "",
+    useremail: t.useremail || "",
+    subject: t.subject,
+    message: t.message,
+    status: t.status,
+    createdAt: typeof t.createdAt === "string" ? t.createdAt : new Date(t.createdAt).toISOString(),
+    replies: (t.replies || []).map((r) => ({
+      id: r.id,
+      message: r.message,
+      createdAt: typeof r.createdAt === "string" ? r.createdAt : new Date(r.createdAt).toISOString(),
+      isAdmin: !!r.isAdmin,
+    })),
+  })
+
+  // Load tickets from backend whenever user changes (after auth ready)
+  useEffect(() => {
+    let cancelled = false
+    async function loadTickets() {
+      try {
+        // Admins get all tickets; users get only their own
+        const list = await SupportAPI.getTickets(
+          user && user.role !== "admin" ? { userId: user.id } : undefined,
+        )
+        if (!cancelled) {
+          const mapped = list.map(mapTicket)
+          setTickets(mapped)
+          // keep other local data as-is; save tickets snapshot
+          saveData(ads, ratings, transactions, mapped)
+        }
+      } catch (err) {
+        console.error("Failed to load tickets", err)
+      }
+    }
+    if (user) loadTickets()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.role])
 
   const saveData = (
     newAds: Ad[],
@@ -408,31 +458,65 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveData(ads, ratings, newTransactions, tickets)
   }
 
-  const addTicket = (ticket: SupportTicket) => {
-    const newTickets = [...tickets, ticket]
-    setTickets(newTickets)
-    saveData(ads, ratings, transactions, newTickets)
+  const addTicket = async (ticket: SupportTicket) => {
+    // Persist to backend, then update local state with server's copy
+    try {
+      const created = await SupportAPI.createTicket({
+        userId: ticket.userId,
+        username: user?.fullName || "",
+        useremail: user?.email || "",
+        subject: ticket.subject,
+        message: ticket.message,
+      })
+      const createdMapped = mapTicket(created)
+      const newTickets = [createdMapped, ...tickets]
+      setTickets(newTickets)
+      saveData(ads, ratings, transactions, newTickets)
+    } catch (err) {
+      console.error("Failed to create ticket", err)
+      // Fallback: optimistic local add
+      const newTickets = [
+        {
+          ...ticket,
+          username: user?.fullName || ticket.username || "",
+          useremail: user?.email || ticket.useremail || "",
+        },
+        ...tickets,
+      ]
+      setTickets(newTickets)
+      saveData(ads, ratings, transactions, newTickets)
+    }
   }
 
-  const replyToTicket = (ticketId: string, message: string, isAdmin: boolean) => {
-    const newTickets = tickets.map((ticket) =>
-      ticket.id === ticketId
-        ? {
-            ...ticket,
-            replies: [
-              ...ticket.replies,
-              {
-                id: Math.random().toString(36).substr(2, 9),
-                message,
-                createdAt: new Date().toISOString(),
-                isAdmin,
-              },
-            ],
-          }
-        : ticket,
-    )
-    setTickets(newTickets)
-    saveData(ads, ratings, transactions, newTickets)
+  const replyToTicket = async (ticketId: string, message: string, isAdmin: boolean) => {
+    try {
+      const updated = await SupportAPI.addReply(ticketId, { message, isAdmin })
+      const mapped = mapTicket(updated)
+      const newTickets = tickets.map((t) => (t.id === ticketId ? mapped : t))
+      setTickets(newTickets)
+      saveData(ads, ratings, transactions, newTickets)
+    } catch (err) {
+      console.error("Failed to add reply", err)
+      // Fallback: optimistic local update
+      const newTickets = tickets.map((ticket) =>
+        ticket.id === ticketId
+          ? {
+              ...ticket,
+              replies: [
+                ...ticket.replies,
+                {
+                  id: Math.random().toString(36).substr(2, 9),
+                  message,
+                  createdAt: new Date().toISOString(),
+                  isAdmin,
+                },
+              ],
+            }
+          : ticket,
+      )
+      setTickets(newTickets)
+      saveData(ads, ratings, transactions, newTickets)
+    }
   }
 
   return (
