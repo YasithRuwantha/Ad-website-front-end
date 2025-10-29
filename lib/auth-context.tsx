@@ -1,133 +1,94 @@
 "use client"
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useState, useEffect } from "react"
 
 export interface User {
   id: string
+  fullName: string
   email: string
-  name: string
-  phone?: string
-  avatar?: string
-  address?: string
-  city?: string
-  country?: string
-  role: "user" | "admin"
-  plan: "starter" | "normal" | "premium"
-  balance: number
-  referralCode: string
-  referralEarnings: number
-  createdAt: string
-  payoutMethod?: "bank" | "paypal" | "stripe"
-  bankAccount?: string
-  paypalEmail?: string
-  totalEarnings: number
-  totalPayouts: number
+  role: String
 }
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  logout: () => void
   signup: (email: string, password: string, name: string, referralCode?: string) => Promise<void>
-  updateUser: (updates: Partial<User>) => void
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-// Demo credentials
-const DEMO_USERS = {
-  "admin@example.com": { password: "admin123", role: "admin" as const },
-  "user@example.com": { password: "user123", role: "user" as const },
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Load user from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem("user")
-    if (stored) {
-      setUser(JSON.parse(stored))
-    }
+    const token = localStorage.getItem("token")
+    const userData = localStorage.getItem("user")
+    if (token && userData) setUser(JSON.parse(userData))
     setIsLoading(false)
   }, [])
 
-  const login = async (email: string, password: string) => {
-    const demoUser = DEMO_USERS[email as keyof typeof DEMO_USERS]
-    if (!demoUser || demoUser.password !== password) {
-      throw new Error("Invalid credentials")
-    }
+  // 🟢 Login
+const login = async (email: string, password: string) => {
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email,
-      name: email.split("@")[0],
-      phone: "+1 (555) 123-4567",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=" + email,
-      address: "123 Main Street",
-      city: "San Francisco",
-      country: "United States",
-      role: demoUser.role,
-      plan: "starter",
-      balance: demoUser.role === "admin" ? 10000 : 100,
-      referralCode: Math.random().toString(36).substr(2, 8).toUpperCase(),
-      referralEarnings: 0,
-      createdAt: new Date().toISOString(),
-      payoutMethod: "bank",
-      bankAccount: "****1234",
-      paypalEmail: "",
-      totalEarnings: demoUser.role === "admin" ? 50000 : 1250,
-      totalPayouts: demoUser.role === "admin" ? 45000 : 800,
-    }
+    const data = await res.json();
 
-    localStorage.setItem("user", JSON.stringify(newUser))
-    setUser(newUser)
+    if (!res.ok) throw new Error(data.message || "Login failed");
+
+    // ✅ Store token & user in localStorage
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    // ✅ Update React state
+    setUser(data.user);
+
+    // Optional: verify it's stored
+    console.log("Saved user:", localStorage.getItem("user"));
+    console.log("Saved token:", localStorage.getItem("token"));
+
+    // Optional: alert for debugging
+    // alert(`Login success!\nUser: ${JSON.stringify(data.user, null, 2)}`);
+
+  } catch (err: any) {
+    alert(err.message || "Login error");
+  }
+};
+
+
+  // 🟢 Signup
+  const signup = async (email: string, password: string, name: string) => {
+    const res = await fetch("http://localhost:5000/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, fullName: name }),
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || "Signup failed")
+
+    localStorage.setItem("token", data.token)
+    localStorage.setItem("user", JSON.stringify(data.user))
+    setUser(data.user)
   }
 
-  const signup = async (email: string, password: string, name: string, referralCode?: string) => {
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email,
-      name,
-      phone: "+1 (555) 000-0000",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=" + email,
-      address: "",
-      city: "",
-      country: "",
-      role: "user",
-      plan: "starter",
-      balance: referralCode ? 50 : 0,
-      referralCode: Math.random().toString(36).substr(2, 8).toUpperCase(),
-      referralEarnings: 0,
-      createdAt: new Date().toISOString(),
-      payoutMethod: "bank",
-      bankAccount: "",
-      paypalEmail: "",
-      totalEarnings: 0,
-      totalPayouts: 0,
-    }
-
-    localStorage.setItem("user", JSON.stringify(newUser))
-    setUser(newUser)
-  }
-
+  // 🔴 Logout
   const logout = () => {
+    localStorage.removeItem("token")
     localStorage.removeItem("user")
     setUser(null)
   }
 
-  const updateUser = (updates: Partial<User>) => {
-    if (user) {
-      const updated = { ...user, ...updates }
-      localStorage.setItem("user", JSON.stringify(updated))
-      setUser(updated)
-    }
-  }
-
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, signup, updateUser }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   )
@@ -135,8 +96,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider")
-  }
+  if (!context) throw new Error("useAuth must be used within AuthProvider")
   return context
 }
