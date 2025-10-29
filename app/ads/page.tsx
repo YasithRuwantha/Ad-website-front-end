@@ -7,16 +7,26 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 import PostAdModal from "@/components/ads/post-ad-modal"
+import AdRatingModal from "@/components/ads/ad-rating-modal"
 import { Eye, CheckCircle, Clock, XCircle } from "lucide-react"
-import UserSidebar from "@/components/user/user-sidebar"
+import type { Ad } from "@/lib/data-context"
 
 export default function AdsPage() {
   const { user } = useAuth()
-  const { ads, addAd } = useData()
+  const { ads, addAd, updateAd } = useData()
   const [showPostModal, setShowPostModal] = useState(false)
+  const [showRatingModal, setShowRatingModal] = useState(false)
+  const [selectedAd, setSelectedAd] = useState<Ad | null>(null)
+
+  // Debug: Log ads to see what we have
+  console.log("Total ads:", ads.length)
+  console.log("User ID:", user?.id)
 
   const userAds = ads.filter((ad) => ad.userId === user?.id)
   const allAds = ads.filter((ad) => ad.status === "approved")
+
+  console.log("User ads:", userAds.length)
+  console.log("All approved ads:", allAds.length)
 
   const stats = [
     { label: "Total Ads", value: userAds.length, icon: Eye },
@@ -25,10 +35,21 @@ export default function AdsPage() {
     { label: "Rejected", value: userAds.filter((a) => a.status === "rejected").length, icon: XCircle },
   ]
 
+  function handleAdClick(ad: Ad) {
+    setSelectedAd(ad)
+    setShowRatingModal(true)
+  }
+
+  function handleSubmitRating(adId: string, rating: number) {
+    updateAd(adId, { rating })
+    setShowRatingModal(false)
+  }
+
   return (
   <div className="flex h-screen bg-background">
     <UserSidebar />
     <div className="p-6 space-y-6 w-full flex-1 overflow-auto">
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Ads Management</h1>
@@ -93,7 +114,11 @@ export default function AdsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {userAds.map((ad) => (
-                <Card key={ad.id} className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden">
+                <Card 
+                  key={ad.id} 
+                  className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden cursor-pointer"
+                  onClick={() => handleAdClick(ad)}
+                >
                   <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                     <img
                       src={ad.image || "/placeholder.svg"}
@@ -124,6 +149,12 @@ export default function AdsPage() {
                       <span className="text-muted-foreground">{ad.views} views</span>
                       <span className="text-primary font-semibold">{new Date(ad.createdAt).toLocaleDateString()}</span>
                     </div>
+                    {ad.rating && (
+                      <div className="mt-2 flex items-center gap-1 text-sm">
+                        <span className="text-yellow-500">★</span>
+                        <span className="font-semibold text-foreground">{ad.rating}/5</span>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -141,7 +172,11 @@ export default function AdsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allAds.map((ad) => (
-                <Card key={ad.id} className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden">
+                <Card 
+                  key={ad.id} 
+                  className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden cursor-pointer"
+                  onClick={() => handleAdClick(ad)}
+                >
                   <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                     <img
                       src={ad.image || "/placeholder.svg"}
@@ -159,6 +194,12 @@ export default function AdsPage() {
                       <span className="text-muted-foreground">by {ad.userName}</span>
                       <span className="text-primary font-semibold">{ad.views} views</span>
                     </div>
+                    {ad.rating && (
+                      <div className="mt-2 flex items-center gap-1 text-sm">
+                        <span className="text-yellow-500">★</span>
+                        <span className="font-semibold text-foreground">{ad.rating}/5</span>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -168,7 +209,12 @@ export default function AdsPage() {
       </Tabs>
 
       <PostAdModal open={showPostModal} onOpenChange={setShowPostModal} onSubmit={addAd} />
+      <AdRatingModal 
+        open={showRatingModal} 
+        onOpenChange={setShowRatingModal} 
+        ad={selectedAd}
+        onSubmit={handleSubmitRating}
+      />
     </div>
-  </div>
   )
 }
