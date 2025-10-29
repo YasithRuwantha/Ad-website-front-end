@@ -47,6 +47,7 @@ export default function SupportPage() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto md:ml-0 p-4 md:p-6">
+
       <div className="flex items-center justify-between ">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Customer Support</h1>
