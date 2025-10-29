@@ -50,7 +50,7 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user?.name}!</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user?.fullName}!</h1>
         <p className="text-muted-foreground">
           You're on the <span className="font-semibold text-primary capitalize">{user?.plan}</span> plan
         </p>

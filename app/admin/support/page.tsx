@@ -55,11 +55,17 @@ export default function AdminSupportPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle>{ticket.subject}</CardTitle>
-                    <CardDescription>From {ticket.userId}</CardDescription>
+                    <CardDescription>
+                      From {ticket.username || ticket.userId}{ticket.useremail ? ` (${ticket.useremail})` : ""} •
+                      {" "}
+                      {new Date(ticket.createdAt).toLocaleDateString()}
+                    </CardDescription>
                   </div>
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700">
-                    {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700">
+                      {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                    </span>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
