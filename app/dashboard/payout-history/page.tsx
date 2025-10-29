@@ -7,120 +7,55 @@ import { Calendar, DollarSign, CheckCircle, Clock, XCircle } from "lucide-react"
 
 // Mock payout history data
 const MOCK_PAYOUT_HISTORY = [
-  {
-    id: "1",
-    amount: 500,
-    method: "bank",
-    status: "completed",
-    date: "2024-10-20",
-    reference: "PAY-2024-10-001",
-  },
-  {
-    id: "2",
-    amount: 750,
-    method: "paypal",
-    status: "completed",
-    date: "2024-10-15",
-    reference: "PAY-2024-10-002",
-  },
-  {
-    id: "3",
-    amount: 300,
-    method: "bank",
-    status: "pending",
-    date: "2024-10-25",
-    reference: "PAY-2024-10-003",
-  },
-  {
-    id: "4",
-    amount: 1200,
-    method: "stripe",
-    status: "completed",
-    date: "2024-10-10",
-    reference: "PAY-2024-10-004",
-  },
-  {
-    id: "5",
-    amount: 450,
-    method: "bank",
-    status: "failed",
-    date: "2024-10-05",
-    reference: "PAY-2024-10-005",
-  },
-  {
-    id: "6",
-    amount: 600,
-    method: "paypal",
-    status: "completed",
-    date: "2024-09-28",
-    reference: "PAY-2024-09-001",
-  },
+  { id: "1", amount: 500, method: "bank", status: "completed", date: "2024-10-20", reference: "PAY-2024-10-001" },
+  { id: "2", amount: 750, method: "paypal", status: "completed", date: "2024-10-15", reference: "PAY-2024-10-002" },
+  { id: "3", amount: 300, method: "bank", status: "pending", date: "2024-10-25", reference: "PAY-2024-10-003" },
+  { id: "4", amount: 1200, method: "stripe", status: "completed", date: "2024-10-10", reference: "PAY-2024-10-004" },
+  { id: "5", amount: 450, method: "bank", status: "failed", date: "2024-10-05", reference: "PAY-2024-10-005" },
+  { id: "6", amount: 600, method: "paypal", status: "completed", date: "2024-09-28", reference: "PAY-2024-09-001" },
 ]
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case "completed":
-      return <CheckCircle className="w-5 h-5 text-green-600" />
-    case "pending":
-      return <Clock className="w-5 h-5 text-amber-600" />
-    case "failed":
-      return <XCircle className="w-5 h-5 text-red-600" />
-    default:
-      return null
+    case "completed": return <CheckCircle className="w-5 h-5 text-green-600" />
+    case "pending": return <Clock className="w-5 h-5 text-amber-600" />
+    case "failed": return <XCircle className="w-5 h-5 text-red-600" />
+    default: return null
   }
 }
 
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case "completed":
-      return <Badge className="bg-green-100 text-green-800">Completed</Badge>
-    case "pending":
-      return <Badge className="bg-amber-100 text-amber-800">Pending</Badge>
-    case "failed":
-      return <Badge className="bg-red-100 text-red-800">Failed</Badge>
-    default:
-      return null
+    case "completed": return <Badge className="bg-green-100 text-green-800">Completed</Badge>
+    case "pending": return <Badge className="bg-amber-100 text-amber-800">Pending</Badge>
+    case "failed": return <Badge className="bg-red-100 text-red-800">Failed</Badge>
+    default: return null
   }
 }
 
 const getMethodLabel = (method: string) => {
   switch (method) {
-    case "bank":
-      return "Bank Transfer"
-    case "paypal":
-      return "PayPal"
-    case "stripe":
-      return "Stripe"
-    default:
-      return method
+    case "bank": return "Bank Transfer"
+    case "paypal": return "PayPal"
+    case "stripe": return "Stripe"
+    default: return method
   }
 }
 
 export default function PayoutHistoryPage() {
   const { user } = useAuth()
 
+  // Safe dummy values if user or fields are undefined
+  const safeUser = {
+    totalPayouts: user?.totalPayouts ?? 0,
+    balance: user?.balance ?? 0,
+    totalEarnings: user?.totalEarnings ?? 0,
+  }
+
   const stats = [
-    {
-      label: "Total Payouts",
-      value: `$${user?.totalPayouts.toFixed(2)}`,
-      icon: DollarSign,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-    },
-    {
-      label: "Completed",
-      value: MOCK_PAYOUT_HISTORY.filter((p) => p.status === "completed").length,
-      icon: CheckCircle,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-    },
-    {
-      label: "Pending",
-      value: MOCK_PAYOUT_HISTORY.filter((p) => p.status === "pending").length,
-      icon: Clock,
-      color: "text-amber-600",
-      bgColor: "bg-amber-50",
-    },
+    { label: "Total Payouts", value: `$${safeUser.totalPayouts.toFixed(2)}`, icon: DollarSign, color: "text-blue-600", bgColor: "bg-blue-50" },
+    { label: "Completed", value: MOCK_PAYOUT_HISTORY.filter((p) => p.status === "completed").length, icon: CheckCircle, color: "text-green-600", bgColor: "bg-green-50" },
+    { label: "Pending", value: MOCK_PAYOUT_HISTORY.filter((p) => p.status === "pending").length, icon: Clock, color: "text-amber-600", bgColor: "bg-amber-50" },
   ]
 
   return (
@@ -159,50 +94,46 @@ export default function PayoutHistoryPage() {
           <CardDescription>Complete history of all your payouts</CardDescription>
         </CardHeader>
         <CardContent>
-          {MOCK_PAYOUT_HISTORY.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-semibold text-foreground">Date</th>
-                    <th className="text-left py-3 px-4 font-semibold text-foreground">Reference</th>
-                    <th className="text-left py-3 px-4 font-semibold text-foreground">Amount</th>
-                    <th className="text-left py-3 px-4 font-semibold text-foreground">Method</th>
-                    <th className="text-left py-3 px-4 font-semibold text-foreground">Status</th>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Date</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Reference</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Amount</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Method</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MOCK_PAYOUT_HISTORY.map((payout) => (
+                  <tr key={payout.id} className="border-b hover:bg-primary/5 transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-foreground">{new Date(payout.date).toLocaleDateString()}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="font-mono text-sm text-muted-foreground">{payout.reference}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="font-bold text-foreground">${(payout.amount ?? 0).toFixed(2)}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="text-foreground">{getMethodLabel(payout.method)}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(payout.status)}
+                        {getStatusBadge(payout.status)}
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {MOCK_PAYOUT_HISTORY.map((payout) => (
-                    <tr key={payout.id} className="border-b hover:bg-primary/5 transition-colors">
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">{new Date(payout.date).toLocaleDateString()}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className="font-mono text-sm text-muted-foreground">{payout.reference}</span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className="font-bold text-foreground">${payout.amount.toFixed(2)}</span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className="text-foreground">{getMethodLabel(payout.method)}</span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(payout.status)}
-                          {getStatusBadge(payout.status)}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-center py-8">No payout history yet</p>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 

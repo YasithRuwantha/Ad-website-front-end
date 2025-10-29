@@ -8,13 +8,24 @@ import { useState } from "react"
 
 export default function PayoutPage() {
   const { user, updateUser } = useAuth()
-  const [payoutMethod, setPayoutMethod] = useState(user?.payoutMethod || "bank")
-  const [bankAccount, setBankAccount] = useState(user?.bankAccount || "")
-  const [paypalEmail, setPaypalEmail] = useState(user?.paypalEmail || "")
+
+  // --- Provide dummy values if undefined ---
+  const safeUser = {
+    balance: user?.balance ?? 120,          // dummy balance
+    totalEarnings: user?.totalEarnings ?? 500, // dummy total earnings
+    totalPayouts: user?.totalPayouts ?? 300,   // dummy total payouts
+    payoutMethod: user?.payoutMethod ?? "bank",
+    bankAccount: user?.bankAccount ?? "",
+    paypalEmail: user?.paypalEmail ?? "",
+  }
+
+  const [payoutMethod, setPayoutMethod] = useState(safeUser.payoutMethod)
+  const [bankAccount, setBankAccount] = useState(safeUser.bankAccount)
+  const [paypalEmail, setPaypalEmail] = useState(safeUser.paypalEmail)
   const [showSuccess, setShowSuccess] = useState(false)
 
   const minimumPayout = 50
-  const canPayout = (user?.balance || 0) >= minimumPayout
+  const canPayout = safeUser.balance >= minimumPayout
 
   const handleSavePayoutMethod = () => {
     updateUser({
@@ -28,13 +39,13 @@ export default function PayoutPage() {
 
   const handleRequestPayout = () => {
     if (canPayout) {
-      const newBalance = (user?.balance || 0) - (user?.balance || 0)
-      const newTotalPayouts = (user?.totalPayouts || 0) + (user?.balance || 0)
+      const newBalance = 0
+      const newTotalPayouts = safeUser.totalPayouts + safeUser.balance
       updateUser({
         balance: newBalance,
         totalPayouts: newTotalPayouts,
       })
-      alert(`Payout of $${user?.balance.toFixed(2)} requested successfully!`)
+      alert(`Payout of $${safeUser.balance.toFixed(2)} requested successfully!`)
     }
   }
 
@@ -52,7 +63,7 @@ export default function PayoutPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
-                <p className="text-3xl font-bold text-foreground">${user?.balance.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-foreground">${safeUser.balance.toFixed(2)}</p>
               </div>
               <div className="bg-blue-50 p-3 rounded-lg">
                 <Wallet className="w-6 h-6 text-blue-600" />
@@ -66,7 +77,7 @@ export default function PayoutPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Total Earnings</p>
-                <p className="text-3xl font-bold text-foreground">${user?.totalEarnings.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-foreground">${safeUser.totalEarnings.toFixed(2)}</p>
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-green-600" />
@@ -80,7 +91,7 @@ export default function PayoutPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Total Payouts</p>
-                <p className="text-3xl font-bold text-foreground">${user?.totalPayouts.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-foreground">${safeUser.totalPayouts.toFixed(2)}</p>
               </div>
               <div className="bg-purple-50 p-3 rounded-lg">
                 <DollarSign className="w-6 h-6 text-purple-600" />
@@ -198,7 +209,7 @@ export default function PayoutPage() {
               <div>
                 <p className="font-semibold text-amber-900">Minimum payout not reached</p>
                 <p className="text-sm text-amber-800">
-                  You need at least ${minimumPayout} to request a payout. Current balance: ${user?.balance.toFixed(2)}
+                  You need at least ${minimumPayout} to request a payout. Current balance: ${safeUser.balance.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -206,7 +217,7 @@ export default function PayoutPage() {
 
           <div className="bg-foreground/5 p-4 rounded-lg">
             <p className="text-sm text-muted-foreground mb-2">Payout Amount</p>
-            <p className="text-2xl font-bold text-foreground">${user?.balance.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-foreground">${safeUser.balance.toFixed(2)}</p>
           </div>
 
           <Button
