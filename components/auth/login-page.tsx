@@ -19,26 +19,29 @@ export default function LoginPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { login, signup } = useAuth()
+  const [success, setSuccess] = useState("")
+  const [phone, setPhone] = useState("")
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
 
     try {
       if (isLogin) {
-        await login(email, password)
+        await login(email, password);
       } else {
-        await signup(email, password, name, referralCode)
+        const message = await signup(email, password, name, phone, referralCode);
+        setSuccess(message); // ✅ show success message
       }
-      setError("invlaid login")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-100 flex items-center justify-center p-4">
@@ -61,6 +64,13 @@ export default function LoginPage() {
                   {error}
                 </div>
               )}
+
+              {success && (
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-300 rounded-lg text-green-700 text-sm">
+                  ✅ {success}
+                </div>
+              )}
+
 
               {!isLogin && (
                 <div>
@@ -102,12 +112,27 @@ export default function LoginPage() {
 
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Referral Code (Optional)</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Phone number </label>
+                  <Input
+                    type="text"
+                    placeholder="+94 77 777 7777"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className="border-primary/30"
+                  />
+                </div>
+              )}
+
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Referral Code </label>
                   <Input
                     type="text"
                     placeholder="Enter referral code if you have one"
                     value={referralCode}
                     onChange={(e) => setReferralCode(e.target.value)}
+                    required
                     className="border-primary/30"
                   />
                 </div>

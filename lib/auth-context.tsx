@@ -10,6 +10,7 @@ export interface User {
   balance: number
   plan: string
   totalPayouts: number
+  phone: string
 }
 interface AuthContextType {
   user: User | null
@@ -34,8 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   // 🟢 Login
-const login = async (email: string, password: string) => {
-  try {
+  const login = async (email: string, password: string) => {
     const res = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -44,8 +44,11 @@ const login = async (email: string, password: string) => {
 
     const data = await res.json();
 
-    if (!res.ok) throw new Error(data.message || "Login failed");
-
+    if (!res.ok) {
+      // Throw an error so the page can catch it
+      throw new Error(data.message || "Invalid email or password");
+    }
+    
     // ✅ Store token & user in localStorage
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
@@ -61,27 +64,36 @@ const login = async (email: string, password: string) => {
     alert(`Login success!\nUser: ${JSON.stringify(data.user, null, 2)}`);
     setUser(data.user); // ✅ this is enough
 
-  } catch (err: any) {
-    alert(err.message || "Login error");
-  }
 };
 
 
   // 🟢 Signup
-  const signup = async (email: string, password: string, name: string) => {
-    const res = await fetch("http://localhost:5000/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, fullName: name }),
-    })
+  // 🟢 Signup in auth-context.tsx
+const signup = async (email: string, password: string, name: string, phone: string, referralCode?: string) => {
+  let extractedReferral: string | undefined = referralCode;
 
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.message || "Signup failed")
-
-    localStorage.setItem("token", data.token)
-    localStorage.setItem("user", JSON.stringify(data.user))
-    setUser(data.user)
+  if (referralCode) {
+    const extracted = extractEmailFromRef(referralCode);
+    if (extracted) extractedReferral = extracted;
+  } else if (typeof window !== "undefined") {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refFromUrl = urlParams.get("ref");
+    if (refFromUrl) extractedReferral = refFromUrl;
   }
+
+  const res = await fetch("http://localhost:5000/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, fullName: name, phone, referralCode: extractedReferral }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Signup failed");
+
+  // ✅ Return message instead of alert
+  return "Signup successful! Please wait for admin approval.";
+};
+
 
   // 🔴 Logout
   const logout = () => {
@@ -101,4 +113,25 @@ export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) throw new Error("useAuth must be used within AuthProvider")
   return context
+}
+
+
+function extractEmailFromRef(urlString: string) {
+  try {
+    // 1. Create a URL object from the string
+    const url = new URL(urlString);
+    
+    // 2. Create a URLSearchParams object from the query part of the URL (e.g., "?ref=admin@gmail.com")
+    const params = new URLSearchParams(url.search);
+    
+    // 3. Get the value associated with the 'ref' parameter
+    const email = params.get('ref');
+    
+    return email;
+    
+  } catch (e) {
+    // Handle cases where the string is not a valid URL
+    console.error("Invalid URL string provided:", e.message);
+    return null; 
+  }
 }

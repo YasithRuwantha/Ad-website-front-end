@@ -17,26 +17,27 @@ export default function RouteGuard({ children, requiredRole }: RouteGuardProps) 
   const router = useRouter()
   const pathname = usePathname()
 
-  useEffect(() => {
-    if (isLoading) return
+useEffect(() => {
+  if (isLoading) return
 
-    if (!user) {
-      router.push("/")
-      return
+  if (!user) {
+    // router.push("/")
+    return
+  }
+
+  if (pathname === "/signup") return // ✅ skip redirect after signup
+
+  const hasAccess = canAccessRoute(user, pathname)
+
+  if (!hasAccess) {
+    if (user.role === "admin") {
+      router.push("/admin/dashboard")
+    } else {
+      router.push("/dashboard")
     }
+  }
+}, [user, isLoading, pathname, router])
 
-    // Check if user has access to this route
-    const hasAccess = canAccessRoute(user, pathname)
-
-    if (!hasAccess) {
-      // Redirect to appropriate dashboard based on role
-      if (user.role === "admin") {
-        router.push("/admin/dashboard")
-      } else {
-        router.push("/dashboard")
-      }
-    }
-  }, [user, isLoading, pathname, router])
 
   if (isLoading) {
     return (

@@ -26,8 +26,8 @@ export default function ReferralsPage() {
   }
 
   return (
-                <div className="flex h-screen bg-background">
-                  <UserSidebar />
+  <div className="flex h-screen bg-background">
+    <UserSidebar />
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Referral Program</h1>
