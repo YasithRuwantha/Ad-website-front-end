@@ -3,7 +3,9 @@
 import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
+import { Mail, User, Calendar, Reply as ReplyIcon } from "lucide-react"
 
 export default function AdminSupportPage() {
   const { tickets, replyToTicket } = useData()
@@ -52,19 +54,40 @@ export default function AdminSupportPage() {
           openTickets.map((ticket) => (
             <Card key={ticket.id} className="border-primary/20">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle>{ticket.subject}</CardTitle>
-                    <CardDescription>
-                      From {ticket.username || ticket.userId}{ticket.useremail ? ` (${ticket.useremail})` : ""} •
-                      {" "}
-                      {new Date(ticket.createdAt).toLocaleDateString()}
-                    </CardDescription>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-2">
+                    <CardTitle className="text-foreground text-2xl font-bold leading-tight">{ticket.subject}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
+                      <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-muted border text-foreground">
+                        <User className="w-4 h-4" />
+                        <span className="text-sm font-medium">{ticket.username || ticket.userId}</span>
+                      </div>
+                      {ticket.useremail && (
+                        <a
+                          href={`mailto:${ticket.useremail}`}
+                          className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-muted border text-foreground hover:bg-muted/80"
+                        >
+                          <Mail className="w-4 h-4" />
+                          <span className="text-sm font-medium">{ticket.useremail}</span>
+                        </a>
+                      )}
+                      <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-muted border text-foreground">
+                        <Calendar className="w-4 h-4" />
+                        <span className="text-sm font-medium">{new Date(ticket.createdAt).toLocaleString()}</span>
+                      </div>
+                      <Badge variant="secondary" className="capitalize text-sm px-3 py-1">
+                        {ticket.status}
+                      </Badge>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700">
-                      {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                    </span>
+                    <Button
+                      onClick={() => setSelectedTicket(ticket.id)}
+                      size="sm"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      <ReplyIcon className="w-4 h-4 mr-2" /> Reply
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
@@ -106,16 +129,17 @@ export default function AdminSupportPage() {
                     >
                       Send
                     </Button>
+                    <Button
+                      onClick={() => {
+                        setSelectedTicket(null)
+                        setReplyText("")
+                      }}
+                      variant="outline"
+                    >
+                      Cancel
+                    </Button>
                   </div>
-                ) : (
-                  <Button
-                    onClick={() => setSelectedTicket(ticket.id)}
-                    variant="outline"
-                    className="w-full border-primary/30 text-primary hover:bg-primary/10"
-                  >
-                    Reply
-                  </Button>
-                )}
+                ) : null}
               </CardContent>
             </Card>
           ))
