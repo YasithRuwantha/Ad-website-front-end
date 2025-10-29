@@ -216,5 +216,6 @@ export default function AdsPage() {
         onSubmit={handleSubmitRating}
       />
     </div>
+    </div>
   )
 }
