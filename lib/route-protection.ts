@@ -31,5 +31,5 @@ export const canAccessRoute = (user: User | null, pathname: string): boolean => 
 
 export const getRedirectPath = (user: User | null): string => {
   if (!user) return "/"
-  return user.role === "admin" ? "/admin/dashboard" : "/dashboard"
+  return user.role === "admin" ? "/admin/dashboard" : "user/dashboard"
 }
