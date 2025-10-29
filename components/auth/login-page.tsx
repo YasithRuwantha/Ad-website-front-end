@@ -32,7 +32,7 @@ export default function LoginPage() {
       } else {
         await signup(email, password, name, referralCode)
       }
-      router.push("/user/dashboard")
+      router.push("/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
@@ -45,7 +45,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-primary mb-2">EarningHub</h1>
-          <p className="text-muted-foreground">Your platform for ads, products & earnings batman</p>
+          <p className="text-muted-foreground">Your platform for ads, products & earnings</p>
         </div>
 
         <Card className="border-2 border-primary/20 shadow-lg">

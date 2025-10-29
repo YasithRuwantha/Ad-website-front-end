@@ -8,8 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 import CreateTicketModal from "@/components/support/create-ticket-modal"
 import { MessageSquare, Plus } from "lucide-react"
-import UserSidebar from "@/components/user/user-sidebar"
-
 
 export default function SupportPage() {
   const { user } = useAuth()
@@ -42,8 +40,6 @@ export default function SupportPage() {
   }
 
   return (
-        <div className="flex h-screen bg-background">
-          <UserSidebar />
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -217,7 +213,6 @@ export default function SupportPage() {
       </Tabs>
 
       <CreateTicketModal open={showCreateModal} onOpenChange={setShowCreateModal} onSubmit={handleCreateTicket} />
-    </div>
     </div>
   )
 }

@@ -7,8 +7,6 @@ import { useState } from "react"
 import ProductCard from "@/components/products/product-card"
 import RatingModal from "@/components/products/rating-modal"
 import type { Product } from "@/lib/data-context"
-import UserSidebar from "@/components/user/user-sidebar"
-
 
 export default function ProductsPage() {
   const { user } = useAuth()
@@ -41,8 +39,6 @@ export default function ProductsPage() {
   }
 
   return (
-        <div className="flex h-screen bg-background">
-          <UserSidebar />
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Products</h1>
@@ -99,7 +95,6 @@ export default function ProductsPage() {
           onSubmit={handleSubmitRating}
         />
       )}
-    </div>
     </div>
   )
 }

@@ -33,7 +33,7 @@ export default function RouteGuard({ children, requiredRole }: RouteGuardProps) 
       if (user.role === "admin") {
         router.push("/admin/dashboard")
       } else {
-        router.push("/user/dashboard")
+        router.push("/dashboard")
       }
     }
   }, [user, isLoading, pathname, router])

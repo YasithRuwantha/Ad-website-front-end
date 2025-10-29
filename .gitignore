@@ -7,8 +7,6 @@
 /.next/
 /out/
 
-package-lock.jason
-
 # production
 /build
 

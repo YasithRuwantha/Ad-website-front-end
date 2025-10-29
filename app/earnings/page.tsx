@@ -9,8 +9,6 @@ import { useState } from "react"
 import PlansModal from "@/components/earnings/plans-modal"
 import PaymentModal from "@/components/earnings/payment-modal"
 import { TrendingUp, Wallet, CreditCard } from "lucide-react"
-import UserSidebar from "@/components/user/user-sidebar"
-
 
 export default function EarningsPage() {
   const { user, updateUser } = useAuth()
@@ -62,9 +60,6 @@ export default function EarningsPage() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
-      <UserSidebar />
-
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -255,7 +250,6 @@ export default function EarningsPage() {
 
       <PlansModal open={showPlansModal} onOpenChange={setShowPlansModal} />
       <PaymentModal open={showPaymentModal} onOpenChange={setShowPaymentModal} onSubmit={handleAddFunds} />
-    </div>
     </div>
   )
 }
