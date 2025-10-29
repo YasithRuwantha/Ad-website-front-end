@@ -15,13 +15,17 @@ import {
   DollarSign,
   Send,
   History,
+  Menu,
+  X,
 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
 export default function UserSidebar() {
   const { logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
 
   const menuItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -34,7 +38,7 @@ export default function UserSidebar() {
     { label: "Payout", href: "/dashboard/payout", icon: DollarSign },
     { label: "Payout History", href: "/dashboard/payout-history", icon: History },
     { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
-    { label: "test", href: "/test", icon: Send}
+    { label: "test", href: "/test", icon: Send },
   ]
 
   const handleLogout = () => {
@@ -43,43 +47,69 @@ export default function UserSidebar() {
   }
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
-      <div className="p-6 border-b border-sidebar-border">
-        <h1 className="text-2xl font-bold text-sidebar-foreground">Dashboard</h1>
-      </div>
-
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {menuItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href
-          return (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant={isActive ? "default" : "ghost"}
-                className={`w-full justify-start gap-3 ${
-                  isActive
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                {item.label}
-              </Button>
-            </Link>
-          )
-        })}
-      </nav>
-
-      <div className="p-4 border-t border-sidebar-border">
+    <>
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-sidebar-border bg-sidebar">
+        <h1 className="text-xl font-bold text-sidebar-foreground">Dashboard</h1>
         <Button
-          onClick={handleLogout}
-          variant="outline"
-          className="w-full justify-start gap-3 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent bg-transparent"
+          variant="ghost"
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-sidebar-foreground"
         >
-          <LogOut className="w-5 h-5" />
-          Logout
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </Button>
       </div>
-    </aside>
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:static top-0 left-0 h-full w-64 bg-sidebar border-r border-sidebar-border flex flex-col transform transition-transform duration-300 z-50
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
+        <div className="p-6 border-b border-sidebar-border hidden md:block">
+          <h1 className="text-2xl font-bold text-sidebar-foreground">Dashboard</h1>
+        </div>
+
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          {menuItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+            return (
+              <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                <Button
+                  variant={isActive ? "default" : "ghost"}
+                  className={`w-full justify-start gap-3 ${
+                    isActive
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {item.label}
+                </Button>
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div className="p-4 border-t border-sidebar-border">
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="w-full justify-start gap-3 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent bg-transparent"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </Button>
+        </div>
+      </aside>
+
+      {/* Background Overlay for Mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-opacity-40 md:hidden z-40"
+          onClick={() => setIsOpen(false)}
+        ></div>
+      )}
+    </>
   )
 }

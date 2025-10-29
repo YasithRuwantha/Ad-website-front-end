@@ -59,7 +59,7 @@ export default function PayoutHistoryPage() {
   ]
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Payout History</h1>
         <p className="text-muted-foreground">Track all your payouts and transactions</p>
