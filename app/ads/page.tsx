@@ -10,6 +10,7 @@ import PostAdModal from "@/components/ads/post-ad-modal"
 import AdRatingModal from "@/components/ads/ad-rating-modal"
 import { Eye, CheckCircle, Clock, XCircle } from "lucide-react"
 import type { Ad } from "@/lib/data-context"
+import UserSidebar from "@/components/user/user-sidebar"
 
 export default function AdsPage() {
   const { user } = useAuth()
@@ -46,7 +47,10 @@ export default function AdsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+  <div className="flex h-screen bg-background">
+    <UserSidebar />
+    <div className="p-6 space-y-6 w-full flex-1 overflow-auto">
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Ads Management</h1>
@@ -212,6 +216,7 @@ export default function AdsPage() {
         ad={selectedAd}
         onSubmit={handleSubmitRating}
       />
+    </div>
     </div>
   )
 }
