@@ -10,6 +10,7 @@ import PostAdModal from "@/components/ads/post-ad-modal"
 import AdRatingModal from "@/components/ads/ad-rating-modal"
 import { Eye, CheckCircle, Clock, XCircle } from "lucide-react"
 import type { Ad } from "@/lib/data-context"
+import UserSidebar from "@/components/user/user-sidebar"
 
 export default function AdsPage() {
   const { user } = useAuth()
