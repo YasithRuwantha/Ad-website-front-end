@@ -14,11 +14,11 @@ export default function UserLayout({
   const { user, isLoading } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    if (!isLoading && (!user || user.role !== "user")) {
-      router.push("/")
-    }
-  }, [user, isLoading, router])
+  // useEffect(() => {
+  //   if (!isLoading && (!user || user.role !== "user")) {
+  //     router.push("/")
+  //   }
+  // }, [user, isLoading, router])
 
   if (isLoading) {
     return (
@@ -31,9 +31,9 @@ export default function UserLayout({
     )
   }
 
-  if (!user || user.role !== "user") {
-    return null
-  }
+  // if (!user || user.role !== "user") {
+  //   return null
+  // }
 
   return (
     <div className="flex h-screen bg-background">

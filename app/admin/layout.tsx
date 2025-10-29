@@ -14,11 +14,11 @@ export default function AdminLayout({
   const { user, isLoading } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    if (!isLoading && (!user || user.role !== "admin")) {
-      router.push("/")
-    }
-  }, [user, isLoading, router])
+  // useEffect(() => {
+  //   if (!isLoading && (!user || user.role !== "admin")) {
+  //     router.push("/")
+  //   }
+  // }, [user, isLoading, router])
 
   if (isLoading) {
     return (
@@ -31,9 +31,9 @@ export default function AdminLayout({
     )
   }
 
-  if (!user || user.role !== "admin") {
-    return null
-  }
+  // if (!user || user.role !== "admin") {
+  //   return null
+  // }
 
   return (
     <div className="flex h-screen bg-background">
