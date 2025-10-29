@@ -34,6 +34,8 @@ export default function UserSidebar() {
     { label: "Payout", href: "/user/dashboard/payout", icon: DollarSign },
     { label: "Payout History", href: "/user/dashboard/payout-history", icon: History },
     { label: "Fund Transfer", href: "/user/dashboard/fund-transfer", icon: Send },
+    { label: "test", href: "/user/test", icon: Send },
+
   ]
 
   const handleLogout = () => {

@@ -40,6 +40,7 @@ export default function UserLayout({ children, currentPage }: UserLayoutProps) {
     { id: "earnings", label: "Earnings", icon: TrendingUp, href: "/user/earnings" },
     { id: "referrals", label: "Referrals", icon: Users, href: "/user/referrals" },
     { id: "support", label: "Support", icon: MessageSquare, href: "/user/support" },
+    { id: "test", label: "test", icon: MessageSquare, href: "/user/test" },
   ]
 
   return (
