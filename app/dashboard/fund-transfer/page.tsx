@@ -8,31 +8,15 @@ import { useState } from "react"
 
 // Mock transfer history
 const MOCK_TRANSFER_HISTORY = [
-  {
-    id: "1",
-    recipient: "john@example.com",
-    amount: 100,
-    date: "2024-10-20",
-    status: "completed",
-  },
-  {
-    id: "2",
-    recipient: "jane@example.com",
-    amount: 250,
-    date: "2024-10-18",
-    status: "completed",
-  },
-  {
-    id: "3",
-    recipient: "bob@example.com",
-    amount: 75,
-    date: "2024-10-15",
-    status: "pending",
-  },
+  { id: "1", recipient: "john@example.com", amount: 100, date: "2024-10-20", status: "completed" },
+  { id: "2", recipient: "jane@example.com", amount: 250, date: "2024-10-18", status: "completed" },
+  { id: "3", recipient: "bob@example.com", amount: 75, date: "2024-10-15", status: "pending" },
 ]
 
 export default function FundTransferPage() {
   const { user, updateUser } = useAuth()
+  const safeBalance = user?.balance ?? 0
+
   const [recipientEmail, setRecipientEmail] = useState("")
   const [amount, setAmount] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
@@ -44,19 +28,19 @@ export default function FundTransferPage() {
       return
     }
 
-    const transferAmount = Number.parseFloat(amount)
+    const transferAmount = Number(amount)
     if (transferAmount <= 0) {
       setShowError("Amount must be greater than 0")
       return
     }
 
-    if (transferAmount > (user?.balance || 0)) {
+    if (transferAmount > safeBalance) {
       setShowError("Insufficient balance")
       return
     }
 
     // Simulate transfer
-    const newBalance = (user?.balance || 0) - transferAmount
+    const newBalance = safeBalance - transferAmount
     updateUser({ balance: newBalance })
 
     setShowSuccess(true)
@@ -66,6 +50,8 @@ export default function FundTransferPage() {
 
     setTimeout(() => setShowSuccess(false), 3000)
   }
+
+  const totalTransferred = MOCK_TRANSFER_HISTORY.reduce((sum, t) => sum + t.amount, 0)
 
   return (
     <div className="p-6 space-y-6">
@@ -78,16 +64,14 @@ export default function FundTransferPage() {
         <Card className="border-primary/20">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
-            <p className="text-3xl font-bold text-foreground">${user?.balance.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-foreground">${safeBalance.toFixed(2)}</p>
           </CardContent>
         </Card>
 
         <Card className="border-primary/20">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground mb-1">Total Transferred</p>
-            <p className="text-3xl font-bold text-foreground">
-              ${MOCK_TRANSFER_HISTORY.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
-            </p>
+            <p className="text-3xl font-bold text-foreground">${totalTransferred.toFixed(2)}</p>
           </CardContent>
         </Card>
 
@@ -145,7 +129,7 @@ export default function FundTransferPage() {
               </div>
               <Button
                 variant="outline"
-                onClick={() => setAmount(user?.balance.toFixed(2) || "0")}
+                onClick={() => setAmount(safeBalance.toFixed(2))}
                 className="border-primary/20"
               >
                 Max
@@ -156,7 +140,9 @@ export default function FundTransferPage() {
           <div className="bg-primary/5 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-muted-foreground">Transfer Amount</span>
-              <span className="font-bold text-foreground">${amount || "0.00"}</span>
+              <span className="font-bold text-foreground">
+                ${amount ? Number(amount).toFixed(2) : "0.00"}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Fee</span>
@@ -164,7 +150,9 @@ export default function FundTransferPage() {
             </div>
             <div className="border-t border-primary/20 mt-2 pt-2 flex items-center justify-between">
               <span className="font-semibold text-foreground">Total</span>
-              <span className="font-bold text-lg text-foreground">${amount || "0.00"}</span>
+              <span className="font-bold text-lg text-foreground">
+                ${amount ? Number(amount).toFixed(2) : "0.00"}
+              </span>
             </div>
           </div>
 

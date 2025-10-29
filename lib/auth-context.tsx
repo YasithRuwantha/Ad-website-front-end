@@ -6,9 +6,11 @@ export interface User {
   id: string
   fullName: string
   email: string
-  role: String
+  role: string
+  balance: number
+  plan: string
+  totalPayouts: number
 }
-
 interface AuthContextType {
   user: User | null
   isLoading: boolean
@@ -56,7 +58,8 @@ const login = async (email: string, password: string) => {
     console.log("Saved token:", localStorage.getItem("token"));
 
     // Optional: alert for debugging
-    // alert(`Login success!\nUser: ${JSON.stringify(data.user, null, 2)}`);
+    alert(`Login success!\nUser: ${JSON.stringify(data.user, null, 2)}`);
+    setUser(data.user); // ✅ this is enough
 
   } catch (err: any) {
     alert(err.message || "Login error");
