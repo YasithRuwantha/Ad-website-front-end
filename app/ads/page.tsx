@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 import PostAdModal from "@/components/ads/post-ad-modal"
 import { Eye, CheckCircle, Clock, XCircle } from "lucide-react"
+import UserSidebar from "@/components/user/user-sidebar"
 
 export default function AdsPage() {
   const { user } = useAuth()
@@ -25,6 +26,8 @@ export default function AdsPage() {
   ]
 
   return (
+        <div className="flex h-screen bg-background">
+          <UserSidebar />
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -166,5 +169,6 @@ export default function AdsPage() {
 
       <PostAdModal open={showPostModal} onOpenChange={setShowPostModal} onSubmit={addAd} />
     </div>
+  </div>
   )
 }

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Copy, Check, Users, TrendingUp } from "lucide-react"
 import { useState } from "react"
+import UserSidebar from "@/components/user/user-sidebar"
 
 export default function ReferralsPage() {
   const { user } = useAuth()
@@ -25,6 +26,8 @@ export default function ReferralsPage() {
   }
 
   return (
+                <div className="flex h-screen bg-background">
+                  <UserSidebar />
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Referral Program</h1>
@@ -187,6 +190,7 @@ export default function ReferralsPage() {
           </CardContent>
         </Card>
       )}
+    </div>
     </div>
   )
 }
