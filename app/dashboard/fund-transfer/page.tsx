@@ -54,7 +54,7 @@ export default function FundTransferPage() {
   const totalTransferred = MOCK_TRANSFER_HISTORY.reduce((sum, t) => sum + t.amount, 0)
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Fund Transfer</h1>
         <p className="text-muted-foreground">Send funds to other users on the platform</p>
