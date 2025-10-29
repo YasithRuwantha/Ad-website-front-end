@@ -148,20 +148,19 @@ export default function EarningsPage() {
         </Card>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="transactions" className="space-y-4">
+      <Tabs defaultValue="plans" className="space-y-4">
         <TabsList className="bg-primary/10 border border-primary/20">
-          <TabsTrigger
-            value="transactions"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-          >
-            Transaction History
-          </TabsTrigger>
           <TabsTrigger
             value="plans"
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Plans
+          </TabsTrigger>
+          <TabsTrigger
+            value="transactions"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Transaction History
           </TabsTrigger>
         </TabsList>
 
