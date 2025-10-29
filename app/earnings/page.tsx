@@ -85,7 +85,7 @@ export default function EarningsPage() {
   return (
                 <div className="flex h-screen bg-background">
                   <UserSidebar />
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 flex-1 overflow-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
