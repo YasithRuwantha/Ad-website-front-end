@@ -32,7 +32,7 @@ export default function LoginPage() {
       } else {
         await signup(email, password, name, referralCode)
       }
-      router.push("/dashboard")
+      router.push("/user/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {

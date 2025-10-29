@@ -34,12 +34,12 @@ export default function UserLayout({ children, currentPage }: UserLayoutProps) {
   }
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-    { id: "ads", label: "Ads", icon: FileText, href: "/ads" },
-    { id: "products", label: "Products", icon: ShoppingBag, href: "/products" },
-    { id: "earnings", label: "Earnings", icon: TrendingUp, href: "/earnings" },
-    { id: "referrals", label: "Referrals", icon: Users, href: "/referrals" },
-    { id: "support", label: "Support", icon: MessageSquare, href: "/support" },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/user/dashboard" },
+    { id: "ads", label: "Ads", icon: FileText, href: "/user/ads" },
+    { id: "products", label: "Products", icon: ShoppingBag, href: "/user/products" },
+    { id: "earnings", label: "Earnings", icon: TrendingUp, href: "/user/earnings" },
+    { id: "referrals", label: "Referrals", icon: Users, href: "/user/referrals" },
+    { id: "support", label: "Support", icon: MessageSquare, href: "/user/support" },
   ]
 
   return (

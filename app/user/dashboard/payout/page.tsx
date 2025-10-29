@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { DollarSign, Wallet, TrendingUp, AlertCircle } from "lucide-react"
 import { useState } from "react"
+import UserSidebar from "@/components/user/user-sidebar"
+
 
 export default function PayoutPage() {
   const { user, updateUser } = useAuth()

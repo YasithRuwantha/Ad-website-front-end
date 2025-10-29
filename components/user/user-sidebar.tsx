@@ -24,16 +24,16 @@ export default function UserSidebar() {
   const pathname = usePathname()
 
   const menuItems = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Ads", href: "/ads", icon: FileText },
-    { label: "Products", href: "/products", icon: ShoppingBag },
-    { label: "Earnings", href: "/earnings", icon: TrendingUp },
-    { label: "Referrals", href: "/referrals", icon: Users },
-    { label: "Support", href: "/support", icon: MessageSquare },
-    { label: "Plans", href: "/dashboard/plans", icon: CreditCard },
-    { label: "Payout", href: "/dashboard/payout", icon: DollarSign },
-    { label: "Payout History", href: "/dashboard/payout-history", icon: History },
-    { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
+    { label: "Dashboard", href: "/user/dashboard", icon: LayoutDashboard },
+    { label: "Ads", href: "/user/ads", icon: FileText },
+    { label: "Products", href: "/user/products", icon: ShoppingBag },
+    { label: "Earnings", href: "/user/earnings", icon: TrendingUp },
+    { label: "Referrals", href: "/user/referrals", icon: Users },
+    { label: "Support", href: "/user/support", icon: MessageSquare },
+    { label: "Plans", href: "/user/dashboard/plans", icon: CreditCard },
+    { label: "Payout", href: "/user/dashboard/payout", icon: DollarSign },
+    { label: "Payout History", href: "/user/dashboard/payout-history", icon: History },
+    { label: "Fund Transfer", href: "/user/dashboard/fund-transfer", icon: Send },
   ]
 
   const handleLogout = () => {

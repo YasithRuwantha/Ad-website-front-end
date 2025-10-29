@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle, XCircle } from "lucide-react"
+import UserSidebar from "@/components/user/user-sidebar"
 
 export default function AdminAdsPage() {
   const { ads, updateAd } = useData()
@@ -22,6 +23,8 @@ export default function AdminAdsPage() {
 
   return (
     <div className="p-6 space-y-6">
+            <UserSidebar />
+      
       <div>
         <h1 className="text-3xl font-bold text-foreground">Manage Ads</h1>
         <p className="text-muted-foreground">Review and approve user advertisements</p>
