@@ -17,6 +17,7 @@ import {
   History,
   Menu,
   X,
+  List,
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -26,6 +27,7 @@ export default function UserSidebar() {
   const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false) // desktop collapse
 
   const menuItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -62,14 +64,27 @@ export default function UserSidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static top-0 left-0 h-full w-64 bg-sidebar border-r border-sidebar-border flex flex-col transform transition-transform duration-300 z-50
-        ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+        className={`group relative fixed md:static top-0 left-0 h-full bg-sidebar border-r border-sidebar-border flex flex-col transform transition-all duration-300 z-50
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 ${isCollapsed ? "md:w-16" : "md:w-64"} w-64`}
       >
-        <div className="p-6 border-b border-sidebar-border hidden md:block">
-          <h1 className="text-2xl font-bold text-sidebar-foreground">Dashboard</h1>
+        {/* Single hover button (desktop only) */}
+        <div className="hidden md:flex absolute -right-3 top-4">
+          <button
+            type="button"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setIsCollapsed((v) => !v)}
+            className="h-8 w-8 rounded-full bg-sidebar-accent border border-sidebar-border text-sidebar-foreground shadow flex items-center justify-center hover:brightness-110 transition"
+          >
+            <List className="w-4 h-4" />
+          </button>
         </div>
+        {!isCollapsed && (
+          <div className="p-6 border-b border-sidebar-border hidden md:block">
+            <h1 className="text-2xl font-bold text-sidebar-foreground">Dashboard</h1>
+          </div>
+        )}
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className={`flex-1 p-4 space-y-2 overflow-y-auto ${isCollapsed ? "md:px-2" : ""}`}>
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
@@ -77,14 +92,14 @@ export default function UserSidebar() {
               <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
                 <Button
                   variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
+                  className={`w-full items-center ${isCollapsed ? "justify-center" : "justify-start gap-3"} ${
                     isActive
                       ? "bg-sidebar-primary text-sidebar-primary-foreground"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  {item.label}
+                  <span className={`${isCollapsed ? "hidden md:hidden" : "inline"}`}>{item.label}</span>
                 </Button>
               </Link>
             )
@@ -95,10 +110,10 @@ export default function UserSidebar() {
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="w-full justify-start gap-3 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent bg-transparent"
+            className={`w-full ${isCollapsed ? "justify-center" : "justify-start gap-3"} border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent bg-transparent`}
           >
             <LogOut className="w-5 h-5" />
-            Logout
+            <span className={`${isCollapsed ? "hidden md:hidden" : "inline"}`}>Logout</span>
           </Button>
         </div>
       </aside>
