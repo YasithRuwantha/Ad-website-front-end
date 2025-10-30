@@ -21,8 +21,8 @@ export interface TicketDTO {
   replies: ReplyDTO[];
 }
 
-const API_BASE = "http://localhost:5000";
-const SUPPORT_BASE = `${API_BASE}/api/support`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+const SUPPORT_BASE = `${API_URL}/api/support`;
 
 async function handle<T>(res: Response): Promise<T> {
   const data = await res.json().catch(() => null);

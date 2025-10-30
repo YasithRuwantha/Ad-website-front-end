@@ -31,7 +31,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  const API_URL = "http://localhost:5000/api/user" // replace with your API base
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
 
   // Fetch all users
   const fetchUsers = async () => {
