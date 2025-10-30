@@ -5,17 +5,45 @@ import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PlansModal from "@/components/earnings/plans-modal"
 import PaymentModal from "@/components/earnings/payment-modal"
 import { TrendingUp, Wallet, CreditCard } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
+import { useRouter } from "next/navigation"
+
 
 export default function EarningsPage() {
   const { user, updateUser } = useAuth()
   const { transactions, addTransaction } = useData()
   const [showPlansModal, setShowPlansModal] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
+
+  const router = useRouter()
+  const [isChecking, setIsChecking] = useState(true)
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user")
+      if (!storedUser) {
+        router.push("/")
+        return
+      }
+
+      const user = JSON.parse(storedUser)
+
+      if (user.role !== "user") {
+        router.push("/")
+        return
+      }
+
+      setIsChecking(false) // ✅ passed all checks
+    } catch (err) {
+      console.error("Error reading user data:", err)
+      router.push("/")
+    }
+  }, [router])
+
 
   // Safe dummy fallbacks
   const balance = user?.balance ?? 10

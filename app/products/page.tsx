@@ -3,17 +3,47 @@
 import { useAuth } from "@/lib/auth-context"
 import { useData } from "@/lib/data-context"
 import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ProductCard from "@/components/products/product-card"
 import RatingModal from "@/components/products/rating-modal"
 import type { Product } from "@/lib/data-context"
 import UserSidebar from "@/components/user/user-sidebar"
+import { useRouter } from "next/navigation"
+
 
 export default function ProductsPage() {
   const { user } = useAuth()
   const { products, ratings, addRating } = useData()
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [showRatingModal, setShowRatingModal] = useState(false)
+
+  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true)
+
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user")
+      if (!storedUser) {
+        router.push("/")
+        return
+      }
+
+      const user = JSON.parse(storedUser)
+
+      if (user.role !== "user") {
+        router.push("/")
+        return
+      }
+
+      setIsChecking(false) // ✅ passed all checks
+    } catch (err) {
+      console.error("Error reading user data:", err)
+      router.push("/")
+    }
+  }, [router])
+
+  
 
   const userRatings = ratings.filter((r) => r.userId === user?.id)
 

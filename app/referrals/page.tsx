@@ -7,12 +7,39 @@ import { Button } from "@/components/ui/button"
 import { Copy, Check, Users, TrendingUp } from "lucide-react"
 import { useState, useEffect } from "react"
 import UserSidebar from "@/components/user/user-sidebar"
+import { useRouter } from "next/navigation"
 
 export default function ReferralsPage() {
   const { user } = useAuth()
   const { transactions } = useData()
   const [copied, setCopied] = useState(false)
   const [referralLink, setReferralLink] = useState("")
+
+  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true)
+  
+  
+    useEffect(() => {
+      try {
+        const storedUser = localStorage.getItem("user")
+        if (!storedUser) {
+          router.push("/")
+          return
+        }
+  
+        const user = JSON.parse(storedUser)
+  
+        if (user.role !== "user") {
+          router.push("/")
+          return
+        }
+  
+        setIsChecking(false) // ✅ passed all checks
+      } catch (err) {
+        console.error("Error reading user data:", err)
+        router.push("/")
+      }
+    }, [router])
 
   useEffect(() => {
     // Run only on client

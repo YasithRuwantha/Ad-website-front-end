@@ -5,14 +5,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
-import { Mail, User, Calendar, Reply as ReplyIcon } from "lucide-react"
+import { Mail, User, Calendar, Reply as ReplyIcon, Search } from "lucide-react"
 
 export default function AdminSupportPage() {
   const { tickets, replyToTicket } = useData()
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null)
   const [replyText, setReplyText] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
 
-  const openTickets = tickets.filter((t) => t.status === "open" || t.status === "in-progress")
+  const openTickets = tickets.filter(
+    (t) =>
+      (t.status === "open" || t.status === "in-progress") &&
+      (t.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.useremail?.toLowerCase().includes(searchTerm.toLowerCase()))
+  )
 
   const handleReply = (ticketId: string) => {
     if (!replyText.trim()) return
@@ -23,11 +30,27 @@ export default function AdminSupportPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Support Tickets</h1>
-        <p className="text-muted-foreground">Manage customer support requests</p>
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Support Tickets</h1>
+          <p className="text-muted-foreground">Manage customer support requests</p>
+        </div>
+
+        {/* Search bar */}
+        <div className="flex items-center gap-2 border border-primary/20 rounded-lg px-3 py-2 w-full md:w-72 bg-background">
+          <Search className="w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search tickets..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
+          />
+        </div>
       </div>
 
+      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-primary/20">
           <CardContent className="pt-6">
@@ -43,11 +66,12 @@ export default function AdminSupportPage() {
         </Card>
       </div>
 
+      {/* Ticket list */}
       <div className="space-y-4">
         {openTickets.length === 0 ? (
           <Card className="border-primary/20">
             <CardContent className="pt-12 pb-12 text-center">
-              <p className="text-muted-foreground">No open tickets</p>
+              <p className="text-muted-foreground">No matching open tickets</p>
             </CardContent>
           </Card>
         ) : (
@@ -91,29 +115,30 @@ export default function AdminSupportPage() {
                   </div>
                 </div>
               </CardHeader>
+
               <CardContent className="space-y-4">
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <p className="text-sm font-semibold text-foreground mb-1">Customer</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <p className="text-sm font-semibold text-foreground mb-0.5">Customer</p>
                     <p className="text-sm text-foreground">{ticket.message}</p>
                   </div>
 
                   {ticket.replies.map((reply) => (
                     <div
                       key={reply.id}
-                      className={`p-3 rounded-lg ${
+                      className={`p-2 rounded-lg text-sm ${
                         reply.isAdmin ? "bg-secondary/10 border border-secondary/30" : "bg-muted"
                       }`}
                     >
-                      <p className="text-sm font-semibold text-foreground mb-1">
+                      <p className="font-semibold text-foreground mb-0.5">
                         {reply.isAdmin ? "You (Admin)" : "Customer"}
                       </p>
-                      <p className="text-sm text-foreground">{reply.message}</p>
+                      <p className="text-foreground">{reply.message}</p>
                     </div>
                   ))}
                 </div>
 
-                {selectedTicket === ticket.id ? (
+                {selectedTicket === ticket.id && (
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -139,7 +164,7 @@ export default function AdminSupportPage() {
                       Cancel
                     </Button>
                   </div>
-                ) : null}
+                )}
               </CardContent>
             </Card>
           ))
