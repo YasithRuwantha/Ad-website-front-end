@@ -38,7 +38,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     if (!currentUser) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/all`, {
+      const res = await fetch(`${API_URL}/api/user/all`, {
         headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` },
       });
       const data = await res.json();
@@ -56,7 +56,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   // Approve user
   const approveUser = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/${id}/approve`, {
+      const res = await fetch(`${API_URL}/api/user/${id}/approve`, {
         method: "PATCH",
         headers: { 
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   // Delete user
   const deleteUser = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
+      const res = await fetch(`${API_URL}/api/user/${id}`, {
         method: "DELETE",
         headers: { 
           "Authorization": `Bearer ${localStorage.getItem("token")}` 
@@ -91,7 +91,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   // Update user
   const updateUser = async (id: string, data: Partial<User>) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
+      const res = await fetch(`${API_URL}/api/user/${id}`, {
         method: "PATCH",
         headers: { 
           "Content-Type": "application/json",
