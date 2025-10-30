@@ -3,7 +3,7 @@
 import type React from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import AdminSidebar from "@/components/admin/admin-sidebar"
 
 export default function AdminLayout({
@@ -19,6 +19,31 @@ export default function AdminLayout({
   //     router.push("/")
   //   }
   // }, [user, isLoading, router])
+
+    const [isChecking, setIsChecking] = useState(true)
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user")
+      if (!storedUser) {
+        router.push("/")
+        return
+      }
+
+      const user = JSON.parse(storedUser)
+
+      // Check role
+      if (user.role !== "admin") {
+        router.push("/")
+        return
+      }
+
+      setIsChecking(false)
+    } catch (err) {
+      console.error("Error reading user data:", err)
+      router.push("/")
+    }
+  }, [router])
 
   if (isLoading) {
     return (

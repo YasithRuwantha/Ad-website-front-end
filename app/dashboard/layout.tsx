@@ -1,9 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import UserSidebar from "@/components/user/user-sidebar"
 
 export default function UserLayout({
@@ -11,16 +10,33 @@ export default function UserLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isLoading } = useAuth()
   const router = useRouter()
+  const [isChecking, setIsChecking] = useState(true)
 
-  // useEffect(() => {
-  //   if (!isLoading && (!user || user.role !== "user")) {
-  //     router.push("/")
-  //   }
-  // }, [user, isLoading, router])
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user")
+      if (!storedUser) {
+        router.push("/")
+        return
+      }
 
-  if (isLoading) {
+      const user = JSON.parse(storedUser)
+
+      if (user.role !== "user") {
+        router.push("/")
+        return
+      }
+
+      setIsChecking(false) // ✅ passed all checks
+    } catch (err) {
+      console.error("Error reading user data:", err)
+      router.push("/")
+    }
+  }, [router])
+
+  // Show loader while checking localStorage
+  if (isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -31,16 +47,9 @@ export default function UserLayout({
     )
   }
 
-  // if (!user || user.role !== "user") {
-  //   return null
-  // }
-
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background">
-      {/* Sidebar — fixed on mobile, static on desktop */}
       <UserSidebar />
-
-      {/* Main Content */}
       <main className="flex-1 overflow-auto md:ml-0 p-4 md:p-6">
         {children}
       </main>
