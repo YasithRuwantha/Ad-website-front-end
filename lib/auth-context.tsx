@@ -20,6 +20,8 @@ interface AuthContextType {
   logout: () => void
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -36,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 🟢 Login
   const login = async (email: string, password: string) => {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -81,7 +83,7 @@ const signup = async (email: string, password: string, name: string, phone: stri
     if (refFromUrl) extractedReferral = refFromUrl;
   }
 
-  const res = await fetch("http://localhost:5000/api/auth/signup", {
+    const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, fullName: name, phone, referralCode: extractedReferral }),
