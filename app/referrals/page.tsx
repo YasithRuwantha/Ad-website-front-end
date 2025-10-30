@@ -5,18 +5,23 @@ import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Copy, Check, Users, TrendingUp } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import UserSidebar from "@/components/user/user-sidebar"
 
 export default function ReferralsPage() {
   const { user } = useAuth()
   const { transactions } = useData()
   const [copied, setCopied] = useState(false)
+  const [referralLink, setReferralLink] = useState("")
 
-  const userString = localStorage.getItem("user")
-  const usertemp = userString ? JSON.parse(userString) : null
-  const userEmail = usertemp?.email || ""
-  const referralLink = `http://www.adsales.com/signup?ref=${userEmail}`
+  useEffect(() => {
+    // Run only on client
+    const userString = localStorage.getItem("user")
+    const usertemp = userString ? JSON.parse(userString) : null
+    const userEmail = usertemp?.email || ""
+    setReferralLink(`http://www.adsales.com/signup?ref=${userEmail}`)
+  }, [])
+
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink)
