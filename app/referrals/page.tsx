@@ -13,11 +13,10 @@ export default function ReferralsPage() {
   const { transactions } = useData()
   const [copied, setCopied] = useState(false)
 
-  const referralLink = `${typeof window !== "undefined" ? window.location.origin : ""}/signup?ref=${user?.referralCode}`
-  const referralTransactions = transactions.filter(
-    (t) => t.userId === user?.id && t.type === "referral" && t.status === "completed",
-  )
-  const totalReferralEarnings = referralTransactions.reduce((sum, t) => sum + t.amount, 0)
+  const userString = localStorage.getItem("user")
+  const usertemp = userString ? JSON.parse(userString) : null
+  const userEmail = usertemp?.email || ""
+  const referralLink = `http://www.adsales.com/signup?ref=${userEmail}`
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink)
@@ -43,7 +42,7 @@ export default function ReferralsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Referral Earnings</p>
-                <p className="text-3xl font-bold text-primary">${totalReferralEarnings.toFixed(2)}</p>
+                {/* <p className="text-3xl font-bold text-primary">${totalReferralEarnings.toFixed(2)}</p> */}
               </div>
               <TrendingUp className="w-8 h-8 text-primary/40" />
             </div>
@@ -55,7 +54,7 @@ export default function ReferralsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Total Referrals</p>
-                <p className="text-3xl font-bold text-foreground">{referralTransactions.length}</p>
+                <p className="text-3xl font-bold text-foreground">{referralLink.length}</p>
               </div>
               <Users className="w-8 h-8 text-primary/40" />
             </div>
@@ -66,7 +65,7 @@ export default function ReferralsPage() {
           <CardContent className="pt-6">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Your Referral Code</p>
-              <p className="text-2xl font-bold text-primary font-mono">{user?.referralCode}</p>
+              {/* <p className="text-2xl font-bold text-primary font-mono">{user?.referralCode}</p> */}
             </div>
           </CardContent>
         </Card>
@@ -165,15 +164,15 @@ export default function ReferralsPage() {
         </CardContent>
       </Card>
 
-      {referralTransactions.length > 0 && (
+      {referralLink.length > 0 && (
         <Card className="border-primary/20">
           <CardHeader>
             <CardTitle>Referral History</CardTitle>
             <CardDescription>Your recent referral earnings</CardDescription>
           </CardHeader>
-          <CardContent>
+          {/* <CardContent>
             <div className="space-y-3">
-              {referralTransactions
+              {referralLink
                 .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                 .map((transaction) => (
                   <div
@@ -190,7 +189,7 @@ export default function ReferralsPage() {
                   </div>
                 ))}
             </div>
-          </CardContent>
+          </CardContent> */}
         </Card>
       )}
     </div>

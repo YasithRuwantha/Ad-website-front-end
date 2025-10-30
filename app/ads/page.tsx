@@ -86,7 +86,7 @@ export default function AdsPage() {
         })}
       </div>
 
-      <Tabs defaultValue="my-ads" className="space-y-4">
+      <Tabs defaultValue="my-ads" className="pt-4 space-y-4">
         <TabsList className="bg-primary/10 border border-primary/20">
           <TabsTrigger
             value="my-ads"
