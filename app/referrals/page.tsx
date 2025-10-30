@@ -30,7 +30,7 @@ export default function ReferralsPage() {
       <UserSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto md:ml-0 p-4 md:p-6">
+      <div className="space-y-3 flex-1 overflow-auto md:ml-0 p-4 md:p-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Referral Program</h1>
         <p className="text-muted-foreground">Earn money by inviting friends to join EarningHub</p>
