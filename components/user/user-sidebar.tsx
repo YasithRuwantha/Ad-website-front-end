@@ -70,7 +70,7 @@ export default function UserSidebar() {
           <h1 className="text-2xl font-bold text-sidebar-foreground whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Dashboard</h1>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
