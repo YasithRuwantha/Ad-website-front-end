@@ -3,10 +3,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react"
 
 export interface Product {
+  createdAt: string | number | Date
   _id: string
   name: string
   description: string
-  rating: number
+  rating: string
   ratedBy: number
   addedTime: string
   imageUrl: string
@@ -47,13 +48,20 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem("token")
     const user = localStorage.getItem("user")
     const email = user ? JSON.parse(user).email : "unknown"
+    const now = new Date().toLocaleString();
 
     const formData = new FormData()
     formData.append("name", product.name)
     formData.append("description", product.description)
     formData.append("addedBy", email)
+    formData.append("now", now)
     if (product.imageFile) formData.append("image", product.imageFile)
-
+    
+    // ✅ Debug
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+    
     const res = await fetch(`${API_URL}/api/products/add`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -70,6 +78,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   // ✅ Update product
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     const token = localStorage.getItem("token")
+    console.log("update product", updates);
     const res = await fetch(`${API_URL}/api/products/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

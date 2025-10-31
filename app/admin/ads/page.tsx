@@ -23,6 +23,7 @@ export default function AdminProductsPage() {
     rating: ""
   })
 
+  // console.log(products)
   // ✅ Add Product
   const handleAddProduct = async () => {
     if (!newProduct.name) return alert("Name is required")
@@ -44,6 +45,7 @@ export default function AdminProductsPage() {
       await updateProduct(editProduct.id, {
         name: editProduct.name,
         description: editProduct.description,
+        rating: editProduct.rating
       })
       setIsEditModalOpen(false)
     } catch (e: any) {
@@ -134,7 +136,7 @@ export default function AdminProductsPage() {
               type="text"
               placeholder="2.34"
               value={editProduct.rating}
-              onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
+              onChange={(e) => setEditProduct({ ...editProduct, rating: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
             <input
@@ -214,11 +216,17 @@ export default function AdminProductsPage() {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <p className="text-foreground line-clamp-2">{p.description}</p>
-                    {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-48 object-cover rounded" />}
+                        {p.imageUrl && (
+                          <img
+                            src={p.imageUrl}
+                            alt={p.name}
+                            className="w-full h-48 object-contain rounded bg-gray-100"
+                          />
+                        )}
                     <p className="text-sm text-muted-foreground">
                       Rating: {p.rating} ({p.ratedBy} people rated)
                     </p>
-                    <p className="text-xs text-muted-foreground">Added: {new Date(p.addedTime).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">Added: {new Date(p.createdAt).toLocaleString()}</p>
                   </CardContent>
                 </Card>
               ))}
