@@ -14,19 +14,22 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, productRatings, userRating, onRate }: ProductCardProps) {
   const avgRating =
-    productRatings.length > 0 ? productRatings.reduce((sum, r) => sum + r.rating, 0) / productRatings.length : 0
+    productRatings.length > 0
+      ? productRatings.reduce((sum, r) => sum + r.rating, 0) / productRatings.length
+      : 0
+
+      console.log("Product received:", product, "average rating : ", avgRating, "r.rating :", r.rating)
+
 
   return (
     <Card className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden">
       {/* Product Image */}
       <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
         <img
-          src={product.image || "/placeholder.svg"}
+          src={product.imageUrl || "/placeholder.svg"}
           alt={product.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform"
-          onError={(e) => {
-            e.currentTarget.src = "/diverse-products-still-life.png"
-          }}
+          onError={(e) => (e.currentTarget.src = "/diverse-products-still-life.png")}
         />
       </div>
 
@@ -38,7 +41,6 @@ export default function ProductCard({ product, productRatings, userRating, onRat
         {/* Price */}
         <div className="mb-3">
           <p className="text-2xl font-bold text-primary">${product.price}</p>
-          <p className="text-xs text-muted-foreground">by {product.seller}</p>
         </div>
 
         {/* Rating */}
@@ -47,7 +49,10 @@ export default function ProductCard({ product, productRatings, userRating, onRat
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                className={`w-4 h-4 ${i < Math.round(avgRating)
+                    ? "fill-primary text-primary"
+                    : "text-muted-foreground"
+                  }`}
               />
             ))}
           </div>
@@ -58,18 +63,19 @@ export default function ProductCard({ product, productRatings, userRating, onRat
         {/* User Rating Badge */}
         {userRating && (
           <div className="mb-3 p-2 bg-primary/10 rounded-lg">
-            <p className="text-xs font-semibold text-primary">Your Rating: {userRating.rating}/5</p>
+            <p className="text-xs font-semibold text-primary">
+              Your Rating: {userRating.rating}/5
+            </p>
           </div>
         )}
 
         {/* Rate Button */}
         <Button
           onClick={onRate}
-          className={`w-full ${
-            userRating
+          className={`w-full ${userRating
               ? "bg-secondary hover:bg-secondary/90 text-secondary-foreground"
               : "bg-primary hover:bg-primary/90 text-primary-foreground"
-          }`}
+            }`}
         >
           {userRating ? "Update Rating" : "Rate Product"}
         </Button>

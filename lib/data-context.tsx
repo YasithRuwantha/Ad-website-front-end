@@ -7,6 +7,7 @@ import type { TicketDTO } from "./support"
 import * as SupportAPI from "./support"
 
 export interface Product {
+  imageUrl: string
   id: string
   name: string
   description: string
