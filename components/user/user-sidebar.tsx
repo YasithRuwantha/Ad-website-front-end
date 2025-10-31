@@ -17,6 +17,7 @@ import {
   History,
   Menu,
   X,
+  User,
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -28,6 +29,7 @@ export default function UserSidebar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const menuItems = [
+    { label: "Profile", href: "/dashboard/profile", icon: User },
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     // { label: "Ads", href: "/ads", icon: FileText },
     { label: "Products", href: "/products", icon: ShoppingBag },
