@@ -12,11 +12,16 @@ export default function AdminUsersPage() {
   const { user } = useAuth()
   const { transactions } = useData()
   const [copied, setCopied] = useState(false)
-  const { users, isLoading, fetchUsers, updateUser, deleteUser } = useUsers()
+  const { users, isLoading, fetchUsers, updateUser, deleteUser, addRemainingAds } = useUsers()
 
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error" | ""; text: string }>({
+    type: "",
+    text: "",
+  })
 
   const [editData, setEditData] = useState({
     fullName: "",
@@ -24,7 +29,10 @@ export default function AdminUsersPage() {
     phone: "",
     role: "",
     status: "",
+    adsPerDay: "",
   })
+
+  const [adsAdjust, setAdsAdjust] = useState<number>(0)
 
   useEffect(() => {
     fetchUsers()
@@ -32,8 +40,8 @@ export default function AdminUsersPage() {
 
   const filteredUsers = users.filter(
     (u) =>
-      u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+      u.fullName?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase())
   )
 
   const userString = localStorage.getItem("user")
@@ -55,14 +63,51 @@ export default function AdminUsersPage() {
       phone: user.phone,
       role: user.role,
       status: user.status,
+      adsPerDay: user.adsPerDay,
     })
+    setAdsAdjust(0)
     setIsModalOpen(true)
+    setMessage({ type: "", text: "" }) // clear previous messages
   }
 
   const handleSaveChanges = async () => {
     if (!selectedUser) return
-    await updateUser(selectedUser._id, editData)
-    setIsModalOpen(false)
+    setIsSaving(true)
+    setMessage({ type: "", text: "" })
+
+    try {
+      await updateUser(selectedUser._id, editData)
+      setMessage({ type: "success", text: "✅ User updated successfully!" })
+      setTimeout(() => setIsModalOpen(false), 1500)
+      fetchUsers()
+    } catch (error) {
+      console.error(error)
+      setMessage({ type: "error", text: "❌ Failed to update user. Please try again." })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const adjustAds = async (amount: number) => {
+    if (!selectedUser) return
+    if (!adsAdjust || adsAdjust <= 0) {
+      setMessage({ type: "error", text: "Enter a valid number" })
+      return
+    }
+
+    try {
+      await addRemainingAds(selectedUser._id, amount > 0 ? adsAdjust : -adsAdjust)
+      setSelectedUser({
+        ...selectedUser,
+        remaining: Math.max((selectedUser.remaining || 0) + amount, 0),
+      })
+      setMessage({ type: "success", text: amount > 0 ? `✅ Added ${adsAdjust} ads!` : `✅ Removed ${adsAdjust} ads!` })
+      setAdsAdjust(0)
+      fetchUsers()
+    } catch (err) {
+      console.error(err)
+      setMessage({ type: "error", text: "❌ Failed to update ads." })
+    }
   }
 
   return (
@@ -138,16 +183,17 @@ export default function AdminUsersPage() {
                     u.status === "inactive" ? "bg-red-50" : "bg-background/50"
                   }`}
                 >
-                  <div className="text-sm sm:text-base">
-                    <p className="font-semibold break-all">
-                      {u.fullName} ({u.email})
-                    </p>
+                  <div className="text-sm sm:text-base space-y-1">
+                    <p className="font-semibold break-all">{u.fullName} ({u.email})</p>
                     <p className="text-muted-foreground">
                       Status: <span className="font-semibold">{u.status}</span>
                     </p>
                     <p className="text-muted-foreground">Phone: {u.phone}</p>
+                    <p className="text-muted-foreground">
+                      Ads per day: <span className="font-semibold">{u.adsPerDay || 0}</span>
+                    </p>
                   </div>
-                  <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                  <div className="flex gap-2 flex-wrap sm:flex-nowrap mt-2 sm:mt-0">
                     <Button
                       size="sm"
                       variant="outline"
@@ -172,53 +218,96 @@ export default function AdminUsersPage() {
         </CardContent>
       </Card>
 
-      {/* Transparent Edit Modal */}
+      {/* Edit Modal */}
       {isModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white bg-opacity-90 p-6 rounded-lg w-full max-w-md space-y-4 shadow-lg">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md space-y-4 shadow-lg">
             <h2 className="text-xl font-bold text-center">Edit User</h2>
 
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={editData.fullName || ""}
-              onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={editData.email || ""}
-              onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Phone"
-              value={editData.phone || ""}
-              onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
-            />
-            <select
-              value={editData.status || ""}
-              onChange={(e) => setEditData({ ...editData, status: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
-            </select>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={editData.fullName}
+                onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={editData.email}
+                onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Phone"
+                value={editData.phone}
+                onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
 
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsModalOpen(false)}
-                className="w-full sm:w-auto"
+              <select
+                value={editData.status}
+                onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
               >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+              </select>
+
+              <select
+                value={editData.adsPerDay}
+                onChange={(e) => setEditData({ ...editData, adsPerDay: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              >
+                <option value={0}>0 Ads / Day</option>
+                <option value={30}>30 Ads / Day</option>
+                <option value={50}>50 Ads / Day</option>
+                <option value={100}>100 Ads / Day</option>
+              </select>
+            </div>
+
+            {/* Remaining Ads */}
+            <div className="border-t pt-4 space-y-2">
+              <label className="block text-sm font-medium text-gray-700">Manage Remaining Ads</label>
+              <p className="text-sm text-gray-600">
+                Current Remaining Ads: <span className="font-semibold">{selectedUser.remaining || 0}</span>
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  placeholder="Enter number"
+                  value={adsAdjust || ""}
+                  onChange={(e) => setAdsAdjust(Number(e.target.value))}
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                />
+                <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => adjustAds(adsAdjust)}>
+                  ➕ Add
+                </Button>
+                <Button type="button" variant="destructive" className="w-full sm:w-auto" onClick={() => adjustAds(-adsAdjust)}>
+                  ➖ Remove
+                </Button>
+              </div>
+            </div>
+
+            {/* Message */}
+            {message.text && (
+              <p className={`text-center text-sm ${message.type === "success" ? "text-green-600" : "text-red-600"}`}>
+                {message.text}
+              </p>
+            )}
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSaving} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button onClick={handleSaveChanges} className="w-full sm:w-auto">
-                Save
+              <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full sm:w-auto">
+                {isSaving ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>

@@ -96,11 +96,9 @@ export default function ProductsPage() {
         </Card>
         <Card className="border-primary/20">
           <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Average Rating</p>
+            <p className="text-sm text-muted-foreground mb-1">Remaining Attemps</p>
             <p className="text-3xl font-bold text-primary">
-              {userRatings.length > 0
-                ? (userRatings.reduce((sum, r) => sum + r.rating, 0) / userRatings.length).toFixed(1)
-                : "N/A"}
+              
             </p>
           </CardContent>
         </Card>
