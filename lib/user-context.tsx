@@ -12,6 +12,7 @@ export interface User {
   plan: string
   totalPayouts: number
   phone: string
+  remaining?: number
   status?: string // pending, approved, rejected
 }
 
@@ -22,6 +23,8 @@ interface UserContextType {
   approveUser: (id: string) => Promise<void>
   deleteUser: (id: string) => Promise<void>
   updateUser: (id: string, data: Partial<User>) => Promise<void>
+  addRemainingAds: (id: string, extra: number) => Promise<void>; 
+
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -109,8 +112,42 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // Add Remaining Ads
+  const addRemainingAds = async (id: string, extra: number) => {
+    console.log("add remaining ads front end runned")
+    try {
+      const res = await fetch(`${API_URL}/api/user/add-remaining/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ extra }),
+      });
+      if (!res.ok) throw new Error("Failed to add ads");
+
+      const updatedUser = await res.json();
+      setUsers((prev) =>
+        prev.map((u) => (u._id === id ? updatedUser : u))
+      );
+    } catch (err) {
+      console.error("❌ Error adding remaining ads:", err);
+      throw err;
+    }
+  };
+
+
   return (
-    <UserContext.Provider value={{ users, isLoading, fetchUsers, approveUser, deleteUser, updateUser }}>
+    <UserContext.Provider 
+      value={{ 
+        users, 
+        isLoading, 
+        fetchUsers, 
+        approveUser,
+        deleteUser, 
+        updateUser,
+        addRemainingAds,
+    }}>
       {children}
     </UserContext.Provider>
   )
@@ -122,3 +159,4 @@ export function useUsers() {
   if (!context) throw new Error("useUsers must be used within UserProvider")
   return context
 }
+

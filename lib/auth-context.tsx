@@ -11,6 +11,7 @@ export interface User {
   plan: string
   totalPayouts: number
   phone: string
+  adsPerDay: number
 }
 interface AuthContextType {
   user: User | null
