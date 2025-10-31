@@ -3,10 +3,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react"
 
 export interface Product {
+  createdAt: string | number | Date
   _id: string
   name: string
   description: string
-  rating: number
+  rating: string
   ratedBy: number
   addedTime: string
   imageUrl: string
@@ -47,12 +48,19 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem("token")
     const user = localStorage.getItem("user")
     const email = user ? JSON.parse(user).email : "unknown"
+    const now = new Date().toLocaleString();
 
     const formData = new FormData()
     formData.append("name", product.name)
     formData.append("description", product.description)
     formData.append("addedBy", email)
+    formData.append("now", now)
     if (product.imageFile) formData.append("image", product.imageFile)
+    
+    // ✅ Debug
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
 
     const res = await fetch(`${API_URL}/api/products/add`, {
       method: "POST",
@@ -67,21 +75,46 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     setProducts((prev) => [...prev, data.product])
   }
 
-  // ✅ Update product
-  const updateProduct = async (id: string, updates: Partial<Product>) => {
+  // ✅ Update product - handles both text and image updates
+    const updateProduct = async (id: string, updates: Partial<Product> & { imageFile?: File }) => {
     const token = localStorage.getItem("token")
+    console.log("update product", updates);
+    
+    const formData = new FormData()
+    
+    // Add text fields
+    if (updates.name !== undefined) formData.append("name", updates.name)
+    if (updates.description !== undefined) formData.append("description", updates.description)
+    if (updates.rating !== undefined) formData.append("rating", updates.rating)
+    
+    // Add image file if provided
+    if (updates.imageFile) {
+        formData.append("image", updates.imageFile)
+    }
+    
+    // Debug: Log formData contents
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+    
     const res = await fetch(`${API_URL}/api/products/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(updates),
+        method: "PUT",
+        headers: { 
+        Authorization: `Bearer ${token}` 
+        // Don't set Content-Type - let browser set it with boundary for FormData
+        },
+        body: formData,
     })
-
+    
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || "Failed to update product")
-
-    // ✅ Update UI immediately (use _id not id)
-    setProducts((prev) => prev.map((p) => (p._id === id ? { ...p, ...data } : p)))
-  }
+    
+    // Update UI immediately
+    setProducts((prev) => prev.map((p) => (p._id === id ? { ...p, ...data.product } : p)))
+    
+    // Refresh products to ensure consistency
+    await fetchProducts()
+    }
 
   // ✅ Delete product
   const deleteProduct = async (id: string) => {

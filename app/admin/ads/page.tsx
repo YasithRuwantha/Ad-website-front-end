@@ -15,44 +15,66 @@ export default function AdminProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editProduct, setEditProduct] = useState<{
-    rating: string; id: string; name: string; description: string; imageFile?: File 
-}>({
+    rating: string
+    id: string
+    name: string
+    description: string
+    imageFile?: File
+    currentImageUrl?: string
+  }>({
     id: "",
     name: "",
     description: "",
-    rating: ""
+    rating: "",
+    currentImageUrl: "",
   })
+  const [isUploading, setIsUploading] = useState(false)
 
-  // ✅ Add Product
+  // Add Product
   const handleAddProduct = async () => {
     if (!newProduct.name) return alert("Name is required")
-
+    setIsUploading(true)
     try {
       await addProduct(newProduct)
       setNewProduct({ name: "", description: "" })
       setIsModalOpen(false)
     } catch (e: any) {
       alert(e.message)
+    } finally {
+      setIsUploading(false)
     }
   }
 
-  // ✅ Edit Product
+  // Edit Product
   const handleEditProduct = async () => {
     if (!editProduct.name) return alert("Name is required")
-
+    setIsUploading(true)
     try {
       await updateProduct(editProduct.id, {
         name: editProduct.name,
         description: editProduct.description,
+        rating: editProduct.rating,
+        imageFile: editProduct.imageFile, // Include the image file
       })
       setIsEditModalOpen(false)
+      setEditProduct({
+        id: "",
+        name: "",
+        description: "",
+        rating: "",
+        imageFile: undefined,
+        currentImageUrl: "",
+      })
     } catch (e: any) {
       alert(e.message)
+    } finally {
+      setIsUploading(false)
     }
   }
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Manage Products</h1>
@@ -95,13 +117,18 @@ export default function AdminProductsPage() {
             />
 
             <div className="flex gap-2">
-              <Button onClick={handleAddProduct} className="flex-1 bg-primary text-white">
-                Add Product
+              <Button
+                onClick={handleAddProduct}
+                className="flex-1 bg-primary text-white"
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Add Product"}
               </Button>
               <Button
                 onClick={() => setIsModalOpen(false)}
                 variant="outline"
                 className="flex-1"
+                disabled={isUploading}
               >
                 Close
               </Button>
@@ -115,6 +142,15 @@ export default function AdminProductsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-background p-6 rounded-lg w-full max-w-md relative">
             <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+
+            {/* Current Image */}
+            {editProduct.currentImageUrl && (
+              <img
+                src={editProduct.currentImageUrl}
+                alt="Current Image"
+                className="w-full h-48 object-contain rounded mb-4 bg-gray-100"
+              />
+            )}
 
             <input
               type="text"
@@ -132,9 +168,9 @@ export default function AdminProductsPage() {
             />
             <input
               type="text"
-              placeholder="2.34"
+              placeholder="Rating"
               value={editProduct.rating}
-              onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
+              onChange={(e) => setEditProduct({ ...editProduct, rating: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
             <input
@@ -149,13 +185,18 @@ export default function AdminProductsPage() {
             />
 
             <div className="flex gap-2">
-              <Button onClick={handleEditProduct} className="flex-1 bg-primary text-white">
-                Save Changes
+              <Button
+                onClick={handleEditProduct}
+                className="flex-1 bg-primary text-white"
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Save Changes"}
               </Button>
               <Button
                 onClick={() => setIsEditModalOpen(false)}
                 variant="outline"
                 className="flex-1"
+                disabled={isUploading}
               >
                 Cancel
               </Button>
@@ -199,7 +240,9 @@ export default function AdminProductsPage() {
                             id: p._id,
                             name: p.name,
                             description: p.description,
-                            rating: p.rating
+                            rating: p.rating.toString(),
+                            imageFile: undefined,
+                            currentImageUrl: p.imageUrl,
                           })
                           setIsEditModalOpen(true)
                         }}
@@ -207,18 +250,30 @@ export default function AdminProductsPage() {
                       >
                         <Edit className="w-4 h-4" /> Edit
                       </Button>
-                      <Button variant="destructive" onClick={() => deleteProduct(p._id)} className="gap-2">
+                      <Button
+                        variant="destructive"
+                        onClick={() => deleteProduct(p._id)}
+                        className="gap-2"
+                      >
                         <Trash2 className="w-4 h-4" /> Delete
                       </Button>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <p className="text-foreground line-clamp-2">{p.description}</p>
-                    {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-48 object-cover rounded" />}
+                    {p.imageUrl && (
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="w-full h-48 object-contain rounded bg-gray-100"
+                      />
+                    )}
                     <p className="text-sm text-muted-foreground">
                       Rating: {p.rating} ({p.ratedBy} people rated)
                     </p>
-                    <p className="text-xs text-muted-foreground">Added: {new Date(p.addedTime).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Added: {new Date(p.createdAt).toLocaleString()}
+                    </p>
                   </CardContent>
                 </Card>
               ))}
