@@ -71,7 +71,7 @@ export default function AdminSidebar() {
                   variant={isActive ? "default" : "ghost"}
                   className={`w-full justify-start gap-3 ${
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground my-1"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   }`}
                   onClick={() => setIsOpen(false)} // Close on mobile click
