@@ -5,28 +5,130 @@ import type React from "react"
 import { useAuth } from "@/lib/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Mail, Phone, MapPin, Edit2 } from "lucide-react"
-import { useState } from "react"
+import { Mail, Phone, User as UserIcon, Calendar, FileText, Users } from "lucide-react"
+import { useState, useEffect } from "react"
+
+interface UserProfile {
+  _id: string
+  fullName: string
+  email: string
+  role: string
+  phone: string
+  status: string
+  referrals: string
+  adsPerDay: number
+  remaining: number
+  referrelBy?: string
+  createdAt: string
+}
 
 export default function UserProfilePage() {
-  const { user, updateUser } = useAuth()
+  const { user: authUser } = useAuth()
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    phone: user?.phone || "",
-    address: user?.address || "",
-    city: user?.city || "",
-    country: user?.country || "",
+    fullName: "",
+    phone: "",
   })
 
-  const handleSave = () => {
-    updateUser(formData)
-    setIsEditing(false)
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+  // Fetch user profile from backend
+  useEffect(() => {
+    loadProfile()
+  }, [])
+
+  async function loadProfile() {
+    try {
+      setIsLoading(true)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${API_URL}/api/user`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      })
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch profile")
+      }
+
+      const data = await res.json()
+      setProfile(data)
+      setFormData({
+        fullName: data.fullName || "",
+        phone: data.phone || "",
+      })
+    } catch (err) {
+      console.error("Failed to load profile:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function handleSave() {
+    if (!profile) return
+
+    try {
+      setIsSaving(true)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${API_URL}/api/user/${profile._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!res.ok) {
+        throw new Error("Failed to update profile")
+      }
+
+      const updated = await res.json()
+      setProfile(updated)
+      setIsEditing(false)
+
+      // Update localStorage
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
+      storedUser.fullName = updated.fullName
+      localStorage.setItem("user", JSON.stringify(storedUser))
+    } catch (err) {
+      console.error("Failed to update profile:", err)
+      alert("Failed to update profile")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-primary/20">
+          <CardContent className="pt-12 pb-12 text-center">
+            <p className="text-muted-foreground">Loading profile...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!profile) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-primary/20">
+          <CardContent className="pt-12 pb-12 text-center">
+            <p className="text-muted-foreground">Failed to load profile</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -42,35 +144,49 @@ export default function UserProfilePage() {
             <CardTitle>Profile Information</CardTitle>
             <CardDescription>Update your personal details</CardDescription>
           </div>
-          <Button onClick={() => setIsEditing(!isEditing)} variant="outline" size="sm" className="border-primary/20">
-            <Edit2 className="w-4 h-4 mr-2" />
-            {isEditing ? "Cancel" : "Edit"}
-          </Button>
+          {!isEditing ? (
+            <Button onClick={() => setIsEditing(true)} variant="outline" size="sm" className="border-primary/20">
+              Edit
+            </Button>
+          ) : (
+            <div className="flex gap-2">
+              <Button onClick={handleSave} disabled={isSaving} size="sm">
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
+              <Button onClick={() => setIsEditing(false)} variant="outline" size="sm">
+                Cancel
+              </Button>
+            </div>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Avatar and Basic Info */}
-          <div className="flex items-start gap-4">
-            <img
-              src={user?.avatar || "/placeholder.svg"}
-              alt={user?.name}
-              className="w-20 h-20 rounded-full border-2 border-primary/20"
-            />
-            <div className="flex-1">
+          {/* Basic Info */}
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Full Name</label>
               {isEditing ? (
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="fullName"
+                  value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary mb-2"
+                  className="w-full px-3 py-2 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary mt-1"
                 />
               ) : (
-                <h3 className="text-2xl font-bold text-foreground">{user?.name}</h3>
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                  <UserIcon className="w-5 h-5 text-muted-foreground" />
+                  <p className="font-medium">{profile.fullName || "Not set"}</p>
+                </div>
               )}
-              <p className="text-sm text-muted-foreground">
-                Member since {new Date(user?.createdAt || "").toLocaleDateString()}
-              </p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Member Since</label>
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                <Calendar className="w-5 h-5 text-muted-foreground" />
+                <p className="font-medium">{new Date(profile.createdAt).toLocaleDateString()}</p>
+              </div>
             </div>
           </div>
 
@@ -78,112 +194,75 @@ export default function UserProfilePage() {
           <div className="space-y-3">
             <h4 className="font-semibold text-foreground">Contact Information</h4>
 
-            <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-muted-foreground" />
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground">Email</p>
-                <p className="text-foreground">{user?.email}</p>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Email</label>
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                <Mail className="w-5 h-5 text-muted-foreground" />
+                <p className="text-foreground">{profile.email}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-muted-foreground" />
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground">Phone</p>
-                {isEditing ? (
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-3 py-1 border border-primary/20 rounded text-foreground"
-                  />
-                ) : (
-                  <p className="text-foreground">{user?.phone}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Address Information */}
-          <div className="space-y-3">
-            <h4 className="font-semibold text-foreground">Address</h4>
-
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-muted-foreground mt-1" />
-              <div className="flex-1 space-y-2">
-                <div>
-                  <p className="text-xs text-muted-foreground">Street Address</p>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      className="w-full px-3 py-1 border border-primary/20 rounded text-foreground"
-                    />
-                  ) : (
-                    <p className="text-foreground">{user?.address || "Not provided"}</p>
-                  )}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Phone</label>
+              {isEditing ? (
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary mt-1"
+                />
+              ) : (
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                  <Phone className="w-5 h-5 text-muted-foreground" />
+                  <p className="text-foreground">{profile.phone || "Not set"}</p>
                 </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-xs text-muted-foreground">City</p>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        className="w-full px-3 py-1 border border-primary/20 rounded text-foreground"
-                      />
-                    ) : (
-                      <p className="text-foreground">{user?.city || "Not provided"}</p>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Country</p>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
-                        className="w-full px-3 py-1 border border-primary/20 rounded text-foreground"
-                      />
-                    ) : (
-                      <p className="text-foreground">{user?.country || "Not provided"}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
           {/* Account Stats */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-primary/20">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">
-                {user?.plan.charAt(0).toUpperCase() + user?.plan.slice(1)}
-              </p>
-              <p className="text-xs text-muted-foreground">Current Plan</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-primary/20">
+            <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
+                <Users className="w-5 h-5 text-primary" />
+                <p className="text-sm text-muted-foreground">Referrals</p>
+              </div>
+              <p className="text-2xl font-bold text-primary">{profile.referrals || "0"}</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">${user?.balance.toFixed(2)}</p>
-              <p className="text-xs text-muted-foreground">Balance</p>
+
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center gap-3 mb-2">
+                <FileText className="w-5 h-5 text-green-600" />
+                <p className="text-sm text-muted-foreground">Remaining Ads</p>
+              </div>
+              <p className="text-2xl font-bold text-green-600">{profile.remaining || 0}</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{user?.referralCode}</p>
-              <p className="text-xs text-muted-foreground">Referral Code</p>
+
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center gap-3 mb-2">
+                <FileText className="w-5 h-5 text-blue-600" />
+                <p className="text-sm text-muted-foreground">Ads Per Day</p>
+              </div>
+              <p className="text-2xl font-bold text-blue-600">{profile.adsPerDay || 0}</p>
             </div>
           </div>
 
-          {isEditing && (
-            <Button onClick={handleSave} className="w-full bg-primary hover:bg-primary/90">
-              Save Changes
-            </Button>
-          )}
+          {/* Status Badge */}
+          <div className="pt-4 border-t border-primary/20">
+            <p className="text-sm text-muted-foreground mb-2">Account Status</p>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                profile.status === "active"
+                  ? "bg-green-100 text-green-700"
+                  : profile.status === "pending"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
+              {profile.status?.charAt(0).toUpperCase() + profile.status?.slice(1) || "Pending"}
+            </span>
+          </div>
         </CardContent>
       </Card>
     </div>
