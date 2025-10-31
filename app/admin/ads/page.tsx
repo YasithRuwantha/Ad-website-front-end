@@ -1,174 +1,279 @@
 "use client"
-import { useData } from "@/lib/data-context"
+import { useProducts } from "@/lib/products-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CheckCircle, XCircle } from "lucide-react"
+import { Trash2, Edit } from "lucide-react"
+import { useState } from "react"
 
-export default function AdminAdsPage() {
-  const { ads, updateAd } = useData()
+export default function AdminProductsPage() {
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts()
+  const [newProduct, setNewProduct] = useState<{ name: string; description: string; imageFile?: File }>({
+    name: "",
+    description: "",
+  })
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editProduct, setEditProduct] = useState<{
+    rating: string
+    id: string
+    name: string
+    description: string
+    imageFile?: File
+    currentImageUrl?: string
+  }>({
+    id: "",
+    name: "",
+    description: "",
+    rating: "",
+    currentImageUrl: "",
+  })
+  const [isUploading, setIsUploading] = useState(false)
 
-  const pendingAds = ads.filter((a) => a.status === "pending")
-  const approvedAds = ads.filter((a) => a.status === "approved")
-  const rejectedAds = ads.filter((a) => a.status === "rejected")
-
-  const handleApprove = (adId: string) => {
-    updateAd(adId, { status: "approved" })
+  // Add Product
+  const handleAddProduct = async () => {
+    if (!newProduct.name) return alert("Name is required")
+    setIsUploading(true)
+    try {
+      await addProduct(newProduct)
+      setNewProduct({ name: "", description: "" })
+      setIsModalOpen(false)
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setIsUploading(false)
+    }
   }
 
-  const handleReject = (adId: string) => {
-    updateAd(adId, { status: "rejected" })
+  // Edit Product
+  const handleEditProduct = async () => {
+    if (!editProduct.name) return alert("Name is required")
+    setIsUploading(true)
+    try {
+      await updateProduct(editProduct.id, {
+        name: editProduct.name,
+        description: editProduct.description,
+        rating: editProduct.rating,
+        imageFile: editProduct.imageFile, // Include the image file
+      })
+      setIsEditModalOpen(false)
+      setEditProduct({
+        id: "",
+        name: "",
+        description: "",
+        rating: "",
+        imageFile: undefined,
+        currentImageUrl: "",
+      })
+    } catch (e: any) {
+      alert(e.message)
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Manage Ads</h1>
-        <p className="text-muted-foreground">Review and approve user advertisements</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Manage Products</h1>
+          <p className="text-muted-foreground">Add, edit, or remove products</p>
+        </div>
+        <Button onClick={() => setIsModalOpen(true)} className="bg-primary text-white">
+          Add Product
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Pending Review</p>
-            <p className="text-3xl font-bold text-primary">{pendingAds.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Approved</p>
-            <p className="text-3xl font-bold text-green-600">{approvedAds.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Rejected</p>
-            <p className="text-3xl font-bold text-destructive">{rejectedAds.length}</p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* ➕ Add Product Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg w-full max-w-md relative">
+            <h2 className="text-xl font-bold mb-4">Add New Product</h2>
 
-      <Tabs defaultValue="pending" className="space-y-4">
+            <input
+              type="text"
+              placeholder="Product Name"
+              value={newProduct.name}
+              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setNewProduct({ ...newProduct, imageFile: e.target.files[0] })
+                }
+              }}
+              className="border p-2 rounded w-full mb-4"
+            />
+
+            <div className="flex gap-2">
+              <Button
+                onClick={handleAddProduct}
+                className="flex-1 bg-primary text-white"
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Add Product"}
+              </Button>
+              <Button
+                onClick={() => setIsModalOpen(false)}
+                variant="outline"
+                className="flex-1"
+                disabled={isUploading}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✏️ Edit Product Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg w-full max-w-md relative">
+            <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+
+            {/* Current Image */}
+            {editProduct.currentImageUrl && (
+              <img
+                src={editProduct.currentImageUrl}
+                alt="Current Image"
+                className="w-full h-48 object-contain rounded mb-4 bg-gray-100"
+              />
+            )}
+
+            <input
+              type="text"
+              placeholder="Product Name"
+              value={editProduct.name}
+              onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              value={editProduct.description}
+              onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Rating"
+              value={editProduct.rating}
+              onChange={(e) => setEditProduct({ ...editProduct, rating: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setEditProduct({ ...editProduct, imageFile: e.target.files[0] })
+                }
+              }}
+              className="border p-2 rounded w-full mb-4"
+            />
+
+            <div className="flex gap-2">
+              <Button
+                onClick={handleEditProduct}
+                className="flex-1 bg-primary text-white"
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Save Changes"}
+              </Button>
+              <Button
+                onClick={() => setIsEditModalOpen(false)}
+                variant="outline"
+                className="flex-1"
+                disabled={isUploading}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📦 Product List Tabs */}
+      <Tabs defaultValue="all" className="space-y-4">
         <TabsList className="bg-primary/10 border border-primary/20">
           <TabsTrigger
-            value="pending"
+            value="all"
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
-            Pending ({pendingAds.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="approved"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-          >
-            Approved ({approvedAds.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="rejected"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-          >
-            Rejected ({rejectedAds.length})
+            All Products ({products.length})
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pending" className="space-y-4">
-          {pendingAds.length === 0 ? (
+        <TabsContent value="all" className="space-y-4">
+          {products.length === 0 ? (
             <Card className="border-primary/20">
-              <CardContent className="pt-12 pb-12 text-center">
-                <p className="text-muted-foreground">No pending ads</p>
+              <CardContent className="pt-12 pb-12 text-center text-muted-foreground">
+                No products found
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
-              {pendingAds.map((ad) => (
-                <Card key={ad.id} className="border-primary/20">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle>{ad.title}</CardTitle>
-                        <CardDescription>by {ad.userName}</CardDescription>
-                      </div>
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-yellow-100 text-yellow-700">
-                        Pending
-                      </span>
+              {products.map((p) => (
+                <Card key={p._id} className="border-primary/20">
+                  <CardHeader className="flex justify-between items-start">
+                    <div>
+                      <CardTitle>{p.name}</CardTitle>
+                      <CardDescription>Added by {p.addedBy}</CardDescription>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-foreground">{ad.description}</p>
                     <div className="flex gap-2">
                       <Button
-                        onClick={() => handleApprove(ad.id)}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white gap-2"
+                        variant="outline"
+                        onClick={() => {
+                          setEditProduct({
+                            id: p._id,
+                            name: p.name,
+                            description: p.description,
+                            rating: p.rating.toString(),
+                            imageFile: undefined,
+                            currentImageUrl: p.imageUrl,
+                          })
+                          setIsEditModalOpen(true)
+                        }}
+                        className="gap-2"
                       >
-                        <CheckCircle className="w-4 h-4" />
-                        Approve
+                        <Edit className="w-4 h-4" /> Edit
                       </Button>
-                      <Button onClick={() => handleReject(ad.id)} variant="destructive" className="flex-1 gap-2">
-                        <XCircle className="w-4 h-4" />
-                        Reject
+                      <Button
+                        variant="destructive"
+                        onClick={() => deleteProduct(p._id)}
+                        className="gap-2"
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete
                       </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="approved" className="space-y-4">
-          {approvedAds.length === 0 ? (
-            <Card className="border-primary/20">
-              <CardContent className="pt-12 pb-12 text-center">
-                <p className="text-muted-foreground">No approved ads</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {approvedAds.map((ad) => (
-                <Card key={ad.id} className="border-primary/20 border-green-200">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle>{ad.title}</CardTitle>
-                        <CardDescription>by {ad.userName}</CardDescription>
-                      </div>
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
-                        Approved
-                      </span>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-foreground line-clamp-2">{ad.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="rejected" className="space-y-4">
-          {rejectedAds.length === 0 ? (
-            <Card className="border-primary/20">
-              <CardContent className="pt-12 pb-12 text-center">
-                <p className="text-muted-foreground">No rejected ads</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {rejectedAds.map((ad) => (
-                <Card key={ad.id} className="border-primary/20 border-red-200">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle>{ad.title}</CardTitle>
-                        <CardDescription>by {ad.userName}</CardDescription>
-                      </div>
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-red-100 text-red-700">
-                        Rejected
-                      </span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-foreground line-clamp-2">{ad.description}</p>
+                  <CardContent className="space-y-2">
+                    <p className="text-foreground line-clamp-2">{p.description}</p>
+                    {p.imageUrl && (
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="w-full h-48 object-contain rounded bg-gray-100"
+                      />
+                    )}
+                    <p className="text-sm text-muted-foreground">
+                      Rating: {p.rating} ({p.ratedBy} people rated)
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Added: {new Date(p.createdAt).toLocaleString()}
+                    </p>
                   </CardContent>
                 </Card>
               ))}
