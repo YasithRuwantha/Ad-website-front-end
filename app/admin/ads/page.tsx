@@ -14,10 +14,13 @@ export default function AdminProductsPage() {
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editProduct, setEditProduct] = useState<{ id: string; name: string; description: string; imageFile?: File }>({
+  const [editProduct, setEditProduct] = useState<{
+    rating: string; id: string; name: string; description: string; imageFile?: File 
+}>({
     id: "",
     name: "",
     description: "",
+    rating: ""
   })
 
   // ✅ Add Product
@@ -128,6 +131,13 @@ export default function AdminProductsPage() {
               className="border p-2 rounded w-full mb-2"
             />
             <input
+              type="text"
+              placeholder="2.34"
+              value={editProduct.rating}
+              onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
               type="file"
               accept="image/*"
               onChange={(e) => {
@@ -189,6 +199,7 @@ export default function AdminProductsPage() {
                             id: p._id,
                             name: p.name,
                             description: p.description,
+                            rating: p.rating
                           })
                           setIsEditModalOpen(true)
                         }}
