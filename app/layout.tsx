@@ -8,6 +8,7 @@ import { UserProvider } from "@/lib/user-context" // ✅ import UserProvider
 
 import "./globals.css"
 import { User } from "lucide-react"
+import { ProductsProvider } from "@/lib/products-context"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -28,9 +29,11 @@ export default function RootLayout({
       <body className={`font-sans antialiased`}>
         <AuthProvider>
           <UserProvider>
-            <DataProvider>
+            <ProductsProvider>
+              <DataProvider>
               {children}
-            </DataProvider>
+              </DataProvider>
+            </ProductsProvider>
           </UserProvider>
         </AuthProvider>
         <Analytics />
