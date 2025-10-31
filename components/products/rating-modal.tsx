@@ -61,7 +61,7 @@ export default function RatingModal({ open, onOpenChange, product, onSubmit }: R
           </div>
 
           {/* Comment */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-foreground mb-1">Your Review (Optional)</label>
             <textarea
               placeholder="Share your thoughts about this product..."
@@ -70,7 +70,7 @@ export default function RatingModal({ open, onOpenChange, product, onSubmit }: R
               className="w-full p-2 border border-primary/30 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               rows={4}
             />
-          </div>
+          </div> */}
 
           {/* Actions */}
           <div className="flex gap-2 pt-4">
