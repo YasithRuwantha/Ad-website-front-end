@@ -24,7 +24,7 @@ interface UserContextType {
   approveUser: (id: string) => Promise<void>
   deleteUser: (id: string) => Promise<void>
   updateUser: (id: string, data: Partial<User>) => Promise<void>
-  addRemainingAds: (id: string, extra: number) => Promise<void>; 
+  addRemainingAds: (id: string, extra: number, luckydrawAttempt?: number) => Promise<void>; 
 
 }
 
@@ -115,8 +115,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Add Remaining Ads
-  const addRemainingAds = async (id: string, extra: number) => {
-    console.log("add remaining ads front end runned")
+  const addRemainingAds = async (id: string, extra: number, luckydrawAttempt?: number) => {
+    console.log("add remaining ads front end runned");
+
     try {
       const res = await fetch(`${API_URL}/api/user/add-remaining/${id}`, {
         method: "PATCH",
@@ -124,8 +125,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ extra }),
+        body: JSON.stringify({ extra, luckydrawAttempt }), // ✅ include luckydrawAttempt here
       });
+
       if (!res.ok) throw new Error("Failed to add ads");
 
       const updatedUser = await res.json();
@@ -137,6 +139,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       throw err;
     }
   };
+
 
 
   return (
