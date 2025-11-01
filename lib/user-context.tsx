@@ -14,6 +14,7 @@ export interface User {
   phone: string
   remaining?: number
   status?: string // pending, approved, rejected
+  luckydrawStatus?: string
 }
 
 interface UserContextType {
