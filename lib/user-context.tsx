@@ -78,6 +78,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   // Delete user
   const deleteUser = async (id: string) => {
+    console.log("user delete runned")
     try {
       const res = await fetch(`${API_URL}/api/user/${id}`, {
         method: "DELETE",

@@ -342,6 +342,8 @@ const UserRow = ({ user, openModal, deleteUser }: any) => (
         Update
       </Button>
       <Button size="sm" variant="destructive" onClick={() => deleteUser(user._id)} className="w-full sm:w-auto">
+            {/* <Button size="sm" variant="destructive" onClick={() => console.log("deleting user: ", user._id)} className="w-full sm:w-auto"> */}
+
         Delete
       </Button>
     </div>
