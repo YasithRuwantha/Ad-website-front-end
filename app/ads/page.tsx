@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 import PostAdModal from "@/components/ads/post-ad-modal"
 import AdRatingModal from "@/components/ads/ad-rating-modal"
-import { Eye, CheckCircle, Clock, XCircle } from "lucide-react"
+import { Eye, CheckCircle, Clock, XCircle, Star } from "lucide-react"
 import type { Ad } from "@/lib/data-context"
 import UserSidebar from "@/components/user/user-sidebar"
 
@@ -149,16 +149,41 @@ export default function AdsPage() {
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{ad.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{ad.views} views</span>
-                      <span className="text-primary font-semibold">{new Date(ad.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    {ad.rating && (
-                      <div className="mt-2 flex items-center gap-1 text-sm">
-                        <span className="text-yellow-500">★</span>
-                        <span className="font-semibold text-foreground">{ad.rating}/5</span>
+                    
+                    {/* ✅ Ad Rating Display */}
+                    {ad.status === "approved" && (
+                      <div className="mb-3 p-2 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs font-semibold text-gray-700">Ad Rating</p>
+                          <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded-full shadow-sm">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-bold text-gray-900">
+                              {ad.rating?.toFixed(1) || "0.0"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-4 h-4 ${
+                                star <= Math.round(ad.rating || 0)
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "fill-gray-200 text-gray-200"
+                              }`}
+                            />
+                          ))}
+                        </div>
                       </div>
                     )}
+
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        <Eye className="w-4 h-4 inline mr-1" />
+                        {ad.views} views
+                      </span>
+                      <span className="text-primary font-semibold">{new Date(ad.createdAt).toLocaleDateString()}</span>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -192,18 +217,54 @@ export default function AdsPage() {
                     />
                   </div>
                   <CardContent className="pt-4">
-                    <h3 className="font-semibold text-foreground line-clamp-2 mb-1">{ad.title}</h3>
+                    <h3 className="font-semibold text-foreground line-clamp-2 mb-2">{ad.title}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{ad.description}</p>
+                    
+                    {/* ✅ Ad Average Rating & Count - PROMINENT DISPLAY */}
+                    <div className="mb-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-gray-700">Ad Rating</p>
+                        <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-full shadow-sm">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-bold text-gray-900">
+                            {ad.rating?.toFixed(1) || "0.0"}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Star Display */}
+                      <div className="flex items-center gap-1 mb-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-5 h-5 ${
+                              star <= Math.round(ad.rating || 0)
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "fill-gray-200 text-gray-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      {/* ✅ Rating Count - VISIBLE */}
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-600">Total Ratings:</p>
+                        <p className="text-sm font-bold text-orange-600">
+                          {ad.ratedCount || 0}
+                          <span className="text-xs font-normal text-gray-500 ml-1">
+                            {(ad.ratedCount || 0) === 1 ? "rating" : "ratings"}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">by {ad.userName}</span>
-                      <span className="text-primary font-semibold">{ad.views} views</span>
+                      <span className="text-primary font-semibold flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        {ad.views}
+                      </span>
                     </div>
-                    {ad.rating && (
-                      <div className="mt-2 flex items-center gap-1 text-sm">
-                        <span className="text-yellow-500">★</span>
-                        <span className="font-semibold text-foreground">{ad.rating}/5</span>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               ))}
