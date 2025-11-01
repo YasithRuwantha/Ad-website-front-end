@@ -30,7 +30,8 @@ export default function AdminUsersPage() {
     role: "",
     status: "",
     adsPerDay: "",
-    luckydrawStatus: ""
+    luckydrawStatus: "",
+    luckydrawAttempt: ""
   })
 
   const [adsAdjust, setAdsAdjust] = useState<number>(0)
@@ -68,7 +69,8 @@ export default function AdminUsersPage() {
       role: user.role,
       status: user.status,
       adsPerDay: user.adsPerDay,
-      luckydrawStatus: user.luckydrawStatus
+      luckydrawStatus: user.luckydrawStatus,
+      luckydrawAttempt: user.luckydrawAttempt
     })
     setAdsAdjust(0)
     setIsModalOpen(true)
@@ -101,7 +103,12 @@ export default function AdminUsersPage() {
     }
 
     try {
-      await addRemainingAds(selectedUser._id, amount > 0 ? adsAdjust : -adsAdjust)
+      await addRemainingAds(
+        selectedUser._id,
+        amount > 0 ? adsAdjust : -adsAdjust,
+        editData.luckydrawAttempt // ✅ send this too
+      )
+
       setSelectedUser({
         ...selectedUser,
         remaining: Math.max((selectedUser.remaining || 0) + amount, 0),
@@ -256,6 +263,19 @@ export default function AdminUsersPage() {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
+
+              <div className="flex items-center">
+                <div className="pl-1 w-full">Lucky Draw Trigger</div>
+                <input
+                  type="number"
+                  min={1}
+                  value={editData.luckydrawAttempt || ""}
+                  onChange={(e) => setEditData({ ...editData, luckydrawAttempt: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                  placeholder="Enter attempts needed"
+                />
+              </div>
+
 
               <div className="flex items-center">
                 <div className="pl-1 w-full">Attempts per day</div>

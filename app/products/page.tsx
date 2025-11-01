@@ -10,7 +10,7 @@ import RatingModal from "@/components/products/rating-modal"
 import { useAuth } from "@/lib/auth-context"
 import { useProducts } from "@/lib/products-context"
 import { useRatings } from "@/lib/rating-context"
-import Popup from "@/components/luckydrawPopup" // upgraded popup
+import Popup from "@/components/luckydrawPopup"
 
 export default function ProductsPage() {
   const { user } = useAuth()
@@ -26,6 +26,29 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showLuckyDrawPopup, setShowLuckyDrawPopup] = useState(false)
 
+  // ✅ Fetch Lucky Draw Status
+  const fetchLuckyDrawStatus = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) return
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.luckydrawStatus === "active") {
+          setShowLuckyDrawPopup(true)
+        } else {
+          setShowLuckyDrawPopup(false)
+        }
+      }
+    } catch (err) {
+      console.error("Error checking lucky draw:", err)
+    }
+  }
+
+  // ✅ Initialize Data
   useEffect(() => {
     const init = async () => {
       try {
@@ -43,23 +66,12 @@ export default function ProductsPage() {
 
         setRemaining(parsedUser.remaining || 0)
 
-        // Fetch user's ratings
+        // Fetch user ratings
         const ratings = await getUserRatings()
         setUserRatings(ratings)
 
-        // Fetch lucky draw status
-        const token = localStorage.getItem("token")
-        if (token) {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          if (res.ok) {
-            const data = await res.json()
-            if (data.luckydrawStatus === "active") {
-              setShowLuckyDrawPopup(true)
-            }
-          }
-        }
+        // Fetch Lucky Draw status
+        await fetchLuckyDrawStatus()
 
         setIsChecking(false)
       } catch (err) {
@@ -71,20 +83,14 @@ export default function ProductsPage() {
     init()
   }, [router, getUserRatings])
 
-  const handleRateProduct = (product: any) => {
-    const userRating = userRatings.find((r) => r.productId === product._id)
-    if (userRating) {
-      alert("You have already rated this product.")
-      return
+  // ✅ Refetch Lucky Draw status dynamically when remaining changes
+  useEffect(() => {
+    if (!isChecking) {
+      fetchLuckyDrawStatus()
     }
-    if (remaining <= 0) {
-      alert("No remaining attempts.")
-      return
-    }
-    setSelectedProduct(product)
-    setShowRatingModal(true)
-  }
+  }, [remaining]) // when remaining updates, check again
 
+  // ⭐ Handle Rating Submission
   const handleSubmitRating = async (rating: number, comment: string) => {
     if (!selectedProduct) return
     setIsLoading(true)
@@ -101,6 +107,7 @@ export default function ProductsPage() {
             localStorage.setItem("user", JSON.stringify(user))
           }
         }
+
         const ratings = await getUserRatings()
         setUserRatings(ratings)
         await fetchProducts()
@@ -109,26 +116,40 @@ export default function ProductsPage() {
         setSelectedProduct(null)
         alert(result.message || "✅ Rating submitted successfully!")
       } else {
-        setShowRatingModal(false)
-        setSelectedProduct(null)
         alert(result.message || "❌ Failed to submit rating")
       }
     } catch (err: any) {
-      setShowRatingModal(false)
-      setSelectedProduct(null)
       alert(err.message || "Failed to submit rating")
     } finally {
       setIsLoading(false)
     }
   }
 
+  // ⭐ Handle Product Rating Modal
+  const handleRateProduct = (product: any) => {
+    const userRating = userRatings.find((r) => r.productId === product._id)
+    if (userRating) {
+      alert("You have already rated this product.")
+      return
+    }
+    if (remaining <= 0) {
+      alert("No remaining attempts.")
+      return
+    }
+    setSelectedProduct(product)
+    setShowRatingModal(true)
+  }
+
   if (isChecking) return null
 
+  // ⭐ Dynamic Floating Stars
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => {
-      const fill = rating - i >= 1 ? "fill-primary text-primary" :
-                   rating - i > 0 ? "fill-gradient-to-r from-primary to-accent text-primary" :
-                   "text-muted-foreground"
+      const diff = rating - i
+      let fill = "text-muted-foreground"
+      if (diff >= 1) fill = "text-primary"
+      else if (diff > 0 && diff < 1)
+        fill = "text-primary/60" // half glow look
       return <Star key={i} className={`w-4 h-4 ${fill}`} />
     })
   }
@@ -143,27 +164,25 @@ export default function ProductsPage() {
           <p className="text-muted-foreground">Browse and rate products from our marketplace</p>
         </div>
 
+        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <Card className="border-primary/20">
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground mb-1">Total Products</p>
-              <p className="text-3xl font-bold text-foreground">{products.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-primary/20">
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground mb-1">Your Ratings</p>
-              <p className="text-3xl font-bold text-foreground">{userRatings.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-primary/20">
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground mb-1">Remaining Attempts</p>
-              <p className="text-3xl font-bold text-primary">{remaining}</p>
-            </CardContent>
-          </Card>
+          <Card><CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground mb-1">Total Products</p>
+            <p className="text-3xl font-bold">{products.length}</p>
+          </CardContent></Card>
+
+          <Card><CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground mb-1">Your Ratings</p>
+            <p className="text-3xl font-bold">{userRatings.length}</p>
+          </CardContent></Card>
+
+          <Card><CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground mb-1">Remaining Attempts</p>
+            <p className="text-3xl font-bold text-primary">{remaining}</p>
+          </CardContent></Card>
         </div>
 
+        {/* Product Cards */}
         <div className="pt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => {
             const userRating = userRatings.find(
@@ -180,7 +199,7 @@ export default function ProductsPage() {
                 </div>
 
                 <CardContent>
-                  <h3 className="font-semibold text-foreground line-clamp-2 mb-1">{product.name}</h3>
+                  <h3 className="font-semibold mb-1">{product.name}</h3>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{product.description}</p>
 
                   <div className="mb-3">
@@ -190,7 +209,7 @@ export default function ProductsPage() {
 
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex items-center gap-1">{renderStars(Number(product.rating) || 0)}</div>
-                    <span className="text-sm font-semibold text-foreground">{(Number(product.rating) || 0).toFixed(1)}</span>
+                    <span className="text-sm font-semibold">{(Number(product.rating) || 0).toFixed(1)}</span>
                     <span className="text-xs text-muted-foreground">({product.ratedCount || product.ratedBy || 0})</span>
                   </div>
 
@@ -219,7 +238,13 @@ export default function ProductsPage() {
                         : "bg-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {isLoading ? "Submitting..." : userRating ? "Already Rated ✓" : remaining > 0 ? "Rate Product" : "No Attempts Left"}
+                    {isLoading
+                      ? "Submitting..."
+                      : userRating
+                      ? "Already Rated ✓"
+                      : remaining > 0
+                      ? "Rate Product"
+                      : "No Attempts Left"}
                   </Button>
                 </CardContent>
               </Card>
@@ -227,6 +252,7 @@ export default function ProductsPage() {
           })}
         </div>
 
+        {/* Rating Modal */}
         {selectedProduct && (
           <RatingModal
             open={showRatingModal}
@@ -237,13 +263,12 @@ export default function ProductsPage() {
         )}
       </div>
 
-      {/* Lucky Draw Popup */}
+      {/* 🎯 Lucky Draw Popup */}
       <Popup
         open={showLuckyDrawPopup}
         onClose={() => setShowLuckyDrawPopup(false)}
         title="🎉 Lucky Draw Active!"
-        navigateTo="/dashboard/payout" // pass the page dynamically
-
+        navigateTo="/dashboard/payout"
       >
         <p>Try your luck now and win exciting rewards!</p>
       </Popup>
