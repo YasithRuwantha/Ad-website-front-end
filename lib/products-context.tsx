@@ -7,11 +7,14 @@ export interface Product {
   _id: string
   name: string
   description: string
-  rating: string
+  rating: number  // Changed from string to number
   ratedBy: number
+  ratedCount?: number  // Added for consistency
   addedTime: string
   imageUrl: string
   addedBy: string
+  price?: number      // Added price field
+  income?: number     // Added income field
 }
 
 interface ProductsContextType {
@@ -85,7 +88,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     // Add text fields
     if (updates.name !== undefined) formData.append("name", updates.name)
     if (updates.description !== undefined) formData.append("description", updates.description)
-    if (updates.rating !== undefined) formData.append("rating", updates.rating)
+    if (updates.rating !== undefined) formData.append("rating", updates.rating.toString())  // Convert to string
     
     // Add image file if provided
     if (updates.imageFile) {

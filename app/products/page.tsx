@@ -8,81 +8,118 @@ import { Star } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
 import RatingModal from "@/components/products/rating-modal"
 import { useAuth } from "@/lib/auth-context"
-import { useData } from "@/lib/data-context"
 import { useProducts } from "@/lib/products-context"
-import type { Product } from "@/lib/data-context"
+import { useRatings } from "@/lib/rating-context"
 
 export default function ProductsPage() {
   const { user } = useAuth()
-  const { ratings, addRating } = useData()
-  const { products } = useProducts()
+  const { products, fetchProducts } = useProducts()
+  const { submitRating, getUserRatings } = useRatings()
   const router = useRouter()
 
   const [isChecking, setIsChecking] = useState(true)
   const [remaining, setRemaining] = useState(0)
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [showRatingModal, setShowRatingModal] = useState(false)
+  const [userRatings, setUserRatings] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   // ✅ Get user + remaining attempts from localStorage safely
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user")
-      if (!storedUser) {
-        router.push("/")
-        return
-      }
+    const init = async () => {
+      try {
+        const storedUser = localStorage.getItem("user")
+        if (!storedUser) {
+          router.push("/")
+          return
+        }
 
-      const parsedUser = JSON.parse(storedUser)
-      if (parsedUser.role !== "user") {
-        router.push("/")
-        return
-      }
+        const parsedUser = JSON.parse(storedUser)
+        if (parsedUser.role !== "user") {
+          router.push("/")
+          return
+        }
 
-      setRemaining(parsedUser.remaining || 0)
-      setIsChecking(false)
-    } catch (err) {
-      console.error("Error reading user data:", err)
-      router.push("/")
+        setRemaining(parsedUser.remaining || 0)
+
+        // ✅ Fetch user's ratings from backend
+        const ratings = await getUserRatings()
+        setUserRatings(ratings)
+        
+        setIsChecking(false)
+      } catch (err) {
+        console.error("Error initializing:", err)
+        router.push("/")
+      }
     }
+
+    init()
   }, [router])
 
-  // Ratings made by this user
-  const userRatings = ratings.filter((r) => r.userId === user?.id)
+  const handleRateProduct = (product: any) => {
+    // ✅ Check if user already rated this product
+    const userRating = userRatings.find((r) => r.productId === product._id)
+    
+    if (userRating) {
+      alert("You have already rated this product. Editing is not allowed.")
+      return
+    }
 
-  const handleRateProduct = (product: Product) => {
+    if (remaining <= 0) {
+      alert("You have no remaining attempts to rate products.")
+      return
+    }
+
     setSelectedProduct(product)
     setShowRatingModal(true)
   }
 
-const handleSubmitRating = (rating: number, comment: string) => {
-  if (!selectedProduct || !user) return
+  const handleSubmitRating = async (rating: number, comment: string) => {
+    if (!selectedProduct) return
 
-  // Check if user already rated this product
-  const existingRating = ratings.find(
-    (r) => r.productId === selectedProduct._id && r.userId === user.id
-  )
+    setIsLoading(true)
 
-  if (existingRating) {
-    // Update the existing rating
-    existingRating.rating = rating
-    existingRating.comment = comment
-    existingRating.createdAt = new Date().toISOString()
-  } else {
-    // Add a new rating
-    addRating({
-      id: Math.random().toString(36).substr(2, 9),
-      productId: selectedProduct._id,
-      userId: user.id,
-      userName: user.name,
-      rating,
-      comment,
-      createdAt: new Date().toISOString(),
-    })
+    try {
+      // ✅ Submit rating to backend
+      const result = await submitRating(selectedProduct._id, rating, comment)
+      
+      if (result.success) {
+        // Update remaining attempts
+        if (result.remaining !== undefined) {
+          setRemaining(result.remaining)
+          
+          // Update localStorage
+          const storedUser = localStorage.getItem("user")
+          if (storedUser) {
+            const user = JSON.parse(storedUser)
+            user.remaining = result.remaining
+            localStorage.setItem("user", JSON.stringify(user))
+          }
+        }
+
+        // Refresh ratings and products
+        const ratings = await getUserRatings()
+        setUserRatings(ratings)
+        await fetchProducts()
+
+        setShowRatingModal(false)
+        setSelectedProduct(null)
+
+        alert(result.message || "✅ Rating submitted successfully!")
+      } else {
+        // Handle error response from backend
+        setShowRatingModal(false)
+        setSelectedProduct(null)
+        alert(result.message || "❌ Failed to submit rating")
+      }
+    } catch (err: any) {
+      setShowRatingModal(false)
+      setSelectedProduct(null)
+      alert(err.message || "Failed to submit rating")
+    } finally {
+      setIsLoading(false)
+    }
   }
-
-  setShowRatingModal(false)
-  setSelectedProduct(null)
-}
 
 
   if (isChecking) return null
@@ -152,19 +189,22 @@ const handleSubmitRating = (rating: number, comment: string) => {
                     {product.description}
                   </p>
 
-                  {/* Price */}
+                  {/* Income per rating */}
                   <div className="mb-3">
-                    <p className="text-2xl font-bold text-primary">${product.price}</p>
+                    <p className="text-sm text-gray-600">Income per rating</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      ${product.income || 0}
+                    </p>
                   </div>
 
-                  {/* Rating (direct from backend) */}
+                  {/* Product Rating */}
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
                           className={`w-4 h-4 ${
-                            i < Math.round(product.rating)
+                            i < Math.round(Number(product.rating) || 0)
                               ? "fill-primary text-primary"
                               : "text-muted-foreground"
                           }`}
@@ -172,7 +212,10 @@ const handleSubmitRating = (rating: number, comment: string) => {
                       ))}
                     </div>
                     <span className="text-sm font-semibold text-foreground">
-                      {product.rating.toFixed(1)}
+                      {(Number(product.rating) || 0).toFixed(1)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      ({product.ratedCount || product.ratedBy || 0})
                     </span>
                   </div>
 
@@ -180,7 +223,15 @@ const handleSubmitRating = (rating: number, comment: string) => {
                   {userRating && (
                     <div className="mb-3 p-2 bg-primary/10 rounded-lg">
                       <p className="text-xs font-semibold text-primary">
-                        Your Rating: {userRating.rating}/5
+                        Your Rating: {userRating.rating}/5 ⭐
+                      </p>
+                      {userRating.comment && (
+                        <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                          "{userRating.comment}"
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Rated on {new Date(userRating.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   )}
@@ -188,13 +239,23 @@ const handleSubmitRating = (rating: number, comment: string) => {
                   {/* Rate Button */}
                   <Button
                     onClick={() => handleRateProduct(product)}
+                    disabled={isLoading || remaining <= 0 || !!userRating}
                     className={`w-full ${
                       userRating
-                        ? "bg-secondary hover:bg-secondary/90 text-secondary-foreground"
-                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : remaining > 0
+                        ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        : "bg-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {userRating ? "Update Rating" : "Rate Product"}
+                    {isLoading 
+                      ? "Submitting..." 
+                      : userRating 
+                      ? "Already Rated ✓" 
+                      : remaining > 0 
+                      ? "Rate Product" 
+                      : "No Attempts Left"
+                    }
                   </Button>
                 </CardContent>
               </Card>

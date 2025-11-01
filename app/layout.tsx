@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { AuthProvider } from "@/lib/auth-context"
 import { DataProvider } from "@/lib/data-context"
 import { UserProvider } from "@/lib/user-context" // ✅ import UserProvider
+import { RatingProvider } from "@/lib/rating-context" // ✅ Add RatingProvider
 
 import "./globals.css"
 import { User } from "lucide-react"
@@ -30,9 +31,11 @@ export default function RootLayout({
         <AuthProvider>
           <UserProvider>
             <ProductsProvider>
-              <DataProvider>
-              {children}
-              </DataProvider>
+              <RatingProvider>
+                <DataProvider>
+                {children}
+                </DataProvider>
+              </RatingProvider>
             </ProductsProvider>
           </UserProvider>
         </AuthProvider>
