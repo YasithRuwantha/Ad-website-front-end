@@ -14,28 +14,48 @@ export default function UserLayout({
   const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user")
-      if (!storedUser) {
+    const checkUser = async () => {
+      try {
+        const storedUser = localStorage.getItem("user")
+        const token = localStorage.getItem("token")
+
+        if (!storedUser || !token) {
+          router.push("/")
+          return
+        }
+
+        const user = JSON.parse(storedUser)
+
+        if (user.role !== "user") {
+          router.push("/")
+          return
+        }
+
+        // ✅ Passed all checks, now fetch lucky draw status
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (!res.ok) {
+          console.error("Failed to fetch lucky draw status")
+          return
+        }
+
+        const data = await res.json()
+        console.log("🎲 Lucky Draw Status:", data)
+
+        setIsChecking(false)
+      } catch (err) {
+        console.error("Error reading user data:", err)
         router.push("/")
-        return
       }
-
-      const user = JSON.parse(storedUser)
-
-      if (user.role !== "user") {
-        router.push("/")
-        return
-      }
-
-      setIsChecking(false) // ✅ passed all checks
-    } catch (err) {
-      console.error("Error reading user data:", err)
-      router.push("/")
     }
+
+    checkUser()
   }, [router])
 
-  // Show loader while checking localStorage
   if (isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen">

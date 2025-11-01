@@ -30,19 +30,23 @@ export default function AdminUsersPage() {
     role: "",
     status: "",
     adsPerDay: "",
+    luckydrawStatus: ""
   })
 
   const [adsAdjust, setAdsAdjust] = useState<number>(0)
+
+  const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all") // <-- role filter
 
   useEffect(() => {
     fetchUsers()
   }, [])
 
-  const filteredUsers = users.filter(
-    (u) =>
+  const filteredUsers = users
+    .filter(u =>
       u.fullName?.toLowerCase().includes(search.toLowerCase()) ||
       u.email?.toLowerCase().includes(search.toLowerCase())
-  )
+    )
+    .filter(u => roleFilter === "all" ? true : u.role === roleFilter) // <-- filter by role
 
   const userString = localStorage.getItem("user")
   const usertemp = userString ? JSON.parse(userString) : null
@@ -64,6 +68,7 @@ export default function AdminUsersPage() {
       role: user.role,
       status: user.status,
       adsPerDay: user.adsPerDay,
+      luckydrawStatus: user.luckydrawStatus
     })
     setAdsAdjust(0)
     setIsModalOpen(true)
@@ -120,45 +125,60 @@ export default function AdminUsersPage() {
         </p>
       </div>
 
-      {/* Referral Link */}
-      <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5">
-        <CardHeader>
-          <CardTitle className="text-primary text-lg sm:text-xl">Share Your Referral Link</CardTitle>
-          <CardDescription className="text-sm sm:text-base">
-            Share this link with friends to earn $10 for each successful signup
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              value={referralLink}
-              readOnly
-              className="flex-1 px-4 py-2 bg-background border border-primary/30 rounded-lg text-foreground text-sm font-mono"
-            />
-            <Button
-              onClick={handleCopyLink}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 w-full sm:w-auto"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4" /> Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" /> Copy
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Referral Link - only for Admins */}
+      {user?.role === "admin" && (
+        <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5">
+          <CardHeader>
+            <CardTitle className="text-primary text-lg sm:text-xl">Share Your Referral Link</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
+              Share this link with friends to earn $10 for each successful signup
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={referralLink}
+                readOnly
+                className="flex-1 px-4 py-2 bg-background border border-primary/30 rounded-lg text-foreground text-sm font-mono"
+              />
+              <Button
+                onClick={handleCopyLink}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 w-full sm:w-auto"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" /> Copy
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Role Filter Buttons */}
+      <div className="flex gap-2">
+        <Button variant={roleFilter === "all" ? "default" : "outline"} onClick={() => setRoleFilter("all")}>
+          All
+        </Button>
+        <Button variant={roleFilter === "user" ? "default" : "outline"} onClick={() => setRoleFilter("user")}>
+          Users
+        </Button>
+        <Button variant={roleFilter === "admin" ? "default" : "outline"} onClick={() => setRoleFilter("admin")}>
+          Admins
+        </Button>
+      </div>
 
       {/* User List */}
       <Card className="border-primary/20">
         <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div>
-            <CardTitle className="text-lg sm:text-xl">Users</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Accounts</CardTitle>
             <CardDescription className="text-sm sm:text-base">
               View and manage user accounts
             </CardDescription>
@@ -174,46 +194,12 @@ export default function AdminUsersPage() {
         <CardContent>
           {isLoading ? (
             <p className="text-center py-8 text-muted-foreground">Loading users...</p>
+          ) : filteredUsers.length === 0 ? (
+            <p className="text-center text-muted-foreground">No users found.</p>
           ) : (
-            <div className="space-y-4">
-              {filteredUsers.map((u) => (
-                <div
-                  key={u._id}
-                  className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg gap-2 ${
-                    u.status === "inactive" ? "bg-red-50" : "bg-background/50"
-                  }`}
-                >
-                  <div className="text-sm sm:text-base space-y-1">
-                    <p className="font-semibold break-all">{u.fullName} ({u.email})</p>
-                    <p className="text-muted-foreground">
-                      Status: <span className="font-semibold">{u.status}</span>
-                    </p>
-                    <p className="text-muted-foreground">Phone: {u.phone}</p>
-                    <p className="text-muted-foreground">
-                      Ads per day: <span className="font-semibold">{u.adsPerDay || 0}</span>
-                    </p>
-                  </div>
-                  <div className="flex gap-2 flex-wrap sm:flex-nowrap mt-2 sm:mt-0">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => openModal(u)}
-                      className="w-full sm:w-auto"
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => deleteUser(u._id)}
-                      className="w-full sm:w-auto"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            filteredUsers.map(u => (
+              <UserRow key={u._id} user={u} openModal={openModal} deleteUser={deleteUser} />
+            ))
           )}
         </CardContent>
       </Card>
@@ -247,26 +233,43 @@ export default function AdminUsersPage() {
                 className="w-full px-3 py-2 border rounded-lg text-sm"
               />
 
-              <select
-                value={editData.status}
-                onChange={(e) => setEditData({ ...editData, status: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="pending">Pending</option>
-              </select>
+              <div className="flex items-center">
+                <div className="pl-1 w-full">Account Status</div>
+                <select
+                  value={editData.status}
+                  onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
 
-              <select
-                value={editData.adsPerDay}
-                onChange={(e) => setEditData({ ...editData, adsPerDay: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
-              >
-                <option value={0}>0 Ads / Day</option>
-                <option value={30}>30 Ads / Day</option>
-                <option value={50}>50 Ads / Day</option>
-                <option value={100}>100 Ads / Day</option>
-              </select>
+              <div className="flex items-center">
+                <div className="pl-1 w-full">Luckydraw Status</div>
+                <select
+                  value={editData.luckydrawStatus}
+                  onChange={(e) => setEditData({ ...editData, luckydrawStatus: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div className="flex items-center">
+                <div className="pl-1 w-full">Attempts per day</div>
+                <select
+                  value={editData.adsPerDay}
+                  onChange={(e) => setEditData({ ...editData, adsPerDay: parseInt(e.target.value) })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                >
+                  <option value={0}>0 Ads / Day</option>
+                  <option value={30}>30 Ads / Day</option>
+                  <option value={50}>50 Ads / Day</option>
+                  <option value={100}>100 Ads / Day</option>
+                </select>
+              </div>
             </div>
 
             {/* Remaining Ads */}
@@ -316,3 +319,33 @@ export default function AdminUsersPage() {
     </div>
   )
 }
+
+// User Row Component
+const UserRow = ({ user, openModal, deleteUser }: any) => (
+  <div
+    className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg gap-2 ${
+      user.status === "inactive" ? "bg-red-50" : "bg-background/50"
+    }`}
+  >
+    <div className="text-sm sm:text-base space-y-1">
+      <p className="font-semibold break-all">{user.fullName} ({user.email})</p>
+      <p className="text-muted-foreground">
+        Status: <span className="font-semibold">{user.status}</span>
+      </p>
+      <p className="text-muted-foreground">Phone: {user.phone}</p>
+      <p className="text-muted-foreground">
+        Ads per day: <span className="font-semibold">{user.adsPerDay || 0}</span>
+      </p>
+    </div>
+    <div className="flex gap-2 flex-wrap sm:flex-nowrap mt-2 sm:mt-0">
+      <Button size="sm" variant="outline" onClick={() => openModal(user)} className="w-full sm:w-auto">
+        Update
+      </Button>
+      <Button size="sm" variant="destructive" onClick={() => deleteUser(user._id)} className="w-full sm:w-auto">
+            {/* <Button size="sm" variant="destructive" onClick={() => console.log("deleting user: ", user._id)} className="w-full sm:w-auto"> */}
+
+        Delete
+      </Button>
+    </div>
+  </div>
+)
