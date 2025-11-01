@@ -259,6 +259,7 @@ export default function ProductsPage() {
             onOpenChange={setShowRatingModal}
             product={selectedProduct}
             onSubmit={handleSubmitRating}
+            isLoading={isLoading}  // Pass it here
           />
         )}
       </div>

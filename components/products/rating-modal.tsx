@@ -12,24 +12,26 @@ interface RatingModalProps {
   onOpenChange: (open: boolean) => void
   product: Product
   onSubmit: (rating: number, comment: string) => void
+  isLoading: boolean   // Add this
 }
 
-export default function RatingModal({ open, onOpenChange, product, onSubmit }: RatingModalProps) {
+export default function RatingModal({ 
+  open, 
+  onOpenChange, 
+  product, 
+  onSubmit, 
+  isLoading   // <-- use this instead
+}: RatingModalProps) {
   const [rating, setRating] = useState(5)
   const [comment, setComment] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
-    try {
-      onSubmit(rating, comment)
-    } finally {
-      setIsLoading(false)
-      setRating(5)
-      setComment("")
-    }
+    // Don't set loading here — parent controls it
+    onSubmit(rating, comment)
+    // Reset after submit (optional, parent may close modal)
+    setRating(5)
+    setComment("")
   }
 
   return (
@@ -39,7 +41,6 @@ export default function RatingModal({ open, onOpenChange, product, onSubmit }: R
           <DialogTitle className="text-primary">Rate Product</DialogTitle>
           <DialogDescription>{product.name}</DialogDescription>
         </DialogHeader>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Star Rating */}
           <div>
@@ -51,6 +52,7 @@ export default function RatingModal({ open, onOpenChange, product, onSubmit }: R
                   type="button"
                   onClick={() => setRating(star)}
                   className="focus:outline-none transition-transform hover:scale-110"
+                  disabled={isLoading}   // Disable stars while submitting
                 >
                   <Star
                     className={`w-8 h-8 ${star <= rating ? "fill-primary text-primary" : "text-muted-foreground"}`}
@@ -60,24 +62,13 @@ export default function RatingModal({ open, onOpenChange, product, onSubmit }: R
             </div>
           </div>
 
-          {/* Comment */}
-          {/* <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Your Review (Optional)</label>
-            <textarea
-              placeholder="Share your thoughts about this product..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="w-full p-2 border border-primary/30 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              rows={4}
-            />
-          </div> */}
-
           {/* Actions */}
           <div className="flex gap-2 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={isLoading}   // Disable cancel too
               className="flex-1 border-primary/30"
             >
               Cancel
