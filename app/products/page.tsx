@@ -25,6 +25,7 @@ export default function ProductsPage() {
   const [userRatings, setUserRatings] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showLuckyDrawPopup, setShowLuckyDrawPopup] = useState(false)
+  const [showAlreadyRatedPopup, setShowAlreadyRatedPopup] = useState(false)
 
   // ✅ Fetch Lucky Draw Status
   const fetchLuckyDrawStatus = async () => {
@@ -68,6 +69,8 @@ export default function ProductsPage() {
 
         // Fetch user ratings
         const ratings = await getUserRatings()
+        console.log("🔍 All user ratings received:", ratings)
+        console.log("🔍 Number of ratings:", ratings.length)
         setUserRatings(ratings)
 
         // Fetch Lucky Draw status
@@ -127,15 +130,20 @@ export default function ProductsPage() {
 
   // ⭐ Handle Product Rating Modal
   const handleRateProduct = (product: any) => {
+    console.log("handleRateProduct called for:", product.name)
     const userRating = userRatings.find((r) => r.productId === product._id)
+    console.log("User rating found:", userRating)
     if (userRating) {
-      alert("You have already rated this product.")
+      console.log("Showing already rated alert")
+      setShowAlreadyRatedPopup(true)
       return
     }
     if (remaining <= 0) {
       alert("No remaining attempts.")
       return
     }
+    
+    console.log("Opening rating modal")
     setSelectedProduct(product)
     setShowRatingModal(true)
   }
@@ -184,10 +192,16 @@ export default function ProductsPage() {
 
         {/* Product Cards */}
         <div className="pt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => {
-            const userRating = userRatings.find(
-              (r) => r.userId === user?.id && r.productId === product._id
-            )
+          {products.map((product) => {           
+            const userRating = userRatings.find((r) => {
+              const ratingProductId = typeof r.productId === 'string' ? r.productId : r.productId?._id
+              return ratingProductId === product._id
+            })
+            
+            console.log("Product:", product.name, "ID:", product._id)
+            console.log("User Rating found:", userRating)
+            console.log("---")
+            
             return (
               <Card key={product._id} className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden">
                 <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
@@ -229,10 +243,10 @@ export default function ProductsPage() {
 
                   <Button
                     onClick={() => handleRateProduct(product)}
-                    disabled={isLoading || remaining <= 0 || !!userRating}
+                    disabled={isLoading || (remaining <= 0 && !userRating)}
                     className={`w-full ${
                       userRating
-                        ? "bg-gray-400 cursor-not-allowed"
+                        ? "bg-blue-500 hover:bg-blue-600 text-white border-2 border-blue-300"
                         : remaining > 0
                         ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                         : "bg-gray-400 cursor-not-allowed"
@@ -241,7 +255,7 @@ export default function ProductsPage() {
                     {isLoading
                       ? "Submitting..."
                       : userRating
-                      ? "Already Rated ✓"
+                      ? "Already Rated "
                       : remaining > 0
                       ? "Rate Product"
                       : "No Attempts Left"}
@@ -273,6 +287,7 @@ export default function ProductsPage() {
       >
         <p>Try your luck now and win exciting rewards!</p>
       </Popup>
+   
     </div>
   )
 }
