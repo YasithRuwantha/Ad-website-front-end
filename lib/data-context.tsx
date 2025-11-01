@@ -29,6 +29,7 @@ export interface Ad {
   createdAt: string
   views: number
   rating?: number
+  ratedCount?: number
 }
 
 export interface Rating {
