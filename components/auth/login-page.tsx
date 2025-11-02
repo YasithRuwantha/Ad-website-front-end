@@ -6,9 +6,9 @@ import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Home, ChevronRight, Facebook, Twitter, Linkedin, Instagram, Send } from "lucide-react"
+import Image from "next/image"
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -44,96 +44,126 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-2">EarningHub</h1>
-          <p className="text-muted-foreground">Your platform for ads, products & earnings</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header with Navigation */}
+      <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-xl">E</span>
+            </div>
+            <span className="font-bold text-gray-900">EarningHub</span>
+          </div>
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-gray-700 hover:text-green-600 transition">Home</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition">About</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition">Plan</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition">FAQ</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition">Contact</a>
+          </nav>
+          <Button className="bg-green-600 hover:bg-green-700 text-white px-6 rounded-full">
+            👤 Login
+          </Button>
         </div>
+      </header>
 
-        <Card className="border-2 border-primary/20 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-b">
-            <CardTitle className="text-primary">{isLogin ? "Welcome Back" : "Create Account"}</CardTitle>
-            <CardDescription>{isLogin ? "Sign in to your account" : "Join our community today"}</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Page Title and Breadcrumb */}
+      <div className="bg-white border-b border-gray-200 py-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Login</h1>
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <Home className="w-4 h-4 text-gray-500" />
+            <span className="text-gray-500">Home</span>
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <span className="text-green-600 font-medium">Login</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - Two Column Layout */}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          {/* Left Column - Login Form */}
+          <div className="bg-white p-8 md:p-12 rounded-lg shadow-sm">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+            <p className="text-gray-600 mb-8">Hey Enter your details to get sign in to your account</p>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm">
+                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
                   <AlertCircle className="w-4 h-4" />
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-300 rounded-lg text-green-700 text-sm">
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
                   ✅ {success}
                 </div>
               )}
 
-
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <Input
                     type="text"
                     placeholder="John Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required={!isLogin}
-                    className="border-primary/30"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <Input
                   type="email"
-                  placeholder={isLogin ? "admin@example.com" : "your@email.com"}
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-primary/30"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                 <Input
                   type="password"
-                  placeholder={isLogin ? "admin123" : "Create a password"}
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="border-primary/30"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
                 />
               </div>
 
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Phone number </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
                   <Input
                     type="text"
                     placeholder="+94 77 777 7777"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
-                    className="border-primary/30"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
                   />
                 </div>
               )}
 
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Referral Code </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Referral Code</label>
                   <Input
                     type="text"
                     placeholder="Enter referral code if you have one"
                     value={referralCode}
                     onChange={(e) => setReferralCode(e.target.value)}
                     required
-                    className="border-primary/30"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
                   />
                 </div>
               )}
@@ -141,43 +171,135 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 {isLoading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
               </Button>
-            </form>
 
-            <div className="mt-6 pt-6 border-t border-border">
-              <p className="text-center text-sm text-muted-foreground mb-4">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(!isLogin)
+                    setError("")
+                    setSuccess("")
+                  }}
+                  className="text-green-600 hover:text-green-700 font-medium text-sm"
+                >
+                  {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Right Column - Image */}
+          <div className="hidden md:block relative h-[600px] rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=1000&fit=crop"
+              alt="Earning Platform"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900/30 via-transparent to-gray-900/30"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white mt-auto">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* Brand Section */}
+            <div className="col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">E</span>
+                </div>
+                <span className="font-bold text-white text-lg">EarningHub</span>
+              </div>
+              <p className="text-gray-400 text-sm mb-6">
+                We are a award winning multinational company. We believe quality and standard worldwide consider.
               </p>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setIsLogin(!isLogin)
-                  setError("")
-                }}
-                className="w-full border-primary/30 text-primary hover:bg-yellow-50"
-              >
-                {isLogin ? "Sign Up" : "Sign In"}
-              </Button>
+              <div className="flex gap-3">
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                  <Facebook className="w-4 h-4" />
+                </a>
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              </div>
             </div>
 
-            {isLogin && (
-              <div className="mt-6 p-4 bg-yellow-50 border border-primary/20 rounded-lg">
-                <p className="text-xs font-semibold text-primary mb-2">Demo Credentials:</p>
-                <p className="text-xs text-muted-foreground mb-1">
-                  <strong>Admin:</strong> admin@example.com / admin123
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  <strong>User:</strong> user@example.com / user123
-                </p>
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4 relative inline-block">
+                Quick Links
+                <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
+              </h3>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Home</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">About</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Plan</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Blog</a></li>
+              </ul>
+            </div>
+
+            {/* Company Policy */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4 relative inline-block">
+                Company Policy
+                <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
+              </h3>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Contact</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Terms & Condition</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Cookie Policy</a></li>
+              </ul>
+            </div>
+
+            {/* Newsletter */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4 relative inline-block">
+                Newsletter
+                <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
+              </h3>
+              <p className="text-gray-400 text-sm mb-4">
+                Get our offers & news in your inbox
+              </p>
+              <div className="relative">
+                <Input
+                  type="email"
+                  placeholder="Your Email"
+                  className="w-full bg-white text-gray-900 border-none rounded-full pl-4 pr-12 py-6 focus:ring-2 focus:ring-green-600"
+                />
+                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center text-white transition">
+                  <Send className="w-4 h-4" />
+                </button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright Bar */}
+        <div className="border-t border-gray-800">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              Copyright © 2025 <span className="text-green-600 font-semibold">EarningHub</span> All Rights Reserved
+            </p>
+            <div className="text-green-600 text-sm font-medium mt-2 md:mt-0">
+              English
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
