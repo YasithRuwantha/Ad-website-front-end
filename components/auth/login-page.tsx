@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,27 @@ export default function LoginPage() {
   const [success, setSuccess] = useState("")
   const [phone, setPhone] = useState("")
   const router = useRouter()
+  const [isFooterVisible, setIsFooterVisible] = useState(false)
+  const footerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsFooterVisible(entry.isIntersecting)
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -100px 0px' }
+    )
+
+    if (footerRef.current) {
+      observer.observe(footerRef.current)
+    }
+
+    return () => {
+      if (footerRef.current) {
+        observer.unobserve(footerRef.current)
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,13 +76,13 @@ export default function LoginPage() {
             <span className="font-bold text-gray-900">EarningHub</span>
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-gray-700 hover:text-green-600 transition">Home</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition">About</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition">Plan</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition">FAQ</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition">Contact</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">FAQ</a>
+            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">Contact</a>
           </nav>
-          <Button className="bg-green-600 hover:bg-green-700 text-white px-6 rounded-full">
+          <Button className="bg-green-600 hover:bg-green-700 text-white px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg">
             👤 Login
           </Button>
         </div>
@@ -84,26 +105,26 @@ export default function LoginPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left Column - Login Form */}
-          <div className="bg-white p-8 md:p-12 rounded-lg shadow-sm">
+          <div className="bg-white p-8 md:p-12 rounded-lg shadow-sm transition-all duration-500 hover:shadow-xl">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h2>
             <p className="text-gray-600 mb-8">Hey Enter your details to get sign in to your account</p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
                   <AlertCircle className="w-4 h-4" />
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
                   ✅ {success}
                 </div>
               )}
 
               {!isLogin && (
-                <div>
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <Input
                     type="text"
@@ -111,7 +132,7 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required={!isLogin}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                   />
                 </div>
               )}
@@ -124,7 +145,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                 />
               </div>
 
@@ -136,12 +157,12 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                 />
               </div>
 
               {!isLogin && (
-                <div>
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
                   <Input
                     type="text"
@@ -149,13 +170,13 @@ export default function LoginPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                   />
                 </div>
               )}
 
               {!isLogin && (
-                <div>
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Referral Code</label>
                   <Input
                     type="text"
@@ -163,7 +184,7 @@ export default function LoginPage() {
                     value={referralCode}
                     onChange={(e) => setReferralCode(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                   />
                 </div>
               )}
@@ -171,7 +192,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
               </Button>
@@ -184,7 +205,7 @@ export default function LoginPage() {
                     setError("")
                     setSuccess("")
                   }}
-                  className="text-green-600 hover:text-green-700 font-medium text-sm"
+                  className="text-green-600 hover:text-green-700 font-medium text-sm transition-all duration-300 hover:underline"
                 >
                   {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
                 </button>
@@ -193,7 +214,7 @@ export default function LoginPage() {
           </div>
 
           {/* Right Column - Image */}
-          <div className="hidden md:block relative h-[600px] rounded-lg overflow-hidden shadow-lg">
+          <div className="hidden md:block relative h-[600px] rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
             <Image
               src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=1000&fit=crop"
               alt="Earning Platform"
@@ -207,11 +228,11 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white mt-auto">
+      <footer ref={footerRef} className="bg-gray-900 text-white mt-auto overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand Section */}
-            <div className="col-span-1">
+            <div className={`col-span-1 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
                   <span className="text-white font-bold text-xl">E</span>
@@ -222,51 +243,51 @@ export default function LoginPage() {
                 We are a award winning multinational company. We believe quality and standard worldwide consider.
               </p>
               <div className="flex gap-3">
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
                   <Facebook className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
                   <Twitter className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
                   <Linkedin className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition">
+                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
                   <Instagram className="w-4 h-4" />
                 </a>
               </div>
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div className={`transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <h3 className="text-lg font-semibold mb-4 relative inline-block">
                 Quick Links
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Home</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">About</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Plan</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Blog</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Home</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">About</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Plan</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Blog</a></li>
               </ul>
             </div>
 
             {/* Company Policy */}
-            <div>
+            <div className={`transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <h3 className="text-lg font-semibold mb-4 relative inline-block">
                 Company Policy
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Contact</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Terms & Condition</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition text-sm">Cookie Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Contact</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Terms & Condition</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Cookie Policy</a></li>
               </ul>
             </div>
 
             {/* Newsletter */}
-            <div>
+            <div className={`transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <h3 className="text-lg font-semibold mb-4 relative inline-block">
                 Newsletter
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
@@ -274,13 +295,13 @@ export default function LoginPage() {
               <p className="text-gray-400 text-sm mb-4">
                 Get our offers & news in your inbox
               </p>
-              <div className="relative">
+              <div className="relative group">
                 <Input
                   type="email"
                   placeholder="Your Email"
-                  className="w-full bg-white text-gray-900 border-none rounded-full pl-4 pr-12 py-6 focus:ring-2 focus:ring-green-600"
+                  className="w-full bg-white text-gray-900 border-none rounded-full pl-4 pr-12 py-6 focus:ring-2 focus:ring-green-600 transition-all duration-300"
                 />
-                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center text-white transition">
+                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
                   <Send className="w-4 h-4" />
                 </button>
               </div>
@@ -289,7 +310,7 @@ export default function LoginPage() {
         </div>
 
         {/* Copyright Bar */}
-        <div className="border-t border-gray-800">
+        <div className={`border-t border-gray-800 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
               Copyright © 2025 <span className="text-green-600 font-semibold">EarningHub</span> All Rights Reserved
