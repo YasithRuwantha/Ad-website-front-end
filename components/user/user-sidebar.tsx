@@ -37,7 +37,8 @@ export default function UserSidebar() {
     { label: "Referrals", href: "/referrals", icon: Users },
     { label: "Support", href: "/support", icon: MessageSquare },
     { label: "Plans", href: "/dashboard/plans", icon: CreditCard },
-    { label: "Payout", href: "/dashboard/payout", icon: DollarSign },
+    { label: "Add Funds", href: "/dashboard/add-funds", icon: DollarSign },
+    { label: "Payout", href: "/dashboard/payout", icon: Send },
     { label: "Payout History", href: "/dashboard/payout-history", icon: History },
     { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
     { label: "test", href: "/test", icon: Send },
@@ -82,7 +83,7 @@ export default function UserSidebar() {
                   variant={isActive ? "default" : "ghost"}
                   className={`w-full justify-start gap-3 ${
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground my-1"
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   }`}
                 >
