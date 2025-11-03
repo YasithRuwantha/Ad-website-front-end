@@ -6,7 +6,7 @@ import { useAuth } from "./auth-context"
 export interface FundPayment {
   _id: string
   userID: string
-  amount: number
+  amount: string
   requestedDate: string
   approvedDate?: string
   method: "USDT-TRC20" | "Bank" | "Card" | "Other"
@@ -21,7 +21,13 @@ interface FundPaymentContextType {
   loading: boolean
   error: string | null
   fetchFundPayments: () => Promise<void>
-  addFundPayment: (payment: Partial<FundPayment>) => Promise<FundPayment>
+  addFundPayment: (payment: {
+    userID: string
+    amount: number
+    method: "USDT-TRC20" | "Bank" | "Card" | "Other"
+    imgFile?: File
+    requestedDate?: string
+  }) => Promise<FundPayment>
   updateFundPaymentStatus: (id: string, status: "approved" | "rejected") => Promise<void>
   deleteFundPayment: (id: string) => Promise<void>
 }
@@ -57,23 +63,32 @@ export function FundPaymentProvider({ children }: { children: React.ReactNode })
   }
 
   // 🟡 Add new payment (Customer)
-  const addFundPayment = async (payment: Partial<FundPayment>): Promise<FundPayment> => {
-  console.log("🟡 addFundPayment payload before sending:", payment.imgUrl); // ✅ log here
+const addFundPayment = async (payment: {
+  userID: string
+  amount: number
+  method: "USDT-TRC20" | "Bank" | "Card" | "Other"
+  imgFile?: File
+  requestedDate?: string
+}) => {
   setLoading(true);
   try {
     const token = localStorage.getItem("token");
+    const formData = new FormData();
 
-    // If you're sending an image file, you need FormData instead of JSON
+    console.log("test", payment.userID, payment.amount, payment.method)
+    formData.append("userID", payment.userID);
+    formData.append("amount", payment.amount.toString());
+    formData.append("method", payment.method);
+    if (payment.requestedDate) formData.append("requestedDate", payment.requestedDate);
+    if (payment.imgFile) formData.append("imgUrl", payment.imgFile);
+
     const res = await fetch(`${API_URL}/api/fund-payments/add`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", // only for JSON payload
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // do NOT set Content-Type for FormData
       },
-      body: JSON.stringify(payment), // logs above show exactly what is sent
+      body: formData,
     });
-
-    
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Failed to add fund payment");
@@ -87,6 +102,7 @@ export function FundPaymentProvider({ children }: { children: React.ReactNode })
     setLoading(false);
   }
 };
+
 
 
   // 🟣 Approve / Reject (Admin)

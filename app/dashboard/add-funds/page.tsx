@@ -66,7 +66,7 @@ export default function AddFundsPage() {
     setShowPaymentForm(true)
   }
 
-  const handleConfirmPayment = async () => {
+const handleConfirmPayment = async () => {
   try {
     const userString = localStorage.getItem("user");
     let userIdFromStorage = "";
@@ -75,18 +75,15 @@ export default function AddFundsPage() {
       userIdFromStorage = user.id;
     }
 
-    // Prepare form data
-    const formData = new FormData()
-    formData.append("userID", userIdFromStorage)
-    formData.append("fullName", fullName)
-    formData.append("email", email)
-    formData.append("amount", selectedPayment === "usdt" ? amount : depositAmount)
-    formData.append("method", selectedPayment === "usdt" ? "USDT-TRC20" : "Bank")
-    formData.append("bankName", bankName)
-    if (proofFile) formData.append("imgUrl", proofFile)
+    const paymentPayload = {
+      userID: userIdFromStorage,
+      amount: selectedPayment === "usdt" ? amount : depositAmount,
+      method: selectedPayment === "usdt" ? "USDT-TRC20" : "Bank",
+      imgFile: proofFile, // optional
+      requestedDate: new Date().toISOString(),
+    }
 
-    // Call context function
-    const newPayment = await addFundPayment(formData as any)
+    const newPayment = await addFundPayment(paymentPayload)
     alert(`Payment submitted successfully! ID: ${newPayment._id}`)
   } catch (err: any) {
     alert("Failed to submit payment: " + err.message)
