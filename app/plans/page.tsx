@@ -33,56 +33,80 @@ export default function PlansPage() {
     {
       name: "Starter",
       price: "$100",
+      investment: "$100",
       description: "Get started with basic ad clicks at no cost!",
       period: "Unlimited",
       productLimit: "10",
-      dailyIncome: "10-20$",
-      icon: "🎯"
+      profit15: "$15",
+      profit20: "$20",
+      profitRange: "$15-$20",
+      icon: "🎯",
+      isPremium: false
     },
     {
       name: "Basic",
       price: "$300",
+      investment: "$300",
       description: "Perfect for beginners looking to grow!",
       period: "Unlimited",
       productLimit: "20",
-      dailyIncome: "20-40$",
-      icon: "🚀"
+      profit15: "$45",
+      profit20: "$60",
+      profitRange: "$45-$60",
+      icon: "🚀",
+      isPremium: false
     },
     {
       name: "Beginner",
       price: "$500",
+      investment: "$500",
       description: "Start earning with more opportunities!",
       period: "Unlimited",
       productLimit: "30",
-      dailyIncome: "30-50$",
-      icon: "⭐"
+      profit15: "$75",
+      profit20: "$100",
+      profitRange: "$75-$100",
+      icon: "⭐",
+      isPremium: false
     },
     {
       name: "Advanced",
       price: "$1,000",
+      investment: "$1,000",
       description: "Take your earnings to the next level!",
       period: "Unlimited",
       productLimit: "50",
-      dailyIncome: "50-80$",
-      icon: "💎"
+      profit15: "$150",
+      profit20: "$200",
+      profitRange: "$150-$200",
+      icon: "💎",
+      isPremium: true
     },
     {
       name: "Professional",
       price: "$1,500",
+      investment: "$1,500",
       description: "Professional tier with maximum returns!",
       period: "Unlimited",
       productLimit: "75",
-      dailyIncome: "80-120$",
-      icon: "👑"
+      profit15: "$225",
+      profit20: "$300",
+      profitRange: "$225-$300",
+      icon: "👑",
+      isPremium: true
     },
     {
       name: "Premium",
       price: "$2,000",
+      investment: "$2,000",
       description: "Ultimate earning potential unlocked!",
       period: "Unlimited",
       productLimit: "100",
-      dailyIncome: "120-200$",
-      icon: "🏆"
+      profit15: "$300",
+      profit20: "$400",
+      profitRange: "$300-$400",
+      icon: "🏆",
+      isPremium: true
     }
   ]
 
@@ -123,56 +147,113 @@ export default function PlansPage() {
           {plans.map((plan, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-green-500 hover:shadow-2xl transition-all duration-500 transform hover:scale-105"
+              className={`rounded-2xl p-8 border-2 transition-all duration-500 transform hover:scale-105 relative ${
+                plan.isPremium 
+                  ? 'bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 border-yellow-400 hover:border-yellow-500 hover:shadow-2xl shadow-xl' 
+                  : 'bg-white border-gray-200 hover:border-green-500 hover:shadow-2xl'
+              }`}
             >
+              {/* Premium Badge */}
+              {plan.isPremium && (
+                <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                  ⭐ PREMIUM
+                </div>
+              )}
+
               {/* Icon */}
               <div className="text-5xl mb-4">{plan.icon}</div>
 
               {/* Plan Name */}
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+              <h3 className={`text-2xl font-bold mb-2 ${plan.isPremium ? 'text-yellow-900' : 'text-gray-900'}`}>
+                {plan.name}
+              </h3>
 
               {/* Price */}
               <div className="mb-4">
-                <span className="text-5xl font-bold text-gray-900">{plan.price}</span>
+                <span className={`text-5xl font-bold ${plan.isPremium ? 'text-yellow-800' : 'text-gray-900'}`}>
+                  {plan.price}
+                </span>
               </div>
 
               {/* Description */}
-              <p className="text-gray-600 mb-6">{plan.description}</p>
+              <p className={`mb-6 ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+                {plan.description}
+              </p>
 
               {/* Features */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                    plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
+                  }`}>
+                    <svg className={`w-3 h-3 ${plan.isPremium ? 'text-yellow-700' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-gray-700 text-sm">Period : {plan.period}</span>
+                  <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
+                    Period: {plan.period}
+                  </span>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                    plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
+                  }`}>
+                    <svg className={`w-3 h-3 ${plan.isPremium ? 'text-yellow-700' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-gray-700 text-sm">Daily Product Limit : {plan.productLimit}</span>
+                  <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
+                    Daily Product Limit: {plan.productLimit}
+                  </span>
                 </div>
+              </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+              {/* Profit Information */}
+              <div className={`rounded-lg p-4 mb-6 ${
+                plan.isPremium ? 'bg-yellow-100 border border-yellow-300' : 'bg-green-50 border border-green-200'
+              }`}>
+                <h4 className={`text-sm font-bold mb-3 ${plan.isPremium ? 'text-yellow-900' : 'text-green-900'}`}>
+                  Expected Profit (15-20% Return)
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+                      15% Profit:
+                    </span>
+                    <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                      {plan.profit15}
+                    </span>
                   </div>
-                  <span className="text-gray-700 text-sm">Daily income : {plan.dailyIncome}</span>
+                  <div className="flex justify-between items-center">
+                    <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+                      20% Profit:
+                    </span>
+                    <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                      {plan.profit20}
+                    </span>
+                  </div>
+                  <div className={`mt-2 pt-2 border-t ${plan.isPremium ? 'border-yellow-300' : 'border-green-300'}`}>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-semibold ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
+                        Profit Range:
+                      </span>
+                      <span className={`text-base font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                        {plan.profitRange}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Purchase Button */}
               <button
                 onClick={handlePurchase}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg"
+                className={`w-full font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg ${
+                  plan.isPremium
+                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
               >
                 <span>Purchase Plan</span>
                 <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,20 +280,6 @@ export default function PlansPage() {
               <p className="text-gray-400 text-sm mb-6">
                 We are a award winning multinational company. We believe quality and standard worldwide consider.
               </p>
-              <div className="flex gap-3">
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Instagram className="w-4 h-4" />
-                </a>
-              </div>
             </div>
 
             {/* Quick Links */}
