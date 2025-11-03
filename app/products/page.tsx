@@ -182,10 +182,10 @@ export default function ProductsPage() {
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => {
       const diff = rating - i
-      let fill = "text-muted-foreground"
-      if (diff >= 1) fill = "text-primary"
+      let fill = "text-gray-300"
+      if (diff >= 1) fill = "text-yellow-400 fill-yellow-400"
       else if (diff > 0 && diff < 1)
-        fill = "text-primary/60" // half glow look
+        fill = "text-yellow-400 fill-yellow-400 opacity-60" // half glow look
       return <Star key={i} className={`w-4 h-4 ${fill}`} />
     })
   }
@@ -255,26 +255,53 @@ export default function ProductsPage() {
 
         <div className="flex-1 overflow-auto p-4 md:p-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Products</h1>
-          <p className="text-muted-foreground">Browse and rate products from our marketplace</p>
+          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+          <p className="text-gray-600">Browse and rate products from our marketplace</p>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <Card><CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Total Products</p>
-            <p className="text-3xl font-bold">{products.length}</p>
-          </CardContent></Card>
+          <Card className="border-2 border-green-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Total Products</p>
+                  <p className="text-3xl font-bold text-gray-900">{products.length}</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <Star className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <Card><CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Your Ratings</p>
-            <p className="text-3xl font-bold">{userRatings.length}</p>
-          </CardContent></Card>
+          <Card className="border-2 border-green-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Your Ratings</p>
+                  <p className="text-3xl font-bold text-gray-900">{userRatings.length}</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <Star className="w-6 h-6 text-green-600 fill-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <Card><CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Remaining Attempts</p>
-            <p className="text-3xl font-bold text-primary">{remaining}</p>
-          </CardContent></Card>
+          <Card className="border-2 border-green-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Remaining Attempts</p>
+                  <p className="text-3xl font-bold text-green-600">{remaining}</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <Star className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Product Cards */}
@@ -290,8 +317,8 @@ export default function ProductsPage() {
             console.log("---")
             
             return (
-              <Card key={product._id} className="border-primary/20 hover:shadow-lg transition-shadow overflow-hidden">
-                <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
+              <Card key={product._id} className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all overflow-hidden">
+                <div className="h-48 bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
                   <img
                     src={product.imageUrl || "/placeholder.svg"}
                     alt={product.name}
@@ -300,8 +327,8 @@ export default function ProductsPage() {
                 </div>
 
                 <CardContent>
-                  <h3 className="font-semibold mb-1">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{product.description}</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{product.description}</p>
 
                   <div className="mb-3">
                     <p className="text-sm text-gray-600">Income per rating</p>
@@ -310,19 +337,19 @@ export default function ProductsPage() {
 
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex items-center gap-1">{renderStars(Number(product.rating) || 0)}</div>
-                    <span className="text-sm font-semibold">{(Number(product.rating) || 0).toFixed(1)}</span>
-                    <span className="text-xs text-muted-foreground">({product.ratedCount || product.ratedBy || 0})</span>
+                    <span className="text-sm font-semibold text-gray-900">{(Number(product.rating) || 0).toFixed(1)}</span>
+                    <span className="text-xs text-gray-600">({product.ratedCount || product.ratedBy || 0})</span>
                   </div>
 
                   {userRating && (
-                    <div className="mb-3 p-2 bg-primary/10 rounded-lg">
-                      <p className="text-xs font-semibold text-primary">
+                    <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-xs font-semibold text-green-700">
                         Your Rating: {userRating.rating}/5 ⭐
                       </p>
                       {userRating.comment && (
                         <p className="text-xs text-gray-600 mt-1 line-clamp-2">"{userRating.comment}"</p>
                       )}
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-gray-500 mt-1">
                         Rated on {new Date(userRating.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -335,7 +362,7 @@ export default function ProductsPage() {
                       userRating
                         ? "bg-blue-500 hover:bg-blue-600 text-white border-2 border-blue-300"
                         : remaining > 0
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        ? "bg-green-600 hover:bg-green-700 text-white"
                         : "bg-gray-400 cursor-not-allowed"
                     }`}
                   >
