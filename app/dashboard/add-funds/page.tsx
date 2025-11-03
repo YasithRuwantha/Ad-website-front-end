@@ -4,6 +4,9 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+
+import { useFundPayments } from "@/lib/fundPayment-context"
+
 import Image from "next/image"
 
 export default function AddFundsPage() {
@@ -63,33 +66,36 @@ export default function AddFundsPage() {
     setShowPaymentForm(true)
   }
 
-  const handleConfirmPayment = () => {
-    if (selectedPayment === "usdt") {
-      if (!fullName || !email || !proofFile) {
-        alert("Please fill all fields and upload proof of payment")
-        return
-      }
-    } else {
-      // Bank deposit validation
-      if (!fullName || !userId || !depositAmount || !bankName || !email) {
-        alert("Please fill all fields")
-        return
-      }
+  const handleConfirmPayment = async () => {
+  try {
+    const userString = localStorage.getItem("user");
+    let userIdFromStorage = "";
+    if (userString) {
+      const user = JSON.parse(userString);
+      userIdFromStorage = user.id;
     }
-    // Handle payment confirmation logic here
-    alert("Payment submitted successfully!")
-    // Reset form
-    setShowPaymentForm(false)
-    setFullName("")
-    setEmail("")
-    setProofFile(null)
-    setPreviewUrl("")
-    setUserId("")
-    setDepositAmount("")
-    setBankName("")
-    setAmount("")
-    setShowPreview(false)
+
+    // Prepare form data
+    const formData = new FormData()
+    formData.append("userID", userIdFromStorage)
+    formData.append("fullName", fullName)
+    formData.append("email", email)
+    formData.append("amount", selectedPayment === "usdt" ? amount : depositAmount)
+    formData.append("method", selectedPayment === "usdt" ? "USDT-TRC20" : "Bank")
+    formData.append("bankName", bankName)
+    if (proofFile) formData.append("imgUrl", proofFile)
+
+    // Call context function
+    const newPayment = await addFundPayment(formData as any)
+    alert(`Payment submitted successfully! ID: ${newPayment._id}`)
+  } catch (err: any) {
+    alert("Failed to submit payment: " + err.message)
   }
+}
+
+
+  const { addFundPayment } = useFundPayments()
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
