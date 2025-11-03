@@ -29,7 +29,6 @@ export default function UserSidebar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const menuItems = [
-    { label: "Profile", href: "/dashboard/profile", icon: User },
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     // { label: "Ads", href: "/ads", icon: FileText },
     { label: "Products", href: "/products", icon: ShoppingBag },
@@ -52,12 +51,12 @@ export default function UserSidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-sidebar-border bg-sidebar">
-        <h1 className="text-xl font-bold text-sidebar-foreground">Dashboard</h1>
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+        <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
         <Button
           variant="ghost"
           onClick={() => setIsOpen(!isOpen)}
-          className="text-sidebar-foreground"
+          className="text-gray-900"
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </Button>
@@ -65,12 +64,12 @@ export default function UserSidebar() {
 
       {/* Sidebar - Collapsed on desktop with hover-to-expand */}
       <aside
-        className={`group/sidebar fixed md:static top-0 left-0 h-full bg-sidebar border-r border-sidebar-border flex flex-col transform transition-all duration-300 z-50 overflow-hidden
+        className={`group/sidebar fixed md:static top-0 left-0 h-full bg-white border-r border-gray-200 flex flex-col transform transition-all duration-300 z-50 overflow-hidden
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
         w-64 md:w-18 md:hover:w-64`}
       >
-        <div className="p-6 border-b border-sidebar-border hidden md:block">
-          <h1 className="text-2xl font-bold text-sidebar-foreground whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Dashboard</h1>
+        <div className="p-6 border-b border-gray-200 hidden md:block">
+          <h1 className="text-2xl font-bold text-gray-900 whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Dashboard</h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
@@ -83,8 +82,8 @@ export default function UserSidebar() {
                   variant={isActive ? "default" : "ghost"}
                   className={`w-full justify-start gap-3 ${
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "text-gray-700 hover:bg-green-50 hover:text-green-600"
                   }`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
@@ -95,7 +94,7 @@ export default function UserSidebar() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="p-4 border-t border-gray-200">
           <Button
             onClick={handleLogout}
             variant="outline"

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Star } from "lucide-react"
+import { Star, User, ChevronDown, LogOut, Settings } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
 import RatingModal from "@/components/products/rating-modal"
 import { useAuth } from "@/lib/auth-context"
@@ -26,6 +26,9 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showLuckyDrawPopup, setShowLuckyDrawPopup] = useState(false)
   const [showAlreadyRatedPopup, setShowAlreadyRatedPopup] = useState(false)
+  const [userName, setUserName] = useState("User")
+  const [userEmail, setUserEmail] = useState("")
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
 
   // ✅ Fetch Lucky Draw Status
   const fetchLuckyDrawStatus = async () => {
@@ -65,6 +68,8 @@ export default function ProductsPage() {
           return
         }
 
+        setUserName(parsedUser.name || "User")
+        setUserEmail(parsedUser.email || "")
         setRemaining(parsedUser.remaining || 0)
 
         // Fetch user ratings
@@ -148,6 +153,29 @@ export default function ProductsPage() {
     setShowRatingModal(true)
   }
 
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    router.push("/")
+  }
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('.profile-dropdown')) {
+        setShowProfileMenu(false)
+      }
+    }
+    if (showProfileMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showProfileMenu])
+
   if (isChecking) return null
 
   // ⭐ Dynamic Floating Stars
@@ -166,7 +194,66 @@ export default function ProductsPage() {
     <div className="flex flex-col md:flex-row h-screen bg-background">
       <UserSidebar />
 
-      <div className="flex-1 overflow-auto p-4 md:p-6">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Header with Profile */}
+        <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">E</span>
+            </div>
+            <span className="font-bold text-gray-900 hidden md:block">EarningHub</span>
+          </div>
+
+          {/* Profile Section */}
+          <div className="relative profile-dropdown">
+            <button
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="flex items-center gap-2 hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors"
+            >
+              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                <p className="text-xs text-gray-500">{userEmail}</p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </button>
+
+            {showProfileMenu && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                  <p className="text-xs text-gray-500">{userEmail}</p>
+                </div>
+                <button
+                  onClick={() => router.push('/dashboard/profile')}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  My Profile
+                </button>
+                <button
+                  onClick={() => router.push('/dashboard/profile')}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 flex items-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </button>
+                <hr className="my-2 border-gray-100" />
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-auto p-4 md:p-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Products</h1>
           <p className="text-muted-foreground">Browse and rate products from our marketplace</p>
@@ -276,6 +363,7 @@ export default function ProductsPage() {
             isLoading={isLoading}  // Pass it here
           />
         )}
+        </div>
       </div>
 
       {/* 🎯 Lucky Draw Popup */}
