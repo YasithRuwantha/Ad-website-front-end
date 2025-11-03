@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { TrendingUp, FileText, ShoppingBag, Wallet, CreditCard, DollarSign, User } from "lucide-react"
+import { TrendingUp, FileText, ShoppingBag, Wallet, CreditCard, DollarSign, User, PlusCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function DashboardPage() {
@@ -21,8 +21,8 @@ export default function DashboardPage() {
       label: "Total Ads",
       value: userAds.length,
       icon: FileText,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
       label: "Approved Ads",
@@ -35,24 +35,24 @@ export default function DashboardPage() {
       label: "Total Ratings",
       value: userRatings.length,
       icon: ShoppingBag,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
       label: "Transactions",
       value: userTransactions.length,
       icon: Wallet,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
   ]
 
   return (
     <div className="p-6 space-y-6">
-      <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user?.fullName}!</h1>
-        <p className="text-muted-foreground">
-          You're on the <span className="font-semibold text-primary capitalize">{user?.plan}</span> plan
+      <div className="bg-gradient-to-r from-green-100 to-green-50 border-2 border-green-500 rounded-lg p-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.fullName}!</h1>
+        <p className="text-gray-700">
+          You're on the <span className="font-semibold text-green-700 capitalize">{user?.plan}</span> plan
         </p>
       </div>
 
@@ -60,12 +60,12 @@ export default function DashboardPage() {
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
-            <Card key={stat.label} className="border-primary/20 hover:shadow-lg transition-shadow">
+            <Card key={stat.label} className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all">
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-3xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                    <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                   </div>
                   <div className={`${stat.bgColor} p-3 rounded-lg`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
@@ -77,147 +77,131 @@ export default function DashboardPage() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
-          onClick={() => router.push("/dashboard/profile")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" />
-              Profile
-            </CardTitle>
-            <CardDescription>View your details</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">View Profile</Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
           onClick={() => router.push("/dashboard/plans")}
         >
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-primary" />
+              <CreditCard className="w-5 h-5 text-green-600" />
               Plans
             </CardTitle>
             <CardDescription>Upgrade your plan</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">View Plans</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Plans</Button>
           </CardContent>
         </Card>
 
         <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
           onClick={() => router.push("/dashboard/payout")}
         >
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-primary" />
+              <DollarSign className="w-5 h-5 text-green-600" />
               Payout
             </CardTitle>
             <CardDescription>Manage payouts</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">Request Payout</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">Request Payout</Button>
           </CardContent>
         </Card>
 
         <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
           onClick={() => router.push("/dashboard/payout-history")}
         >
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
+              <TrendingUp className="w-5 h-5 text-green-600" />
               History
             </CardTitle>
             <CardDescription>View payout history</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">View History</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View History</Button>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
-          onClick={() => router.push("/ads")}
+          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
+          onClick={() => router.push("/dashboard/add-funds")}
         >
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              Post New Ad
+              <PlusCircle className="w-5 h-5 text-green-600" />
+              Add Funds
             </CardTitle>
-            <CardDescription>Share your products or services</CardDescription>
+            <CardDescription>Deposit money to your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">Post Ad</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">Add Funds</Button>
           </CardContent>
         </Card>
 
         <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
           onClick={() => router.push("/products")}
         >
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-primary" />
+              <ShoppingBag className="w-5 h-5 text-green-600" />
               Browse Products
             </CardTitle>
             <CardDescription>Discover and rate products</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">View Products</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Products</Button>
           </CardContent>
         </Card>
 
         <Card
-          className="border-primary/20 hover:shadow-lg transition-shadow cursor-pointer"
+          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
           onClick={() => router.push("/earnings")}
         >
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
+              <TrendingUp className="w-5 h-5 text-green-600" />
               View Earnings
             </CardTitle>
             <CardDescription>Check your balance & history</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-primary hover:bg-primary/90">View Earnings</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Earnings</Button>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-primary/20">
+      <Card className="border-2 border-green-200">
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle className="text-gray-900">Recent Transactions</CardTitle>
           <CardDescription>Your latest activity</CardDescription>
         </CardHeader>
         <CardContent>
           {userTransactions.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No transactions yet</p>
+            <p className="text-gray-500 text-center py-8">No transactions yet</p>
           ) : (
             <div className="space-y-3">
               {userTransactions.slice(-5).map((transaction) => (
-                <div key={transaction.id} className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
+                <div key={transaction.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
                   <div>
-                    <p className="font-medium text-foreground">{transaction.description}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-gray-900">{transaction.description}</p>
+                    <p className="text-xs text-gray-600">
                       {new Date(transaction.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">
                     <p
-                      className={`font-bold ${transaction.type === "payment" ? "text-destructive" : "text-green-600"}`}
+                      className={`font-bold ${transaction.type === "payment" ? "text-red-600" : "text-green-600"}`}
                     >
                       {transaction.type === "payment" ? "-" : "+"}${transaction.amount.toFixed(2)}
                     </p>
-                    <p className="text-xs text-muted-foreground capitalize">{transaction.status}</p>
+                    <p className="text-xs text-gray-600 capitalize">{transaction.status}</p>
                   </div>
                 </div>
               ))}
