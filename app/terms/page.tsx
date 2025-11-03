@@ -389,20 +389,6 @@ export default function TermsPage() {
               <p className="text-gray-400 text-sm mb-6">
                 We are a award winning multinational company. We believe quality and standard worldwide consider.
               </p>
-              <div className="flex gap-3">
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 bg-white hover:bg-green-600 rounded-full flex items-center justify-center text-gray-900 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg">
-                  <Instagram className="w-4 h-4" />
-                </a>
-              </div>
             </div>
 
             {/* Quick Links */}
