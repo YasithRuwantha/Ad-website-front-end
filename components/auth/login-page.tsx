@@ -76,11 +76,10 @@ export default function LoginPage() {
             <span className="font-bold text-gray-900">EarningHub</span>
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">FAQ</a>
-            <a href="#" className="text-gray-700 hover:text-green-600 transition-all duration-300">Contact</a>
+            <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
+            <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
+            <a href="/plans" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</a>
+            <a href="/terms" className="text-gray-700 hover:text-green-600 transition-all duration-300">Terms & Condition</a>
           </nav>
           <Button className="bg-green-600 hover:bg-green-700 text-white px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg">
             👤 Login
@@ -265,10 +264,9 @@ export default function LoginPage() {
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Home</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">About</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Plan</a></li>
-                <li><a href="/faq" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">FAQ</a></li>
+                <li><a href="/" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Home</a></li>
+                <li><a href="/about" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">About</a></li>
+                <li><a href="/plans" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Plan</a></li>
               </ul>
             </div>
 
@@ -279,8 +277,7 @@ export default function LoginPage() {
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Contact</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Privacy Policy</a></li>
+                <li><a href="/faq" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">FAQ</a></li>
                 <li><a href="/terms" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Terms & Condition</a></li>
                 <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Cookie Policy</a></li>
               </ul>
