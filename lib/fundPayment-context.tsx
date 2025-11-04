@@ -66,6 +66,8 @@ export function FundPaymentProvider({ children }: { children: React.ReactNode })
 const addFundPayment = async (payment: {
   userID: string
   amount: number
+  name: string
+  note: string
   method: "USDT-TRC20" | "Bank" | "Card" | "Other"
   imgFile?: File
   requestedDate?: string
@@ -78,6 +80,7 @@ const addFundPayment = async (payment: {
     console.log("test", payment.userID, payment.amount, payment.method)
     formData.append("userID", payment.userID);
     formData.append("amount", payment.amount.toString());
+    formData.append("note", payment.note)
     formData.append("method", payment.method);
     if (payment.requestedDate) formData.append("requestedDate", payment.requestedDate);
     if (payment.imgFile) formData.append("imgUrl", payment.imgFile);
