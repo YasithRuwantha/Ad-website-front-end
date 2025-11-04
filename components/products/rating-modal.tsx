@@ -36,16 +36,16 @@ export default function RatingModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border-primary/20">
+      <DialogContent className="max-w-md border-2 border-green-200">
         <DialogHeader>
-          <DialogTitle className="text-primary">Rate Product</DialogTitle>
-          <DialogDescription>{product.name}</DialogDescription>
+          <DialogTitle className="text-green-700 text-xl">Rate Product</DialogTitle>
+          <DialogDescription className="text-gray-600">{product.name}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Star Rating */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-3">Your Rating</label>
-            <div className="flex gap-2">
+            <label className="block text-sm font-medium text-gray-900 mb-3">Your Rating</label>
+            <div className="flex gap-2 justify-center">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -55,11 +55,18 @@ export default function RatingModal({
                   disabled={isLoading}   // Disable stars while submitting
                 >
                   <Star
-                    className={`w-8 h-8 ${star <= rating ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                    className={`w-10 h-10 ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
                   />
                 </button>
               ))}
             </div>
+            <p className="text-center mt-2 text-sm text-gray-600">
+              {rating === 1 && "Poor"}
+              {rating === 2 && "Fair"}
+              {rating === 3 && "Good"}
+              {rating === 4 && "Very Good"}
+              {rating === 5 && "Excellent"}
+            </p>
           </div>
 
           {/* Actions */}
@@ -69,14 +76,14 @@ export default function RatingModal({
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}   // Disable cancel too
-              className="flex-1 border-primary/30"
+              className="flex-1 border-2 border-gray-300 hover:bg-gray-50 text-gray-700"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             >
               {isLoading ? "Submitting..." : "Submit Rating"}
             </Button>
