@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  DollarSign,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -27,6 +28,7 @@ export default function AdminSidebar() {
     { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { label: "Manage Ads", href: "/admin/ads", icon: FileText },
     { label: "Users", href: "/admin/users", icon: Users },
+    { label: "Fund Approvals", href: "/admin/fund-approvals", icon: DollarSign },
     { label: "Support", href: "/admin/support", icon: MessageSquare },
     { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     { label: "Settings", href: "/admin/settings", icon: Settings },
