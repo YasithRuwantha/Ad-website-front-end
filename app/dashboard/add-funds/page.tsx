@@ -4,6 +4,9 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+
+import { useFundPayments } from "@/lib/fundPayment-context"
+
 import Image from "next/image"
 
 export default function AddFundsPage() {
@@ -13,12 +16,16 @@ export default function AddFundsPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
+  const [note, setNote] = useState("")
   const [proofFile, setProofFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
   const [userId, setUserId] = useState("")
   const [depositAmount, setDepositAmount] = useState("")
   const [bankName, setBankName] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [successPaymentId, setSuccessPaymentId] = useState<string>("")
+
 
   const currencies = ["USDT", "USD", "EUR", "GBP"]
 
@@ -63,33 +70,74 @@ export default function AddFundsPage() {
     setShowPaymentForm(true)
   }
 
-  const handleConfirmPayment = () => {
-    if (selectedPayment === "usdt") {
-      if (!fullName || !email || !proofFile) {
-        alert("Please fill all fields and upload proof of payment")
-        return
+  const handleConfirmPayment = async () => {
+    try {
+      setIsSubmitting(true)
+      const userString = localStorage.getItem("user")
+      let userIdFromStorage = ""
+      if (userString) {
+        const user = JSON.parse(userString)
+        userIdFromStorage = user.id
       }
-    } else {
-      // Bank deposit validation
-      if (!fullName || !userId || !depositAmount || !bankName || !email) {
-        alert("Please fill all fields")
-        return
+
+      const paymentPayload = {
+        userID: userIdFromStorage,
+        amount: selectedPayment === "usdt" ? amount : depositAmount,
+        method: selectedPayment === "usdt" ? "USDT-TRC20" : "Bank",
+        imgFile: proofFile, // optional
+        requestedDate: new Date().toISOString(),
+        note: note
       }
+
+      const newPayment = await addFundPayment(paymentPayload)
+      
+      // On success
+      setSuccessPaymentId(newPayment._id)
+      setPaymentSuccess(true)
+    } catch (err: any) {
+      alert("Failed to submit payment: " + err.message)
+    } finally {
+      setIsSubmitting(false)
     }
-    // Handle payment confirmation logic here
-    alert("Payment submitted successfully!")
-    // Reset form
-    setShowPaymentForm(false)
-    setFullName("")
-    setEmail("")
-    setProofFile(null)
-    setPreviewUrl("")
-    setUserId("")
-    setDepositAmount("")
-    setBankName("")
-    setAmount("")
-    setShowPreview(false)
   }
+
+if (paymentSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <Card className="border-2 border-green-500 shadow-xl max-w-md text-center p-8">
+          <CardContent>
+            <h2 className="text-2xl font-bold text-green-600 mb-4">Payment Successful!</h2>
+            <p className="text-gray-700 mb-4">
+              Your payment has been successfully submitted.
+            </p>
+            <p className="text-gray-900 font-semibold mb-6">Payment</p>
+            <Button
+              onClick={() => {
+                setPaymentSuccess(false)
+                setShowPaymentForm(false)
+                setAmount("")
+                setFullName("")
+                setNote("")
+                setDepositAmount("")
+                setBankName("")
+                setProofFile(null)
+                setPreviewUrl("")
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg w-full"
+            >
+              Make Another Payment
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+
+
+
+  const { addFundPayment } = useFundPayments()
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -311,16 +359,16 @@ export default function AddFundsPage() {
                         />
                       </div>
 
-                      {/* Email Address */}
+                      {/* note Address */}
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Email address <span className="text-red-600">*</span>
+                          note address <span className="text-red-600">*</span>
                         </label>
                         <Input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Enter your email"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                          placeholder="Enter your note"
                           className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
                         />
                       </div>
@@ -432,10 +480,10 @@ export default function AddFundsPage() {
                           E mail Address <span className="text-red-600">*</span>
                         </label>
                         <Input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Enter your email"
+                          type="note"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                          placeholder="Enter your note"
                           className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
                         />
                       </div>
@@ -453,9 +501,11 @@ export default function AddFundsPage() {
                     <Button
                       onClick={handleConfirmPayment}
                       className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+                      disabled={isSubmitting}
                     >
-                      Confirm Now
+                      {isSubmitting ? "Submitting..." : "Confirm Now"}
                     </Button>
+
                   </div>
                 </div>
               </CardContent>

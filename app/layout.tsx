@@ -10,6 +10,7 @@ import { RatingProvider } from "@/lib/rating-context" // ✅ Add RatingProvider
 import "./globals.css"
 import { User } from "lucide-react"
 import { ProductsProvider } from "@/lib/products-context"
+import { FundPaymentProvider } from "@/lib/fundPayment-context"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -32,9 +33,11 @@ export default function RootLayout({
           <UserProvider>
             <ProductsProvider>
               <RatingProvider>
-                <DataProvider>
-                {children}
-                </DataProvider>
+                <FundPaymentProvider>
+                  <DataProvider>
+                    {children}
+                  </DataProvider>
+                </FundPaymentProvider>
               </RatingProvider>
             </ProductsProvider>
           </UserProvider>
