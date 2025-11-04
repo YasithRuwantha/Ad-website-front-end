@@ -47,7 +47,7 @@ export function FundPaymentProvider({ children }: { children: React.ReactNode })
     if (!currentUser) return
     setLoading(true)
     try {
-      const res = await fetch(`${API_URL}/api/fundPayments`, {
+      const res = await fetch(`${API_URL}/api/fund-payments`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -148,6 +148,10 @@ const addFundPayment = async (payment: {
       setError(err.message)
     }
   }
+
+  
+
+
 
   useEffect(() => {
     if (currentUser?.role === "admin") {
