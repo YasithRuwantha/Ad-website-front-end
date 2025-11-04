@@ -19,6 +19,9 @@ import {
   X,
   User,
   Receipt,
+  HelpCircle,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -28,6 +31,8 @@ export default function UserSidebar() {
   const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [showHelpCenter, setShowHelpCenter] = useState(false)
+  const [showTermsSubmenu, setShowTermsSubmenu] = useState(false)
 
   const menuItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -43,6 +48,19 @@ export default function UserSidebar() {
     { label: "Payout History", href: "/dashboard/payout-history", icon: History },
     { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
     { label: "test", href: "/test", icon: Send },
+  ]
+
+  const helpCenterItems = [
+    { label: "About us", href: "/help/about-us" },
+    { label: "Privacy and data protection", href: "/help/privacy" },
+    { label: "Agreement", href: "/help/agreement" },
+  ]
+
+  const termsSubmenu = [
+    { label: "About pending and On-hold orders", href: "/help/terms/pending-orders" },
+    { label: "About Payout", href: "/help/terms/payout" },
+    { label: "About add funds", href: "/help/terms/add-funds" },
+    { label: "About Lucky products", href: "/help/terms/lucky-products" },
   ]
 
   const handleLogout = () => {
@@ -74,7 +92,7 @@ export default function UserSidebar() {
           <h1 className="text-2xl font-bold text-gray-900 whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Dashboard</h1>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-hide">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
@@ -94,6 +112,93 @@ export default function UserSidebar() {
               </Link>
             )
           })}
+
+          {/* Help Center Section */}
+          <div className="pt-2">
+            <Button
+              variant="ghost"
+              onClick={() => setShowHelpCenter(!showHelpCenter)}
+              className="w-full justify-start gap-3 text-gray-700 hover:bg-green-50 hover:text-green-600"
+            >
+              <HelpCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity flex-1 text-left">
+                Help Center
+              </span>
+              <ChevronDown
+                className={`w-4 h-4 flex-shrink-0 transition-transform md:opacity-0 md:group-hover/sidebar:opacity-100 ${
+                  showHelpCenter ? "rotate-180" : ""
+                }`}
+              />
+            </Button>
+
+            {/* Help Center Sub-items */}
+            {showHelpCenter && (
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-green-200 pl-2">
+                {helpCenterItems.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start text-sm ${
+                          isActive
+                            ? "bg-green-50 text-green-600 font-semibold"
+                            : "text-gray-600 hover:bg-green-50 hover:text-green-600"
+                        }`}
+                      >
+                        <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity">
+                          {item.label}
+                        </span>
+                      </Button>
+                    </Link>
+                  )
+                })}
+
+                {/* Terms and Conditions with Sub-submenu */}
+                <div>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowTermsSubmenu(!showTermsSubmenu)}
+                    className="w-full justify-start text-sm text-gray-600 hover:bg-green-50 hover:text-green-600"
+                  >
+                    <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity flex-1 text-left">
+                      Terms and conditions
+                    </span>
+                    <ChevronRight
+                      className={`w-3 h-3 flex-shrink-0 transition-transform md:opacity-0 md:group-hover/sidebar:opacity-100 ${
+                        showTermsSubmenu ? "rotate-90" : ""
+                      }`}
+                    />
+                  </Button>
+
+                  {/* Terms Sub-submenu */}
+                  {showTermsSubmenu && (
+                    <div className="ml-3 mt-1 space-y-1 border-l-2 border-green-100 pl-2">
+                      {termsSubmenu.map((item) => {
+                        const isActive = pathname === item.href
+                        return (
+                          <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                            <Button
+                              variant="ghost"
+                              className={`w-full justify-start text-xs ${
+                                isActive
+                                  ? "bg-green-50 text-green-600 font-semibold"
+                                  : "text-gray-600 hover:bg-green-50 hover:text-green-600"
+                              }`}
+                            >
+                              <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity">
+                                {item.label}
+                              </span>
+                            </Button>
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="p-4 border-t border-gray-200">
