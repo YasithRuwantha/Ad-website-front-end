@@ -203,22 +203,22 @@ export default function EarningsPage() {
       {/* Main Content */}
       <div className="flex-1 overflow-auto md:ml-0 p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Earnings & Payments</h1>
-          <p className="text-muted-foreground">Manage your balance, plans, and transactions</p>
+          <h1 className="text-3xl font-bold text-gray-900">Earnings & Payments</h1>
+          <p className="text-gray-600">Manage your balance, plans, and transactions</p>
         </div>
         <div className="flex gap-2">
           <Button
             onClick={() => setShowPlansModal(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-green-600 hover:bg-green-700 text-white"
           >
             View Plans
           </Button>
           <Button
             onClick={() => setShowPaymentModal(true)}
             variant="outline"
-            className="border-primary/30 text-primary hover:bg-primary/10"
+            className="border-2 border-green-600 text-green-600 hover:bg-green-50"
           >
             Add Funds
           </Button>
@@ -226,55 +226,61 @@ export default function EarningsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
-                <p className="text-3xl font-bold text-primary">${balance.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mb-1">Current Balance</p>
+                <p className="text-3xl font-bold text-green-700">${balance.toFixed(2)}</p>
               </div>
-              <Wallet className="w-8 h-8 text-primary/40" />
+              <div className="bg-green-600 p-3 rounded-lg">
+                <Wallet className="w-6 h-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card className="border-2 border-green-200">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Earnings</p>
+                <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
                 <p className="text-3xl font-bold text-green-600">${earnings.toFixed(2)}</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-green-600/40" />
+              <div className="bg-green-50 p-3 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-green-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card className="border-2 border-green-200">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Current Plan</p>
-                <p className="text-2xl font-bold text-primary capitalize">{plan}</p>
+                <p className="text-sm text-gray-600 mb-1">Current Plan</p>
+                <p className="text-2xl font-bold text-green-600 capitalize">{plan}</p>
               </div>
-              <CreditCard className="w-8 h-8 text-primary/40" />
+              <div className="bg-green-50 p-3 rounded-lg">
+                <CreditCard className="w-6 h-6 text-green-600" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="plans" className="space-y-4">
-        <TabsList className="bg-primary/10 border border-primary/20">
+        <TabsList className="bg-green-50 border-2 border-green-200">
           <TabsTrigger
             value="plans"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >
             Plans
           </TabsTrigger>
           <TabsTrigger
             value="transactions"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >
             Transaction History
           </TabsTrigger>
@@ -282,16 +288,16 @@ export default function EarningsPage() {
 
         <TabsContent value="transactions" className="space-y-4">
           {userTransactions.length === 0 ? (
-            <Card className="border-primary/20">
+            <Card className="border-2 border-green-200">
               <CardContent className="pt-12 pb-12 text-center">
-                <p className="text-muted-foreground">No transactions yet</p>
+                <p className="text-gray-600">No transactions yet</p>
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-primary/20">
+            <Card className="border-2 border-green-200">
               <CardHeader>
-                <CardTitle>All Transactions</CardTitle>
-                <CardDescription>Your payment and earning history</CardDescription>
+                <CardTitle className="text-gray-900">All Transactions</CardTitle>
+                <CardDescription className="text-gray-600">Your payment and earning history</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -300,23 +306,23 @@ export default function EarningsPage() {
                     .map((transaction) => (
                       <div
                         key={transaction.id}
-                        className="flex items-center justify-between p-4 bg-primary/5 rounded-lg border border-primary/10"
+                        className="flex items-center justify-between p-4 bg-green-50 rounded-lg border-2 border-green-200"
                       >
                         <div className="flex-1">
-                          <p className="font-medium text-foreground">{transaction.description}</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="font-medium text-gray-900">{transaction.description}</p>
+                          <p className="text-xs text-gray-600">
                             {new Date(transaction.createdAt).toLocaleString()}
                           </p>
                         </div>
                         <div className="text-right">
                           <p
                             className={`font-bold text-lg ${
-                              transaction.type === "payment" ? "text-destructive" : "text-green-600"
+                              transaction.type === "payment" ? "text-red-600" : "text-green-600"
                             }`}
                           >
                             {transaction.type === "payment" ? "-" : "+"}${(transaction.amount ?? 0).toFixed(2)}
                           </p>
-                          <p className="text-xs text-muted-foreground capitalize">{transaction.status ?? "pending"}</p>
+                          <p className="text-xs text-gray-600 capitalize">{transaction.status ?? "pending"}</p>
                         </div>
                       </div>
                     ))}
@@ -333,22 +339,22 @@ export default function EarningsPage() {
                 key={p.name}
                 className={`border-2 transition-all ${
                   plan === p.name.toLowerCase()
-                    ? "border-primary bg-primary/5"
-                    : "border-primary/20 hover:border-primary/40"
+                    ? "border-green-600 bg-green-50 shadow-lg"
+                    : "border-green-200 hover:border-green-500"
                 }`}
               >
                 <CardHeader>
-                  <CardTitle className="text-primary">{p.name}</CardTitle>
+                  <CardTitle className="text-green-700">{p.name}</CardTitle>
                   <CardDescription>
-                    <span className="text-2xl font-bold text-foreground">${p.price}</span>
-                    <span className="text-muted-foreground"> USDT</span>
+                    <span className="text-2xl font-bold text-gray-900">${p.price}</span>
+                    <span className="text-gray-600"> USDT</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <ul className="space-y-2">
                     {p.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2 text-sm text-foreground">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                      <li key={feature} className="flex items-center gap-2 text-sm text-gray-700">
+                        <span className="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
                         {feature}
                       </li>
                     ))}
@@ -358,8 +364,8 @@ export default function EarningsPage() {
                     disabled={plan === p.name.toLowerCase() || balance < p.price}
                     className={`w-full ${
                       plan === p.name.toLowerCase()
-                        ? "bg-secondary text-secondary-foreground"
-                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        ? "bg-gray-400 text-white cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700 text-white"
                     }`}
                   >
                     {plan === p.name.toLowerCase()
