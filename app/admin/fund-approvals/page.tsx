@@ -36,7 +36,7 @@ export default function FundApprovalsPage() {
   const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "approved" | "rejected">("all")
   const [isLoading, setIsLoading] = useState(false)
 
-  const { fetchFundPayments, fundPayments } = useFundPayments()
+  const { fetchFundPayments, fundPayments, updateFundPaymentStatus } = useFundPayments()
 
   // Fetch fund payments on mount
   useEffect(() => {
@@ -97,28 +97,46 @@ export default function FundApprovalsPage() {
   }, [searchTerm, filterStatus, requests])
 
   const handleApprove = async (requestId: string) => {
-    setIsLoading(true)
-    setTimeout(() => {
-      setRequests((prev) =>
-        prev.map((req) => (req.id === requestId ? { ...req, status: "approved" as const } : req))
-      )
-      setIsLoading(false)
-      setShowDetailModal(false)
-      alert("Fund request approved successfully!")
-    }, 1000)
-  }
+  setIsLoading(true)
+  try {
+    // Call API to approve
+    await updateFundPaymentStatus(requestId, "approved")
 
-  const handleReject = async (requestId: string) => {
-    setIsLoading(true)
-    setTimeout(() => {
-      setRequests((prev) =>
-        prev.map((req) => (req.id === requestId ? { ...req, status: "rejected" as const } : req))
-      )
-      setIsLoading(false)
-      setShowDetailModal(false)
-      alert("Fund request rejected!")
-    }, 1000)
+    // Update local state after successful API call
+    setRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: "approved" as const } : req))
+    )
+
+    setShowDetailModal(false)
+    alert("Fund request approved successfully!")
+  } catch (err) {
+    console.error(err)
+    alert("Failed to approve request")
+  } finally {
+    setIsLoading(false)
   }
+}
+
+const handleReject = async (requestId: string) => {
+  setIsLoading(true)
+  try {
+    // Call API to reject
+    await updateFundPaymentStatus(requestId, "rejected")
+
+    // Update local state after successful API call
+    setRequests((prev) =>
+      prev.map((req) => (req.id === requestId ? { ...req, status: "rejected" as const } : req))
+    )
+
+    setShowDetailModal(false)
+    alert("Fund request rejected!")
+  } catch (err) {
+    console.error(err)
+    alert("Failed to reject request")
+  } finally {
+    setIsLoading(false)
+  }
+}
 
   const getStatusBadge = (status: string) => {
     switch (status) {

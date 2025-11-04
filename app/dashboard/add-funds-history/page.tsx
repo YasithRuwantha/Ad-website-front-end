@@ -4,75 +4,56 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Receipt, Calendar, DollarSign, CreditCard, CheckCircle, Clock, XCircle } from "lucide-react"
+import { useFundPayments } from "@/lib/fundPayment-context"
+
 
 export default function AddFundsHistoryPage() {
   const [transactions, setTransactions] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { fetchUserFundPayments } = useFundPayments()
 
-  // Mock data - Replace with actual API call
+
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockTransactions = [
-        {
-          id: "TXN001",
-          amount: 500,
-          currency: "USDT",
-          paymentMethod: "USDT(TRC 20)",
-          status: "completed",
-          date: "2025-11-01T10:30:00",
-          transactionId: "0x1234...5678",
-          fullName: "John Doe",
-          email: "john@example.com",
-        },
-        {
-          id: "TXN002",
-          amount: 300,
-          currency: "USD",
-          paymentMethod: "Bank Deposit",
-          status: "pending",
-          date: "2025-11-02T14:20:00",
-          transactionId: "BANK001",
-          fullName: "John Doe",
-          email: "john@example.com",
-          bankName: "ABC Bank",
-        },
-        {
-          id: "TXN003",
-          amount: 1000,
-          currency: "USDT",
-          paymentMethod: "USDT(TRC 20)",
-          status: "completed",
-          date: "2025-10-28T09:15:00",
-          transactionId: "0xabcd...ef12",
-          fullName: "John Doe",
-          email: "john@example.com",
-        },
-        {
-          id: "TXN004",
-          amount: 200,
-          currency: "USD",
-          paymentMethod: "Bank Deposit",
-          status: "failed",
-          date: "2025-10-25T16:45:00",
-          transactionId: "BANK002",
-          fullName: "John Doe",
-          email: "john@example.com",
-          bankName: "XYZ Bank",
-        },
-      ]
-      setTransactions(mockTransactions)
-      setIsLoading(false)
-    }, 500)
-  }, [])
+  const loadUserTransactions = async () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user.id) return;
+    
+    setIsLoading(true);
+    try {
+      const userTransactions = await fetchUserFundPayments(user.id);
+      
+      const formattedTransactions = userTransactions.map((t: any) => ({
+        id: t._id,
+        amount: Number(t.amount),
+        currency: t.method === "USDT-TRC20" ? "USDT" : "USD",
+        paymentMethod: t.method === "USDT-TRC20" ? "USDT(TRC 20)" : "Bank Deposit",
+        status: t.status,
+        date: t.requestedDate || t.createdAt,
+        transactionId: t._id,
+        fullName: t.fullName || user.fullName,
+        email: t.email || user.email,
+        bankName: t.bankName || "",
+      }));
+
+      setTransactions(formattedTransactions);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  loadUserTransactions();
+}, []);
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "completed":
+      case "approved":
         return (
           <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
             <CheckCircle className="w-3 h-3 mr-1" />
-            Completed
+            Approved
           </Badge>
         )
       case "pending":
@@ -106,7 +87,7 @@ export default function AddFundsHistoryPage() {
   }
 
   const totalDeposited = transactions
-    .filter((t) => t.status === "completed")
+    .filter((t) => t.status === "approved")
     .reduce((sum, t) => sum + t.amount, 0)
 
   const pendingAmount = transactions

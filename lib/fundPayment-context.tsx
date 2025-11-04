@@ -62,6 +62,26 @@ export function FundPaymentProvider({ children }: { children: React.ReactNode })
     }
   }
 
+    // fundPayment-context.tsx
+    const fetchUserFundPayments = async (userID: string) => {
+    setLoading(true);
+    try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_URL}/api/fund-payments/user/${userID}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch user's fund payments");
+        return data as FundPayment[];
+    } catch (err: any) {
+        setError(err.message);
+        return [];
+    } finally {
+        setLoading(false);
+    }
+    };
+
+
   // 🟡 Add new payment (Customer)
 const addFundPayment = async (payment: {
   userID: string
@@ -112,7 +132,7 @@ const addFundPayment = async (payment: {
   const updateFundPaymentStatus = async (id: string, status: "approved" | "rejected") => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`${API_URL}/api/fundPayments/${id}`, {
+      const res = await fetch(`${API_URL}/api/fund-payments/update/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -135,7 +155,7 @@ const addFundPayment = async (payment: {
   const deleteFundPayment = async (id: string) => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`${API_URL}/api/fundPayments/${id}`, {
+      const res = await fetch(`${API_URL}/api/fund-payments/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -148,10 +168,6 @@ const addFundPayment = async (payment: {
       setError(err.message)
     }
   }
-
-  
-
-
 
   useEffect(() => {
     if (currentUser?.role === "admin") {
@@ -169,6 +185,7 @@ const addFundPayment = async (payment: {
         addFundPayment,
         updateFundPaymentStatus,
         deleteFundPayment,
+        fetchUserFundPayments
       }}
     >
       {children}
