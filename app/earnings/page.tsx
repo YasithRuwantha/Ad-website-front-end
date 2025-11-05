@@ -11,6 +11,7 @@ import PaymentModal from "@/components/earnings/payment-modal"
 import { TrendingUp, Wallet, CreditCard, User, ChevronDown, LogOut, Settings } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
 import { useRouter } from "next/navigation"
+import { useFundPayments } from "@/lib/fundPayment-context" 
 
 
 export default function EarningsPage() {
@@ -21,33 +22,53 @@ export default function EarningsPage() {
   const [userName, setUserName] = useState("User")
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [cuurentBalance, setCurrentBalance] = useState("")
 
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
 
-  useEffect(() => {
+  const { getCurrentBalance } = useFundPayments()
+
+useEffect(() => {
+  const fetchUserData = async () => {
     try {
-      const storedUser = localStorage.getItem("user")
+      const storedUser = localStorage.getItem("user");
       if (!storedUser) {
-        router.push("/")
-        return
+        router.push("/");
+        return;
       }
 
-      const user = JSON.parse(storedUser)
+      const user = JSON.parse(storedUser);
 
       if (user.role !== "user") {
-        router.push("/")
-        return
+        router.push("/");
+        return;
       }
 
-      setUserName(user.name || "User")
-      setUserEmail(user.email || "")
-      setIsChecking(false) // ✅ passed all checks
+      setUserName(user.fullName || "User");
+      setUserEmail(user.email || "");
+
+      // Fetch current balance from backend on refresh
+      if (user.id) {
+        const latestBalance = await getCurrentBalance(user.id);
+        // console.log(latestBalance)
+        setCurrentBalance(latestBalance);
+
+        if (latestBalance !== null) {
+          updateUser({ balance: latestBalance }); // updates context & local storage
+        }
+      }
+
+      setIsChecking(false);
     } catch (err) {
-      console.error("Error reading user data:", err)
-      router.push("/")
+      console.error("Error reading user data:", err);
+      router.push("/");
     }
-  }, [router])
+  };
+
+  fetchUserData();
+}, [router]);
+
 
 
   // Safe dummy fallbacks
@@ -78,24 +99,26 @@ export default function EarningsPage() {
     }
   }
 
-  const handleAddFunds = (amount: number, walletAddress: string, proofImage: string) => {
-    if (user) {
-      const newBalance = balance + amount
-      updateUser({ balance: newBalance })
+  // const handleAddFunds = (amount: number, walletAddress: string, proofImage: string) => {
+  //   if (user) {
+  //     const newBalance = balance + amount
+  //     updateUser({ balance: newBalance })
 
-      addTransaction({
-        id: Math.random().toString(36).substr(2, 9),
-        userId: user.id,
-        type: "payment",
-        amount: -amount,
-        description: `Added ${amount} USDT from wallet ${walletAddress.slice(0, 10)}...`,
-        status: "completed",
-        createdAt: new Date().toISOString(),
-      })
+  //     addTransaction({
+  //       id: Math.random().toString(36).substr(2, 9),
+  //       userId: user.id,
+  //       type: "payment",
+  //       amount: -amount,
+  //       description: `Added ${amount} USDT from wallet ${walletAddress.slice(0, 10)}...`,
+  //       status: "completed",
+  //       createdAt: new Date().toISOString(),
+  //     })
 
-      setShowPaymentModal(false)
-    }
-  }
+  //     setShowPaymentModal(false)
+  //   }
+  // }
+
+
 
   const plans = [
     {
@@ -232,7 +255,7 @@ export default function EarningsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Current Balance</p>
-                <p className="text-3xl font-bold text-green-700">${balance.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-green-700">${cuurentBalance}</p>
               </div>
               <div className="bg-green-600 p-3 rounded-lg">
                 <Wallet className="w-6 h-6 text-white" />
@@ -382,7 +405,7 @@ export default function EarningsPage() {
       </Tabs>
 
       <PlansModal open={showPlansModal} onOpenChange={setShowPlansModal} />
-      <PaymentModal open={showPaymentModal} onOpenChange={setShowPaymentModal} onSubmit={handleAddFunds} />
+      {/* <PaymentModal open={showPaymentModal} onOpenChange={setShowPaymentModal} onSubmit={handleAddFunds} /> */}
       </div>
       </div>
     </div>

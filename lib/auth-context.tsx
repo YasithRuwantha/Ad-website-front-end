@@ -19,6 +19,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string, name: string, referralCode?: string) => Promise<void>
   logout: () => void
+  updateUser: (updates: Partial<User>) => void
+
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -69,6 +71,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 };
 
+const updateUser = (updates: Partial<User>) => {
+  if (!user) return
+  const updatedUser = { ...user, ...updates }
+  setUser(updatedUser)
+  localStorage.setItem("user", JSON.stringify(updatedUser))
+}
+
 
   // 🟢 Signup
   // 🟢 Signup in auth-context.tsx
@@ -106,7 +115,7 @@ const signup = async (email: string, password: string, name: string, phone: stri
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   )
@@ -138,3 +147,4 @@ function extractEmailFromRef(urlString: string) {
     return null; 
   }
 }
+
