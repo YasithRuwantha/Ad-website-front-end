@@ -70,18 +70,16 @@ export default function LoginPage() {
       <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E</span>
-            </div>
-            <span className="font-bold text-gray-900">EarningHub</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
           <nav className="hidden md:flex items-center gap-8">
             <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
             <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
             <a href="/plans" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</a>
           </nav>
-          <Button className="bg-green-600 hover:bg-green-700 text-white px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg">
-            👤 Login
+          <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg font-semibold flex items-center gap-2">
+            <span className="text-lg">👤</span>
+            <span>Login</span>
           </Button>
         </div>
       </header>
@@ -232,10 +230,7 @@ export default function LoginPage() {
             {/* Brand Section */}
             <div className={`col-span-1 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">E</span>
-                </div>
-                <span className="font-bold text-white text-lg">EarningHub</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
               </div>
               <p className="text-gray-400 text-sm mb-6">
                 We are a award winning multinational company. We believe quality and standard worldwide consider.
@@ -293,7 +288,7 @@ export default function LoginPage() {
         <div className={`border-t border-gray-800 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              Copyright © 2025 <span className="text-green-600 font-semibold">EarningHub</span> All Rights Reserved
+              Copyright © 2025 <span className="text-green-600 font-semibold">Shopify</span> All Rights Reserved
             </p>
             <div className="text-green-600 text-sm font-medium mt-2 md:mt-0">
               English
