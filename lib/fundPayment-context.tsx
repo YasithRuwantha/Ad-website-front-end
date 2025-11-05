@@ -42,6 +42,7 @@ export function FundPaymentProvider({ children }: { children: React.ReactNode })
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
+
   // 🟢 Fetch all fund payments (Admin view)
   const fetchFundPayments = async () => {
     if (!currentUser) return
@@ -169,6 +170,40 @@ const addFundPayment = async (payment: {
     }
   }
 
+    const getCurrentBalance = async (id: string) => {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("User not authenticated");
+
+        const res = await fetch(`${API_URL}/api/user/get-current-balance/${id}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`, // fixed typo: 'Authorizatio' → 'Authorization'
+            "Content-Type": "application/json",
+        },
+        });
+
+        if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Failed to fetch balance");
+        }
+
+        const data = await res.json();
+        const balance = data.balance;
+
+        // Update local storage
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        user.balance = balance;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        return balance; // also return for immediate use
+    } catch (err: any) {
+        console.error(err);
+        return null;
+    }
+};
+
+
   useEffect(() => {
     if (currentUser?.role === "admin") {
       fetchFundPayments()
@@ -185,7 +220,8 @@ const addFundPayment = async (payment: {
         addFundPayment,
         updateFundPaymentStatus,
         deleteFundPayment,
-        fetchUserFundPayments
+        fetchUserFundPayments,
+        getCurrentBalance
       }}
     >
       {children}
