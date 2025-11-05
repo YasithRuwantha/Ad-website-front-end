@@ -68,10 +68,7 @@ export default function PayoutPage() {
         {/* Top Header with Profile */}
         <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">E</span>
-            </div>
-            <span className="font-bold text-gray-900 hidden md:block">EarningHub</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
 
           {/* Profile Section */}

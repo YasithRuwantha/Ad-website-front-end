@@ -91,10 +91,7 @@ export default function ReferralsPage() {
         {/* Top Header with Profile */}
         <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">E</span>
-            </div>
-            <span className="font-bold text-gray-900 hidden md:block">EarningHub</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
 
           {/* Profile Section */}
@@ -150,7 +147,7 @@ export default function ReferralsPage() {
       <div className="space-y-3 flex-1 overflow-auto md:ml-0 p-4 md:p-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Referral Program</h1>
-        <p className="text-gray-600">Earn money by inviting friends to join EarningHub</p>
+        <p className="text-gray-600">Earn money by inviting friends to join Shopify</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
