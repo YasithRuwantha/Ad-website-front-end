@@ -27,6 +27,9 @@ interface FundPaymentContextType {
     method: "USDT-TRC20" | "Bank" | "Card" | "Other"
     imgFile?: File
     requestedDate?: string
+    branchName: string
+    note: string
+    name: string
   }) => Promise<FundPayment>
   updateFundPaymentStatus: (id: string, status: "approved" | "rejected") => Promise<void>
   deleteFundPayment: (id: string) => Promise<void>
@@ -92,6 +95,7 @@ const addFundPayment = async (payment: {
   method: "USDT-TRC20" | "Bank" | "Card" | "Other"
   imgFile?: File
   requestedDate?: string
+  branchName: string
 }) => {
   setLoading(true);
   try {
@@ -103,6 +107,7 @@ const addFundPayment = async (payment: {
     formData.append("amount", payment.amount.toString());
     formData.append("note", payment.note)
     formData.append("method", payment.method);
+    formData.append("branchName", payment.branchName)
     if (payment.requestedDate) formData.append("requestedDate", payment.requestedDate);
     if (payment.imgFile) formData.append("imgUrl", payment.imgFile);
 
