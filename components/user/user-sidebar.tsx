@@ -22,12 +22,13 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronRight,
+  Settings,
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
 export default function UserSidebar() {
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
@@ -91,6 +92,19 @@ export default function UserSidebar() {
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
         w-64 md:w-18 md:hover:w-64`}
       >
+        {/* Mobile Header with Logo and Profile */}
+        <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
+          <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center cursor-pointer"
+            onClick={() => {
+              router.push('/dashboard/profile')
+              setIsOpen(false)
+            }}
+          >
+            <User className="w-5 h-5 text-white" />
+          </div>
+        </div>
+
         <div className="p-6 border-b border-gray-200 hidden md:block">
           <h1 className="text-2xl font-bold text-gray-900 whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Dashboard</h1>
         </div>
