@@ -57,12 +57,12 @@ export default function ProductsPage() {
     // 💰 Random earning per ad rating
   const getIncomePerRating = (planName: string) => {
     const plans: any = {
-      Starter: [15, 20],
-      Basic: [45, 60],
-      Beginner: [75, 100],
-      Advanced: [150, 200],
-      Professional: [225, 300],
-      Premium: [300, 400],
+      Starter: [15, 15],
+      Basic: [45, 45],
+      Beginner: [75, 75],
+      Advanced: [150, 150],
+      Professional: [225, 225],
+      Premium: [300, 300],
     }
 
     const range = plans[planName]
@@ -125,12 +125,12 @@ export default function ProductsPage() {
   }, [user?.plan])
 
   // ⭐ Handle Rating Submission
-  const handleSubmitRating = async (rating: number, comment: string) => {
+  const handleSubmitRating = async (rating: number, comment: string, earning: string) => {
     if (!selectedProduct) return
     setIsLoading(true)
 
     try {
-      const result = await submitRating(selectedProduct._id, rating, comment)
+      const result = await submitRating(selectedProduct._id, rating, comment, earning)
       if (result.success) {
         if (result.remaining !== undefined) {
           setRemaining(result.remaining)
@@ -410,7 +410,7 @@ export default function ProductsPage() {
             open={showRatingModal}
             onOpenChange={setShowRatingModal}
             product={selectedProduct}
-            onSubmit={handleSubmitRating}
+            onSubmit={(rating, comment) => handleSubmitRating(rating, comment, incomePerRating)} // pass income here
             isLoading={isLoading}  // Pass it here
           />
         )}
