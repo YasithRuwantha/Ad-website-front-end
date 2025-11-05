@@ -93,10 +93,7 @@ export default function AdminLayout({
         {/* Top Header with Profile */}
         <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">E</span>
-            </div>
-            <span className="font-bold text-gray-900 hidden md:block">EarningHub Admin</span>
+            <span className="font-bold text-gray-900">Admin Panel</span>
           </div>
           
           {/* Profile Section */}

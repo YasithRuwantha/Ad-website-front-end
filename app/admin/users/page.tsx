@@ -128,17 +128,17 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">User Management</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Management</h1>
+        <p className="text-sm sm:text-base text-gray-600">
           Manage and monitor all platform users
         </p>
       </div>
 
       {/* Referral Link - only for Admins */}
       {user?.role === "admin" && (
-        <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5">
+        <Card className="border-2 border-green-300 bg-gradient-to-r from-green-100 to-green-50">
           <CardHeader>
-            <CardTitle className="text-primary text-lg sm:text-xl">Share Your Referral Link</CardTitle>
+            <CardTitle className="text-green-700 text-lg sm:text-xl">Share Your Referral Link</CardTitle>
             <CardDescription className="text-sm sm:text-base">
               Share this link with friends to earn $10 for each successful signup
             </CardDescription>
@@ -149,11 +149,11 @@ export default function AdminUsersPage() {
                 type="text"
                 value={referralLink}
                 readOnly
-                className="flex-1 px-4 py-2 bg-background border border-primary/30 rounded-lg text-foreground text-sm font-mono"
+                className="flex-1 px-4 py-2 bg-white border border-green-300 rounded-lg text-gray-900 text-sm font-mono"
               />
               <Button
                 onClick={handleCopyLink}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 w-full sm:w-auto"
+                className="bg-green-600 hover:bg-green-700 text-white gap-2 w-full sm:w-auto"
               >
                 {copied ? (
                   <>
@@ -184,7 +184,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* User List */}
-      <Card className="border-primary/20">
+      <Card className="border-2 border-green-200">
         <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div>
             <CardTitle className="text-lg sm:text-xl">Accounts</CardTitle>
@@ -197,7 +197,7 @@ export default function AdminUsersPage() {
             placeholder="Search users..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="px-3 py-2 border rounded-lg text-sm w-full sm:w-64"
+            className="px-3 py-2 border border-green-300 rounded-lg text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </CardHeader>
         <CardContent>
