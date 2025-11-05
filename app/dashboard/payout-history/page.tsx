@@ -61,8 +61,8 @@ export default function PayoutHistoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Payout History</h1>
-        <p className="text-muted-foreground">Track all your payouts and transactions</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Payout History</h1>
+        <p className="text-gray-600">Track all your payouts and transactions</p>
       </div>
 
       {/* Stats */}
@@ -70,12 +70,12 @@ export default function PayoutHistoryPage() {
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
-            <Card key={stat.label} className="border-primary/20">
+            <Card key={stat.label} className="border-green-200">
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-3xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                    <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                   </div>
                   <div className={`${stat.bgColor} p-3 rounded-lg`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
@@ -88,7 +88,7 @@ export default function PayoutHistoryPage() {
       </div>
 
       {/* Payout History Table */}
-      <Card className="border-primary/20">
+      <Card className="border-green-200">
         <CardHeader>
           <CardTitle>Payout Transactions</CardTitle>
           <CardDescription>Complete history of all your payouts</CardDescription>
@@ -98,30 +98,30 @@ export default function PayoutHistoryPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Date</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Reference</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Amount</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Method</th>
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Date</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Reference</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Amount</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Method</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {MOCK_PAYOUT_HISTORY.map((payout) => (
-                  <tr key={payout.id} className="border-b hover:bg-primary/5 transition-colors">
+                  <tr key={payout.id} className="border-b hover:bg-green-50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-foreground">{new Date(payout.date).toLocaleDateString()}</span>
+                        <Calendar className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-900">{new Date(payout.date).toLocaleDateString()}</span>
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-mono text-sm text-muted-foreground">{payout.reference}</span>
+                      <span className="font-mono text-sm text-gray-600">{payout.reference}</span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-bold text-foreground">${(payout.amount ?? 0).toFixed(2)}</span>
+                      <span className="font-bold text-gray-900">${(payout.amount ?? 0).toFixed(2)}</span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="text-foreground">{getMethodLabel(payout.method)}</span>
+                      <span className="text-gray-900">{getMethodLabel(payout.method)}</span>
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
@@ -138,13 +138,13 @@ export default function PayoutHistoryPage() {
       </Card>
 
       {/* Download Statement */}
-      <Card className="border-primary/20">
+      <Card className="border-green-200">
         <CardHeader>
           <CardTitle>Export Statement</CardTitle>
           <CardDescription>Download your payout history as a CSV file</CardDescription>
         </CardHeader>
         <CardContent>
-          <button className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+          <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
             Download CSV
           </button>
         </CardContent>

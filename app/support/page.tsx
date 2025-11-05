@@ -103,10 +103,7 @@ export default function SupportPage() {
         {/* Top Header with Profile */}
         <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">E</span>
-            </div>
-            <span className="font-bold text-gray-900 hidden md:block">EarningHub</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
 
           {/* Profile Section */}
@@ -161,52 +158,53 @@ export default function SupportPage() {
       {/* Main Content */}
       <div className="flex-1 overflow-auto md:ml-0 p-4 md:p-6">
 
-      <div className="flex items-center justify-between ">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Customer Support</h1>
-          <p className="text-muted-foreground">Get help and track your support tickets</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Customer Support 💬</h1>
+          <p className="text-sm md:text-base text-gray-600">Get help and track your support tickets</p>
         </div>
         <Button
           onClick={() => setShowCreateModal(true)}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+          className="bg-green-600 hover:bg-green-700 text-white gap-2 shadow-md"
         >
           <Plus className="w-4 h-4" />
-          Create Ticket
+          <span className="hidden md:inline">Create Ticket</span>
+          <span className="md:hidden">New</span>
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Total Tickets</p>
-            <p className="text-3xl font-bold text-foreground">{userTickets.length}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
+        <Card className="border-green-200 hover:shadow-md transition-shadow">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-xs md:text-sm text-gray-600 mb-1">Total Tickets</p>
+            <p className="text-2xl md:text-3xl font-bold text-gray-900">{userTickets.length}</p>
           </CardContent>
         </Card>
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Open Tickets</p>
-            <p className="text-3xl font-bold text-primary">{openTickets.length}</p>
+        <Card className="border-green-200 hover:shadow-md transition-shadow">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-xs md:text-sm text-gray-600 mb-1">Open Tickets</p>
+            <p className="text-2xl md:text-3xl font-bold text-green-600">{openTickets.length}</p>
           </CardContent>
         </Card>
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Resolved</p>
-            <p className="text-3xl font-bold text-green-600">{resolvedTickets.length}</p>
+        <Card className="border-green-200 hover:shadow-md transition-shadow">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-xs md:text-sm text-gray-600 mb-1">Resolved</p>
+            <p className="text-2xl md:text-3xl font-bold text-green-600">{resolvedTickets.length}</p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="open" className="space-y-4">
-        <TabsList className="bg-primary/10 border border-primary/20">
+        <TabsList className="bg-green-50 border border-green-200">
           <TabsTrigger
             value="open"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >
             Open Tickets ({openTickets.length})
           </TabsTrigger>
           <TabsTrigger
             value="resolved"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >
             Resolved ({resolvedTickets.length})
           </TabsTrigger>
@@ -214,30 +212,30 @@ export default function SupportPage() {
 
         <TabsContent value="open" className="space-y-4">
           {openTickets.length === 0 ? (
-            <Card className="border-primary/20">
-              <CardContent className="pt-12 pb-12 text-center">
-                <MessageSquare className="w-12 h-12 text-primary/30 mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No open tickets</p>
+            <Card className="border-green-200">
+              <CardContent className="pt-8 pb-8 md:pt-12 md:pb-12 text-center">
+                <MessageSquare className="w-10 h-10 md:w-12 md:h-12 text-green-600/30 mx-auto mb-3 md:mb-4" />
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">No open tickets</p>
                 <Button
                   onClick={() => setShowCreateModal(true)}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   Create Your First Ticket
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {openTickets.map((ticket) => (
-                <Card key={ticket.id} className="border-primary/20">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-foreground">{ticket.subject}</CardTitle>
-                        <CardDescription>Created {new Date(ticket.createdAt).toLocaleDateString()}</CardDescription>
+                <Card key={ticket.id} className="border-green-200 hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3 md:pb-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base md:text-lg text-gray-900 mb-1">{ticket.subject}</CardTitle>
+                        <CardDescription className="text-xs md:text-sm">Created {new Date(ticket.createdAt).toLocaleDateString()}</CardDescription>
                       </div>
                       <span
-                        className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                        className={`text-xs font-semibold px-2 md:px-3 py-1 rounded-full whitespace-nowrap ${
                           ticket.status === "open" ? "bg-blue-100 text-blue-700" : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
@@ -245,24 +243,24 @@ export default function SupportPage() {
                       </span>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3 max-h-64 overflow-y-auto">
-                      <div className="p-3 bg-primary/10 rounded-lg">
-                        <p className="text-sm font-semibold text-foreground mb-1">You</p>
-                        <p className="text-sm text-foreground">{ticket.message}</p>
+                  <CardContent className="space-y-3 md:space-y-4 pt-0">
+                    <div className="space-y-2 md:space-y-3 max-h-48 md:max-h-64 overflow-y-auto">
+                      <div className="p-2 md:p-3 bg-green-50 rounded-lg">
+                        <p className="text-xs md:text-sm font-semibold text-gray-900 mb-1">You</p>
+                        <p className="text-xs md:text-sm text-gray-900">{ticket.message}</p>
                       </div>
 
                       {ticket.replies.map((reply) => (
                         <div
                           key={reply.id}
-                          className={`p-3 rounded-lg ${
-                            reply.isAdmin ? "bg-secondary/10 border border-secondary/30" : "bg-muted"
+                          className={`p-2 md:p-3 rounded-lg ${
+                            reply.isAdmin ? "bg-blue-50 border border-blue-200" : "bg-muted"
                           }`}
                         >
-                          <p className="text-sm font-semibold text-foreground mb-1">
+                          <p className="text-xs md:text-sm font-semibold text-gray-900 mb-1">
                             {reply.isAdmin ? "Support Team" : "You"}
                           </p>
-                          <p className="text-sm text-foreground">{reply.message}</p>
+                          <p className="text-xs md:text-sm text-gray-900">{reply.message}</p>
                         </div>
                       ))}
                     </div>
@@ -274,12 +272,12 @@ export default function SupportPage() {
                           placeholder="Type your reply..."
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
-                          className="flex-1 px-3 py-2 border border-primary/30 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="flex-1 px-2 md:px-3 py-1.5 md:py-2 text-sm border border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600"
                         />
                         <Button
                           onClick={() => handleReply(ticket.id)}
                           disabled={!replyText.trim()}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                          className="bg-green-600 hover:bg-green-700 text-white px-3 md:px-4"
                         >
                           Send
                         </Button>
@@ -288,7 +286,7 @@ export default function SupportPage() {
                       <Button
                         onClick={() => setSelectedTicket(ticket.id)}
                         variant="outline"
-                        className="w-full border-primary/30 text-primary hover:bg-primary/10"
+                        className="w-full border-green-300 text-green-600 hover:bg-green-50 text-sm"
                       >
                         Reply
                       </Button>
@@ -302,28 +300,28 @@ export default function SupportPage() {
 
         <TabsContent value="resolved" className="space-y-4">
           {resolvedTickets.length === 0 ? (
-            <Card className="border-primary/20">
-              <CardContent className="pt-12 pb-12 text-center">
-                <p className="text-muted-foreground">No resolved tickets</p>
+            <Card className="border-green-200">
+              <CardContent className="pt-8 pb-8 md:pt-12 md:pb-12 text-center">
+                <p className="text-sm md:text-base text-gray-600">No resolved tickets</p>
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {resolvedTickets.map((ticket) => (
-                <Card key={ticket.id} className="border-primary/20 opacity-75">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-foreground">{ticket.subject}</CardTitle>
-                        <CardDescription>Resolved {new Date(ticket.createdAt).toLocaleDateString()}</CardDescription>
+                <Card key={ticket.id} className="border-green-200 opacity-75 hover:opacity-100 hover:shadow-md transition-all">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base md:text-lg text-gray-900 mb-1">{ticket.subject}</CardTitle>
+                        <CardDescription className="text-xs md:text-sm">Resolved {new Date(ticket.createdAt).toLocaleDateString()}</CardDescription>
                       </div>
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
+                      <span className="text-xs font-semibold px-2 md:px-3 py-1 rounded-full bg-green-100 text-green-700 whitespace-nowrap">
                         Resolved
                       </span>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-foreground line-clamp-2">{ticket.message}</p>
+                  <CardContent className="pt-0">
+                    <p className="text-xs md:text-sm text-gray-900 line-clamp-2">{ticket.message}</p>
                   </CardContent>
                 </Card>
               ))}
