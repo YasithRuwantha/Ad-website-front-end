@@ -172,13 +172,25 @@ export default function AdminUsersPage() {
 
       {/* Role Filter Buttons */}
       <div className="flex gap-2">
-        <Button variant={roleFilter === "all" ? "default" : "outline"} onClick={() => setRoleFilter("all")}>
+        <Button 
+          variant={roleFilter === "all" ? "default" : "outline"} 
+          onClick={() => setRoleFilter("all")}
+          className={roleFilter === "all" ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-300 text-gray-700 hover:bg-green-50"}
+        >
           All
         </Button>
-        <Button variant={roleFilter === "user" ? "default" : "outline"} onClick={() => setRoleFilter("user")}>
+        <Button 
+          variant={roleFilter === "user" ? "default" : "outline"} 
+          onClick={() => setRoleFilter("user")}
+          className={roleFilter === "user" ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-300 text-gray-700 hover:bg-green-50"}
+        >
           Users
         </Button>
-        <Button variant={roleFilter === "admin" ? "default" : "outline"} onClick={() => setRoleFilter("admin")}>
+        <Button 
+          variant={roleFilter === "admin" ? "default" : "outline"} 
+          onClick={() => setRoleFilter("admin")}
+          className={roleFilter === "admin" ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-300 text-gray-700 hover:bg-green-50"}
+        >
           Admins
         </Button>
       </div>
