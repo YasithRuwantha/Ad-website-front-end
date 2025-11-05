@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -22,12 +22,13 @@ export default function AddFundsPage() {
   const [userId, setUserId] = useState("")
   const [depositAmount, setDepositAmount] = useState("")
   const [bankName, setBankName] = useState("")
+  const [bankBranch, setBankBranch] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [successPaymentId, setSuccessPaymentId] = useState<string>("")
 
 
-  const currencies = ["USDT", "USD", "EUR", "GBP"]
+  const currencies = ["USDT", "LKR"]
 
   const paymentMethods = [
     {
@@ -38,7 +39,7 @@ export default function AddFundsPage() {
     },
     {
       id: "bank",
-      title: "Bank Deposit USD",
+      title: "Bank Deposit",
       description: "Bank Transfer - Secure &amp; Easy",
       icon: "🏦",
     },
@@ -70,36 +71,41 @@ export default function AddFundsPage() {
     setShowPaymentForm(true)
   }
 
+       const { addFundPayment } = useFundPayments()
+
   const handleConfirmPayment = async () => {
-    try {
-      setIsSubmitting(true)
-      const userString = localStorage.getItem("user")
-      let userIdFromStorage = ""
-      if (userString) {
-        const user = JSON.parse(userString)
-        userIdFromStorage = user.id
-      }
-
-      const paymentPayload = {
-        userID: userIdFromStorage,
-        amount: selectedPayment === "usdt" ? amount : depositAmount,
-        method: selectedPayment === "usdt" ? "USDT-TRC20" : "Bank",
-        imgFile: proofFile, // optional
-        requestedDate: new Date().toISOString(),
-        note: note
-      }
-
-      const newPayment = await addFundPayment(paymentPayload)
-      
-      // On success
-      setSuccessPaymentId(newPayment._id)
-      setPaymentSuccess(true)
-    } catch (err: any) {
-      alert("Failed to submit payment: " + err.message)
-    } finally {
-      setIsSubmitting(false)
+  try {
+    setIsSubmitting(true)
+    const userString = localStorage.getItem("user")
+    let userIdFromStorage = ""
+    if (userString) {
+      const user = JSON.parse(userString)
+      userIdFromStorage = user.id
     }
+
+    const paymentPayload = {
+      userID: userIdFromStorage,
+      amount: amount,
+      method: selectedPayment === "usdt" ? "USDT-TRC20" : "Bank",
+      imgFile: proofFile,
+      requestedDate: new Date().toISOString(),
+      note,
+      bankBranch,
+      fullName,
+    }
+
+    console.log("Submitting Payment:", paymentPayload)
+    
+
+    const newPayment = await addFundPayment(paymentPayload)
+    setSuccessPaymentId(newPayment._id)
+    setPaymentSuccess(true)
+  } catch (err: any) {
+    alert("Failed to submit payment: " + err.message)
+  } finally {
+    setIsSubmitting(false)
   }
+}
 
 if (paymentSuccess) {
     return (
@@ -136,7 +142,6 @@ if (paymentSuccess) {
 
 
 
-  const { addFundPayment } = useFundPayments()
 
 
   return (
@@ -418,76 +423,128 @@ if (paymentSuccess) {
                   ) : (
                     // Bank Deposit USD Form
                     <>
-                      {/* Full Name */}
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Full Name <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                          type="text"
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="Enter your full name"
-                          className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
-                        />
-                      </div>
+  {/* Full Name */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Full Name <span className="text-red-600">*</span>
+    </label>
+    <Input
+      type="text"
+      value={fullName}
+      onChange={(e) => setFullName(e.target.value)}
+      placeholder="Enter your full name"
+      className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
+    />
+  </div>
 
-                      {/* User ID */}
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          User ID <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                          type="text"
-                          value={userId}
-                          onChange={(e) => setUserId(e.target.value)}
-                          placeholder="Enter your user ID"
-                          className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
-                        />
-                      </div>
+  {/* Note */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Note <span className="text-red-600">*</span>
+    </label>
+    <Input
+      type="text"
+      value={note}
+      onChange={(e) => setNote(e.target.value)}
+      placeholder="Enter your note"
+      className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
+    />
+  </div>
 
-                      {/* Amount */}
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Amount <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                          type="text"
-                          value={depositAmount || amount}
-                          onChange={(e) => setDepositAmount(e.target.value)}
-                          placeholder="Enter amount"
-                          className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
-                        />
-                      </div>
+  {/* Amount */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Amount <span className="text-red-600">*</span>
+    </label>
+    <Input
+      type="text"
+      value={depositAmount || amount}
+      onChange={(e) => setDepositAmount(e.target.value)}
+      placeholder="Enter amount"
+      className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
+    />
+  </div>
 
-                      {/* Your Bank Name */}
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Your Bank Name <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                          type="text"
-                          value={bankName}
-                          onChange={(e) => setBankName(e.target.value)}
-                          placeholder="Enter your bank name"
-                          className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
-                        />
-                      </div>
+  {/* Your Bank Name */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Your Bank Name <span className="text-red-600">*</span>
+    </label>
+    <Input
+      type="text"
+      value={bankName}
+      onChange={(e) => setBankName(e.target.value)}
+      placeholder="Enter your bank name"
+      className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
+    />
+  </div>
 
-                      {/* E mail Address */}
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          E mail Address <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                          type="note"
-                          value={note}
-                          onChange={(e) => setNote(e.target.value)}
-                          placeholder="Enter your note"
-                          className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
-                        />
-                      </div>
-                    </>
+  {/* Your Bank Branch */}
+  {/* <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Your Bank Branch <span className="text-red-600">*</span>
+    </label>
+    <Input
+      type="text"
+      value={bankBranch}
+      onChange={(e) => setBankBranch(e.target.value)}
+      placeholder="Enter your bank branch"
+      className="w-full px-4 py-3 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200"
+    />
+  </div> */}
+
+  {/* 🔹 Upload Proof of Payment */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Upload proof of payment (PDF/IMAGE) <span className="text-red-600">*</span>
+    </label>
+    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-500 transition-colors">
+      <input
+        type="file"
+        accept="image/*,.pdf"
+        onChange={handleFileChange}
+        className="hidden"
+        id="proof-upload-bank"
+      />
+      <label
+        htmlFor="proof-upload-bank"
+        className="cursor-pointer flex flex-col items-center justify-center"
+      >
+        {previewUrl ? (
+          <div className="w-full">
+            <img
+              src={previewUrl}
+              alt="Proof preview"
+              className="max-h-64 mx-auto rounded-lg"
+            />
+            <p className="mt-2 text-sm text-green-600 font-medium">
+              {proofFile?.name}
+            </p>
+          </div>
+        ) : (
+          <div className="py-12">
+            <div className="w-32 h-32 mx-auto mb-4 bg-gray-200 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-16 h-16 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <p className="text-gray-600">Click to upload image or PDF</p>
+          </div>
+        )}
+      </label>
+    </div>
+  </div>
+</>
                   )}
 
                   {/* Action Buttons */}

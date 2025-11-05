@@ -46,7 +46,7 @@ export default function AdminDashboardPage() {
   ]
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Welcome */}
       <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg p-6">
         <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user?.fullName}!</h1>
