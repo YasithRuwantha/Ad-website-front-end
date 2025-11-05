@@ -19,22 +19,22 @@ export default function AdminDashboardPage() {
       label: "Total Users",
       value: totalUsers,
       icon: Users,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
       label: "Pending Ads",
       value: pendingAds.length,
       icon: FileText,
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-50",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
       label: "Support Tickets",
       value: tickets.filter((t) => t.status === "open").length,
       icon: MessageSquare,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
       label: "Total Revenue",
@@ -48,9 +48,9 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Welcome */}
-      <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user?.fullName}!</h1>
-        <p className="text-muted-foreground">Here's an overview of your platform</p>
+      <div className="bg-gradient-to-r from-green-100 to-green-50 border-2 border-green-500 rounded-lg p-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.fullName}!</h1>
+        <p className="text-gray-700">Here's an overview of your platform</p>
       </div>
 
       {/* Stats Grid */}
@@ -58,12 +58,12 @@ export default function AdminDashboardPage() {
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
-            <Card key={stat.label} className="border-primary/20 hover:shadow-lg transition-shadow">
+            <Card key={stat.label} className="border-2 border-green-200 hover:shadow-lg transition-shadow hover:border-green-500">
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-3xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                    <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                   </div>
                   <div className={`${stat.bgColor} p-3 rounded-lg`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
@@ -78,20 +78,20 @@ export default function AdminDashboardPage() {
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pending Ads */}
-        <Card className="border-primary/20">
+        <Card className="border-2 border-green-200">
           <CardHeader>
             <CardTitle>Pending Ads for Review</CardTitle>
             <CardDescription>{pendingAds.length} ads waiting for approval</CardDescription>
           </CardHeader>
           <CardContent>
             {pendingAds.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No pending ads</p>
+              <p className="text-gray-500 text-center py-8">No pending ads</p>
             ) : (
               <div className="space-y-3">
                 {pendingAds.slice(0, 5).map((ad) => (
-                  <div key={ad.id} className="p-3 bg-primary/5 rounded-lg border border-primary/10">
-                    <p className="font-medium text-foreground line-clamp-1">{ad.title}</p>
-                    <p className="text-xs text-muted-foreground">by {ad.userName}</p>
+                  <div key={ad.id} className="p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p className="font-medium text-gray-900 line-clamp-1">{ad.title}</p>
+                    <p className="text-xs text-gray-600">by {ad.userName}</p>
                   </div>
                 ))}
               </div>
@@ -100,25 +100,25 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Recent Transactions */}
-        <Card className="border-primary/20">
+        <Card className="border-2 border-green-200">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
             <CardDescription>Latest platform activity</CardDescription>
           </CardHeader>
           <CardContent>
             {transactions.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No transactions</p>
+              <p className="text-gray-500 text-center py-8">No transactions</p>
             ) : (
               <div className="space-y-3">
                 {transactions.slice(-5).map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
+                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                     <div>
-                      <p className="text-sm font-medium text-foreground line-clamp-1">{transaction.description}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm font-medium text-gray-900 line-clamp-1">{transaction.description}</p>
+                      <p className="text-xs text-gray-600">
                         {new Date(transaction.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <p className="font-bold text-primary">${transaction.amount.toFixed(2)}</p>
+                    <p className="font-bold text-green-600">${transaction.amount.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
