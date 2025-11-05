@@ -82,10 +82,10 @@ export default function AdminProductsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Manage Products</h1>
-          <p className="text-muted-foreground">Add, edit, or remove products</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manage Products</h1>
+          <p className="text-gray-600">Add, edit, or remove products</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="bg-primary text-white">
+        <Button onClick={() => setIsModalOpen(true)} className="bg-green-600 hover:bg-green-700 text-white">
           Add Product
         </Button>
       </div>
@@ -131,7 +131,7 @@ export default function AdminProductsPage() {
             <div className="flex gap-2">
               <Button
                 onClick={handleAddProduct}
-                className="flex-1 bg-primary text-white"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 disabled={isUploading}
               >
                 {isUploading ? "Uploading..." : "Add Product"}
@@ -206,7 +206,7 @@ export default function AdminProductsPage() {
             <div className="flex gap-2">
               <Button
                 onClick={handleEditProduct}
-                className="flex-1 bg-primary text-white"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 disabled={isUploading}
               >
                 {isUploading ? "Uploading..." : "Save Changes"}
@@ -226,10 +226,10 @@ export default function AdminProductsPage() {
 
       {/* 📦 Product List Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="bg-primary/10 border border-primary/20">
+        <TabsList className="bg-green-50 border-2 border-green-200">
           <TabsTrigger
             value="all"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >
             All Products ({products.length})
           </TabsTrigger>
@@ -237,15 +237,15 @@ export default function AdminProductsPage() {
 
         <TabsContent value="all" className="space-y-4">
           {products.length === 0 ? (
-            <Card className="border-primary/20">
-              <CardContent className="pt-12 pb-12 text-center text-muted-foreground">
+            <Card className="border-2 border-green-200">
+              <CardContent className="pt-12 pb-12 text-center text-gray-500">
                 No products found
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
               {products.map((p) => (
-                <Card key={p._id} className="border-primary/20">
+                <Card key={p._id} className="border-2 border-green-200 hover:border-green-500 transition-colors">
                   <CardHeader className="flex justify-between items-start">
                     <div>
                       <CardTitle>{p.name}</CardTitle>

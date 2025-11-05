@@ -24,8 +24,8 @@ export default function EarningsPage() {
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [cuurentBalance, setCurrentBalance] = useState("")
-  const [userEarnings, setUserEarnings] = useState([]);
-  const [totEarning, setTotEarning] = useState();
+  const [userEarnings, setUserEarnings] = useState<{ rating: number; createdAt: string; earning: number }[]>([]);
+  const [totEarning, setTotEarning] = useState<number>(0);
 
 
   const router = useRouter()
@@ -280,7 +280,7 @@ useEffect(() => {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
-                <p className="text-3xl font-bold text-green-600">${totEarning}</p>
+                <p className="text-3xl font-bold text-green-600">${(totEarning || 0).toFixed(2)}</p>
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-green-600" />
@@ -303,6 +303,111 @@ useEffect(() => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Earnings History Table */}
+      <Card className="border-2 border-green-200">
+        <CardHeader>
+          <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">Earnings History</CardTitle>
+          <CardDescription className="text-sm">Your earnings from product ratings</CardDescription>
+        </CardHeader>
+        <CardContent className="p-0 sm:p-6">
+          {userEarnings.length === 0 ? (
+            <div className="text-center py-8 px-4">
+              <p className="text-gray-500 text-sm sm:text-base">No earnings yet. Start rating products to earn!</p>
+            </div>
+          ) : (
+            <>
+              {/* Mobile View - Cards */}
+              <div className="block sm:hidden space-y-3 p-4">
+                {userEarnings.map((item, index) => (
+                  <div key={index} className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-sm font-semibold text-gray-700">#{index + 1}</span>
+                      <span className="font-bold text-green-600">${(item.earning || 0).toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center gap-1 mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < (item.rating || 0) ? "text-yellow-400 text-lg" : "text-gray-300 text-lg"}>
+                          ★
+                        </span>
+                      ))}
+                      <span className="ml-2 text-sm text-gray-600">({item.rating || 0}/5)</span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {new Date(item.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                ))}
+                <div className="bg-green-100 border-2 border-green-300 rounded-lg p-4 mt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-900">Total Earnings:</span>
+                    <span className="font-bold text-xl text-green-600">${(totEarning || 0).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop View - Table */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">#</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Rating</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
+                      <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">Earning</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userEarnings.map((item, index) => (
+                      <tr key={index} className="border-b border-gray-100 hover:bg-green-50 transition-colors">
+                        <td className="py-3 px-4 text-sm text-gray-600">{index + 1}</td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={i < (item.rating || 0) ? "text-yellow-400" : "text-gray-300"}>
+                                ★
+                              </span>
+                            ))}
+                            <span className="ml-2 text-sm text-gray-600">({item.rating || 0}/5)</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-600">
+                          {new Date(item.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="font-bold text-green-600">${(item.earning || 0).toFixed(2)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-green-50 border-t-2 border-green-200">
+                      <td colSpan={3} className="py-3 px-4 text-right font-semibold text-gray-900">
+                        Total Earnings:
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <span className="font-bold text-xl text-green-600">${(totEarning || 0).toFixed(2)}</span>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       <PlansModal open={showPlansModal} onOpenChange={setShowPlansModal} />
       {/* <PaymentModal open={showPaymentModal} onOpenChange={setShowPaymentModal} onSubmit={handleAddFunds} /> */}

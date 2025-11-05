@@ -62,14 +62,14 @@ export default function DashboardPage() {
       </div>
       
       {/* User Info Card with Balance and Buttons */}
-      <div className="bg-white border-2 border-green-200 rounded-lg p-6 shadow-sm">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="bg-white border-2 border-green-200 rounded-lg p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col space-y-4 lg:space-y-0 lg:grid lg:grid-cols-5 lg:gap-6">
           {/* User Avatar and Info */}
-          <div className="flex flex-col items-center justify-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-3">
-              <User className="w-12 h-12 text-white" />
+          <div className="flex flex-col items-center justify-center py-4 lg:py-0">
+            <div className="w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-3">
+              <User className="w-10 sm:w-12 h-10 sm:h-12 text-white" />
             </div>
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-2 w-full max-w-xs">
               <button
                 onClick={() => router.push("/dashboard/plans")}
                 className="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
@@ -88,38 +88,38 @@ export default function DashboardPage() {
           </div>
 
           {/* Main Balance */}
-          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
-              <Wallet className="w-10 h-10 text-green-600" />
+          <div className="flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-green-200 pt-4 lg:pt-0 lg:pl-6">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
+              <Wallet className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">${user?.balance?.toFixed(2) || "0.00"}</p>
-            <p className="text-sm text-gray-600">Total Deoposit</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">${user?.balance?.toFixed(2) || "0.00"}</p>
+            <p className="text-sm text-gray-600">Main Balance</p>
           </div>
 
           {/* Total Deposit */}
-          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
-              <PlusCircle className="w-10 h-10 text-green-600" />
+          <div className="flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-green-200 pt-4 lg:pt-0 lg:pl-6">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
+              <PlusCircle className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">${totalDeposits.toFixed(2)}</p>
-            <p className="text-sm text-gray-600">Total Earnings</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">${totalDeposits.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Total Deposit</p>
           </div>
 
           {/* Total Payout */}
-          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
-              <DollarSign className="w-10 h-10 text-green-600" />
+          <div className="flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-green-200 pt-4 lg:pt-0 lg:pl-6">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
+              <DollarSign className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">${totalPayouts.toFixed(2)}</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">${totalPayouts.toFixed(2)}</p>
             <p className="text-sm text-gray-600">Total Payout</p>
           </div>
 
           {/* Current Plan */}
-          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
-            <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-3">
-              <CreditCard className="w-8 h-8 text-green-600" />
+          <div className="flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-green-200 pt-4 lg:pt-0 lg:pl-6">
+            <div className="w-14 sm:w-16 h-14 sm:h-16 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+              <CreditCard className="w-7 sm:w-8 h-7 sm:h-8 text-green-600" />
             </div>
-            <p className="text-xl font-bold text-gray-900 capitalize">{user?.plan || "Starter"} Clicks</p>
+            <p className="text-lg sm:text-xl font-bold text-gray-900 capitalize">{user?.plan || "Starter"} Clicks</p>
             <p className="text-sm text-green-600 font-medium">Current Plan</p>
           </div>
         </div>

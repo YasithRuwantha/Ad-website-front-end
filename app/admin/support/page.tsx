@@ -33,35 +33,35 @@ export default function AdminSupportPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Support Tickets</h1>
-          <p className="text-muted-foreground">Manage customer support requests</p>
+          <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
+          <p className="text-gray-600">Manage customer support requests</p>
         </div>
 
         {/* Search bar */}
-        <div className="flex items-center gap-2 border border-primary/20 rounded-lg px-3 py-2 w-full md:w-72 bg-background">
-          <Search className="w-4 h-4 text-muted-foreground" />
+        <div className="flex items-center gap-2 border-2 border-green-200 rounded-lg px-3 py-2 w-full md:w-72 bg-white focus-within:border-green-500">
+          <Search className="w-4 h-4 text-gray-500" />
           <input
             type="text"
             placeholder="Search tickets..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
+            className="flex-1 bg-transparent outline-none text-sm text-gray-900 placeholder:text-gray-500"
           />
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="border-primary/20">
+        <Card className="border-2 border-green-200">
           <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Open Tickets</p>
-            <p className="text-3xl font-bold text-primary">{openTickets.length}</p>
+            <p className="text-sm text-gray-600 mb-1">Open Tickets</p>
+            <p className="text-3xl font-bold text-green-600">{openTickets.length}</p>
           </CardContent>
         </Card>
-        <Card className="border-primary/20">
+        <Card className="border-2 border-green-200">
           <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Total Tickets</p>
-            <p className="text-3xl font-bold text-foreground">{tickets.length}</p>
+            <p className="text-sm text-gray-600 mb-1">Total Tickets</p>
+            <p className="text-3xl font-bold text-gray-900">{tickets.length}</p>
           </CardContent>
         </Card>
       </div>
@@ -69,14 +69,14 @@ export default function AdminSupportPage() {
       {/* Ticket list */}
       <div className="space-y-4">
         {openTickets.length === 0 ? (
-          <Card className="border-primary/20">
+          <Card className="border-2 border-green-200">
             <CardContent className="pt-12 pb-12 text-center">
-              <p className="text-muted-foreground">No matching open tickets</p>
+              <p className="text-gray-500">No matching open tickets</p>
             </CardContent>
           </Card>
         ) : (
           openTickets.map((ticket) => (
-            <Card key={ticket.id} className="border-primary/20">
+            <Card key={ticket.id} className="border-2 border-green-200 hover:border-green-500 transition-colors">
               <CardHeader>
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function AdminSupportPage() {
                     <Button
                       onClick={() => setSelectedTicket(ticket.id)}
                       size="sm"
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="bg-green-600 hover:bg-green-700 text-white"
                     >
                       <ReplyIcon className="w-4 h-4 mr-2" /> Reply
                     </Button>
@@ -118,9 +118,9 @@ export default function AdminSupportPage() {
 
               <CardContent className="space-y-4">
                 <div className="space-y-2 max-h-48 overflow-y-auto">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <p className="text-sm font-semibold text-foreground mb-0.5">Customer</p>
-                    <p className="text-sm text-foreground">{ticket.message}</p>
+                  <div className="p-2 bg-green-50 rounded-lg border border-green-200">
+                    <p className="text-sm font-semibold text-gray-900 mb-0.5">Customer</p>
+                    <p className="text-sm text-gray-700">{ticket.message}</p>
                   </div>
 
                   {ticket.replies.map((reply) => (
@@ -145,12 +145,12 @@ export default function AdminSupportPage() {
                       placeholder="Type your reply..."
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-primary/30 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 px-3 py-2 border-2 border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     <Button
                       onClick={() => handleReply(ticket.id)}
                       disabled={!replyText.trim()}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="bg-green-600 hover:bg-green-700 text-white"
                     >
                       Send
                     </Button>
