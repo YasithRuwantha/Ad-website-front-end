@@ -121,7 +121,7 @@ export default function TermsConditionsPage() {
                   <FileText className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Terms and Conditions</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">Use Policy</h1>
                   <p className="text-sm text-gray-600">Last updated: November 2025</p>
                 </div>
               </div>

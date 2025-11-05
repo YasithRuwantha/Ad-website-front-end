@@ -126,6 +126,7 @@ export default function PlansPage() {
             <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
             <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
             <a href="/plans" className="text-green-600 font-medium">Plan</a>
+            <a href="/faq" className="text-green-600 font-medium">FAQ</a>
           </nav>
         </div>
       </header>
