@@ -52,32 +52,32 @@ export default function PayoutPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Payout Management</h1>
-        <p className="text-muted-foreground">Manage your earnings and payout settings</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Payout Management</h1>
+        <p className="text-gray-600">Manage your earnings and payout settings</p>
       </div>
 
       {/* Balance Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
+        <Card className="border-green-200">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
-                <p className="text-3xl font-bold text-foreground">${safeUser.balance.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mb-1">Current Balance</p>
+                <p className="text-3xl font-bold text-gray-900">${safeUser.balance.toFixed(2)}</p>
               </div>
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <Wallet className="w-6 h-6 text-blue-600" />
+              <div className="bg-green-50 p-3 rounded-lg">
+                <Wallet className="w-6 h-6 text-green-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card className="border-green-200">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Earnings</p>
-                <p className="text-3xl font-bold text-foreground">${safeUser.totalEarnings.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
+                <p className="text-3xl font-bold text-gray-900">${safeUser.totalEarnings.toFixed(2)}</p>
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-green-600" />
@@ -86,15 +86,15 @@ export default function PayoutPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card className="border-green-200">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Payouts</p>
-                <p className="text-3xl font-bold text-foreground">${safeUser.totalPayouts.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mb-1">Total Payouts</p>
+                <p className="text-3xl font-bold text-gray-900">${safeUser.totalPayouts.toFixed(2)}</p>
               </div>
-              <div className="bg-purple-50 p-3 rounded-lg">
-                <DollarSign className="w-6 h-6 text-purple-600" />
+              <div className="bg-green-50 p-3 rounded-lg">
+                <DollarSign className="w-6 h-6 text-green-600" />
               </div>
             </div>
           </CardContent>
@@ -102,14 +102,14 @@ export default function PayoutPage() {
       </div>
 
       {/* Payout Method Setup */}
-      <Card className="border-primary/20">
+      <Card className="border-green-200">
         <CardHeader>
           <CardTitle>Payout Method</CardTitle>
           <CardDescription>Set up your preferred payout method</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
-            <label className="flex items-center gap-3 p-4 border-2 border-primary/20 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors">
+            <label className="flex items-center gap-3 p-4 border-2 border-green-200 rounded-lg cursor-pointer hover:bg-green-50 transition-colors">
               <input
                 type="radio"
                 name="payoutMethod"
@@ -119,12 +119,12 @@ export default function PayoutPage() {
                 className="w-4 h-4"
               />
               <div>
-                <p className="font-semibold text-foreground">Bank Transfer</p>
-                <p className="text-sm text-muted-foreground">Direct deposit to your bank account</p>
+                <p className="font-semibold text-gray-900">Bank Transfer</p>
+                <p className="text-sm text-gray-600">Direct deposit to your bank account</p>
               </div>
             </label>
 
-            <label className="flex items-center gap-3 p-4 border-2 border-primary/20 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors">
+            <label className="flex items-center gap-3 p-4 border-2 border-green-200 rounded-lg cursor-pointer hover:bg-green-50 transition-colors">
               <input
                 type="radio"
                 name="payoutMethod"
@@ -134,12 +134,12 @@ export default function PayoutPage() {
                 className="w-4 h-4"
               />
               <div>
-                <p className="font-semibold text-foreground">PayPal</p>
-                <p className="text-sm text-muted-foreground">Receive funds via PayPal</p>
+                <p className="font-semibold text-gray-900">PayPal</p>
+                <p className="text-sm text-gray-600">Receive funds via PayPal</p>
               </div>
             </label>
 
-            <label className="flex items-center gap-3 p-4 border-2 border-primary/20 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors">
+            <label className="flex items-center gap-3 p-4 border-2 border-green-200 rounded-lg cursor-pointer hover:bg-green-50 transition-colors">
               <input
                 type="radio"
                 name="payoutMethod"
@@ -149,34 +149,34 @@ export default function PayoutPage() {
                 className="w-4 h-4"
               />
               <div>
-                <p className="font-semibold text-foreground">Stripe</p>
-                <p className="text-sm text-muted-foreground">Receive funds via Stripe Connect</p>
+                <p className="font-semibold text-gray-900">Stripe</p>
+                <p className="text-sm text-gray-600">Receive funds via Stripe Connect</p>
               </div>
             </label>
           </div>
 
           {payoutMethod === "bank" && (
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Bank Account</label>
+              <label className="block text-sm font-medium text-gray-900 mb-2">Bank Account</label>
               <input
                 type="text"
                 placeholder="Enter your bank account (e.g., ****1234)"
                 value={bankAccount}
                 onChange={(e) => setBankAccount(e.target.value)}
-                className="w-full px-4 py-2 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
               />
             </div>
           )}
 
           {payoutMethod === "paypal" && (
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">PayPal Email</label>
+              <label className="block text-sm font-medium text-gray-900 mb-2">PayPal Email</label>
               <input
                 type="email"
                 placeholder="Enter your PayPal email"
                 value={paypalEmail}
                 onChange={(e) => setPaypalEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
               />
             </div>
           )}
@@ -187,7 +187,7 @@ export default function PayoutPage() {
             </div>
           )}
 
-          <Button onClick={handleSavePayoutMethod} className="w-full bg-primary hover:bg-primary/90">
+          <Button onClick={handleSavePayoutMethod} className="w-full bg-green-600 hover:bg-green-700">
             Save Payout Method
           </Button>
         </CardContent>
@@ -215,9 +215,9 @@ export default function PayoutPage() {
             </div>
           )}
 
-          <div className="bg-foreground/5 p-4 rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">Payout Amount</p>
-            <p className="text-2xl font-bold text-foreground">${safeUser.balance.toFixed(2)}</p>
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">Payout Amount</p>
+            <p className="text-2xl font-bold text-gray-900">${safeUser.balance.toFixed(2)}</p>
           </div>
 
           <Button
@@ -228,7 +228,7 @@ export default function PayoutPage() {
             {canPayout ? "Request Payout Now" : "Balance Too Low"}
           </Button>
 
-          <p className="text-xs text-muted-foreground text-center">Payouts are processed within 3-5 business days</p>
+          <p className="text-xs text-gray-600 text-center">Payouts are processed within 3-5 business days</p>
         </CardContent>
       </Card>
     </div>
