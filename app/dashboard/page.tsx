@@ -16,6 +16,10 @@ export default function DashboardPage() {
   const userTransactions = transactions.filter((t) => t.userId === user?.id)
   const userRatings = ratings.filter((r) => r.userId === user?.id)
 
+  // Calculate totals
+  const totalDeposits = 0 // We'll use dummy value for now
+  const totalPayouts = 0 // We'll use dummy value for now
+
   const stats = [
     {
       label: "Total Ads",
@@ -49,13 +53,79 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
+
       <div className="bg-gradient-to-r from-green-100 to-green-50 border-2 border-green-500 rounded-lg p-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.fullName}!</h1>
         <p className="text-gray-700">
           You're on the <span className="font-semibold text-green-700 capitalize">{user?.plan}</span> plan
         </p>
       </div>
+      
+      {/* User Info Card with Balance and Buttons */}
+      <div className="bg-white border-2 border-green-200 rounded-lg p-6 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* User Avatar and Info */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-3">
+              <User className="w-12 h-12 text-white" />
+            </div>
+            <div className="text-center space-y-2">
+              <button
+                onClick={() => router.push("/dashboard/plans")}
+                className="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
+              >
+                <CreditCard className="w-4 h-4" />
+                Plan
+              </button>
+              <button
+                onClick={() => router.push("/dashboard/add-funds")}
+                className="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
+              >
+                <Wallet className="w-4 h-4" />
+                Deposit
+              </button>
+            </div>
+          </div>
 
+          {/* Main Balance */}
+          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
+              <Wallet className="w-10 h-10 text-green-600" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">${user?.balance?.toFixed(2) || "0.00"}</p>
+            <p className="text-sm text-gray-600">Main Balance</p>
+          </div>
+
+          {/* Total Deposit */}
+          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
+              <PlusCircle className="w-10 h-10 text-green-600" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">${totalDeposits.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Total Deposit</p>
+          </div>
+
+          {/* Total Payout */}
+          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
+              <DollarSign className="w-10 h-10 text-green-600" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">${totalPayouts.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Total Payout</p>
+          </div>
+
+          {/* Current Plan */}
+          <div className="flex flex-col items-center justify-center border-l border-green-200 pl-6">
+            <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+              <CreditCard className="w-8 h-8 text-green-600" />
+            </div>
+            <p className="text-xl font-bold text-gray-900 capitalize">{user?.plan || "Starter"} Clicks</p>
+            <p className="text-sm text-green-600 font-medium">Current Plan</p>
+          </div>
+        </div>
+      </div>
+
+    
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon
@@ -75,106 +145,6 @@ export default function DashboardPage() {
             </Card>
           )
         })}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card
-          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => router.push("/dashboard/plans")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-green-600" />
-              Plans
-            </CardTitle>
-            <CardDescription>Upgrade your plan</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Plans</Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => router.push("/dashboard/payout")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-600" />
-              Payout
-            </CardTitle>
-            <CardDescription>Manage payouts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">Request Payout</Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => router.push("/dashboard/payout-history")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              History
-            </CardTitle>
-            <CardDescription>View payout history</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View History</Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card
-          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => router.push("/dashboard/add-funds")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <PlusCircle className="w-5 h-5 text-green-600" />
-              Add Funds
-            </CardTitle>
-            <CardDescription>Deposit money to your account</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">Add Funds</Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => router.push("/products")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-green-600" />
-              Browse Products
-            </CardTitle>
-            <CardDescription>Discover and rate products</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Products</Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => router.push("/earnings")}
-        >
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              View Earnings
-            </CardTitle>
-            <CardDescription>Check your balance & history</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Earnings</Button>
-          </CardContent>
-        </Card>
       </div>
 
       <Card className="border-2 border-green-200">
