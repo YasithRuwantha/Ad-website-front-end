@@ -55,6 +55,8 @@ export default function UserSidebar() {
     { label: "Privacy and data protection", href: "/help/privacy" },
     { label: "Agreement", href: "/help/agreement" },
     { label: "VIP Level", href: "/help/vip-level" },
+    { label: "Terms and Conditions", href: "/help/terms-conditions" },
+    { label: "FAQ", href: "/help/faq" },
   ]
 
   const termsSubmenu = [
