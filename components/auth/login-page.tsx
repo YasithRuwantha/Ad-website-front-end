@@ -76,6 +76,7 @@ export default function LoginPage() {
             <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
             <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
             <a href="/plans" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</a>
+            <a href="/faq" className="text-green-600 font-medium">FAQ</a>
           </nav>
           <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg font-semibold flex items-center gap-2">
             <span className="text-lg">👤</span>
