@@ -149,48 +149,48 @@ export default function ReferralsPage() {
       {/* Main Content */}
       <div className="space-y-3 flex-1 overflow-auto md:ml-0 p-4 md:p-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Referral Program</h1>
-        <p className="text-muted-foreground">Earn money by inviting friends to join EarningHub</p>
+        <h1 className="text-3xl font-bold text-gray-900">Referral Program</h1>
+        <p className="text-gray-600">Earn money by inviting friends to join EarningHub</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5">
+        <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Referral Earnings</p>
-                {/* <p className="text-3xl font-bold text-primary">${totalReferralEarnings.toFixed(2)}</p> */}
+                <p className="text-sm text-gray-600 mb-1">Referral Earnings</p>
+                {/* <p className="text-3xl font-bold text-green-600">${totalReferralEarnings.toFixed(2)}</p> */}
               </div>
-              <TrendingUp className="w-8 h-8 text-primary/40" />
+              <TrendingUp className="w-8 h-8 text-green-600/40" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card className="border-green-200">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Referrals</p>
-                <p className="text-3xl font-bold text-foreground">{referralLink.length}</p>
+                <p className="text-sm text-gray-600 mb-1">Total Referrals</p>
+                <p className="text-3xl font-bold text-gray-900">{referralLink.length}</p>
               </div>
-              <Users className="w-8 h-8 text-primary/40" />
+              <Users className="w-8 h-8 text-green-600/40" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card className="border-green-200">
           <CardContent className="pt-6">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Your Referral Code</p>
-              {/* <p className="text-2xl font-bold text-primary font-mono">{user?.referralCode}</p> */}
+              <p className="text-sm text-gray-600 mb-1">Your Referral Code</p>
+              {/* <p className="text-2xl font-bold text-green-600 font-mono">{user?.referralCode}</p> */}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5">
+      <Card className="border-2 border-green-300 bg-gradient-to-r from-green-50 to-emerald-50">
         <CardHeader>
-          <CardTitle className="text-primary">Share Your Referral Link</CardTitle>
+          <CardTitle className="text-green-600">Share Your Referral Link</CardTitle>
           <CardDescription>Share this link with friends to earn $10 for each successful signup</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -199,9 +199,9 @@ export default function ReferralsPage() {
               type="text"
               value={referralLink}
               readOnly
-              className="flex-1 px-4 py-2 bg-background border border-primary/30 rounded-lg text-foreground text-sm font-mono"
+              className="flex-1 px-4 py-2 bg-background border border-green-300 rounded-lg text-foreground text-sm font-mono"
             />
-            <Button onClick={copyToClipboard} className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+            <Button onClick={copyToClipboard} className="bg-green-600 hover:bg-green-700 text-white gap-2">
               {copied ? (
                 <>
                   <Check className="w-4 h-4" />
@@ -217,26 +217,26 @@ export default function ReferralsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-            <div className="p-4 bg-background rounded-lg border border-primary/20">
-              <p className="text-sm text-muted-foreground mb-1">Referral Bonus</p>
-              <p className="text-2xl font-bold text-primary">$10</p>
-              <p className="text-xs text-muted-foreground mt-1">Per successful signup</p>
+            <div className="p-4 bg-background rounded-lg border border-green-200">
+              <p className="text-sm text-gray-600 mb-1">Referral Bonus</p>
+              <p className="text-2xl font-bold text-green-600">$10</p>
+              <p className="text-xs text-gray-600 mt-1">Per successful signup</p>
             </div>
-            <div className="p-4 bg-background rounded-lg border border-primary/20">
-              <p className="text-sm text-muted-foreground mb-1">Friend Bonus</p>
-              <p className="text-2xl font-bold text-primary">$5</p>
-              <p className="text-xs text-muted-foreground mt-1">Your friend gets</p>
+            <div className="p-4 bg-background rounded-lg border border-green-200">
+              <p className="text-sm text-gray-600 mb-1">Friend Bonus</p>
+              <p className="text-2xl font-bold text-green-600">$5</p>
+              <p className="text-xs text-gray-600 mt-1">Your friend gets</p>
             </div>
-            <div className="p-4 bg-background rounded-lg border border-primary/20">
-              <p className="text-sm text-muted-foreground mb-1">Unlimited</p>
-              <p className="text-2xl font-bold text-primary">∞</p>
-              <p className="text-xs text-muted-foreground mt-1">No referral limit</p>
+            <div className="p-4 bg-background rounded-lg border border-green-200">
+              <p className="text-sm text-gray-600 mb-1">Unlimited</p>
+              <p className="text-2xl font-bold text-green-600">∞</p>
+              <p className="text-xs text-gray-600 mt-1">No referral limit</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="border-primary/20">
+      <Card className="border-green-200">
         <CardHeader>
           <CardTitle>How It Works</CardTitle>
           <CardDescription>Simple steps to start earning</CardDescription>
@@ -267,13 +267,13 @@ export default function ReferralsPage() {
             ].map((item) => (
               <div key={item.step} className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-bold">
                     {item.step}
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                  <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                  <p className="text-sm text-gray-600">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -282,7 +282,7 @@ export default function ReferralsPage() {
       </Card>
 
       {referralLink.length > 0 && (
-        <Card className="border-primary/20">
+        <Card className="border-green-200">
           <CardHeader>
             <CardTitle>Referral History</CardTitle>
             <CardDescription>Your recent referral earnings</CardDescription>
@@ -294,11 +294,11 @@ export default function ReferralsPage() {
                 .map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/10"
+                    className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100"
                   >
                     <div>
-                      <p className="font-medium text-foreground">{transaction.description}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="font-medium text-gray-900">{transaction.description}</p>
+                      <p className="text-xs text-gray-600">
                         {new Date(transaction.createdAt).toLocaleDateString()}
                       </p>
                     </div>

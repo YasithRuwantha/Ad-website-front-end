@@ -34,32 +34,32 @@ export default function CreateTicketModal({ open, onOpenChange, onSubmit }: Crea
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border-primary/20">
+      <DialogContent className="max-w-md border-green-200">
         <DialogHeader>
-          <DialogTitle className="text-primary">Create Support Ticket</DialogTitle>
+          <DialogTitle className="text-green-600">Create Support Ticket</DialogTitle>
           <DialogDescription>Describe your issue and we'll help you as soon as possible</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Subject</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Subject</label>
             <Input
               placeholder="Brief description of your issue"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               required
-              className="border-primary/30"
+              className="border-green-300"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Message</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Message</label>
             <textarea
               placeholder="Describe your issue in detail..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
-              className="w-full p-2 border border-primary/30 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full p-2 border border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600"
               rows={5}
             />
           </div>
@@ -69,14 +69,14 @@ export default function CreateTicketModal({ open, onOpenChange, onSubmit }: Crea
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1 border-primary/30"
+              className="flex-1 border-green-300"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading || !subject || !message}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             >
               {isLoading ? "Creating..." : "Create Ticket"}
             </Button>
