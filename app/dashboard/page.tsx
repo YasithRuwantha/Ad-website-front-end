@@ -93,7 +93,7 @@ export default function DashboardPage() {
               <Wallet className="w-10 h-10 text-green-600" />
             </div>
             <p className="text-2xl font-bold text-gray-900">${user?.balance?.toFixed(2) || "0.00"}</p>
-            <p className="text-sm text-gray-600">Main Balance</p>
+            <p className="text-sm text-gray-600">Total Deoposit</p>
           </div>
 
           {/* Total Deposit */}
@@ -102,7 +102,7 @@ export default function DashboardPage() {
               <PlusCircle className="w-10 h-10 text-green-600" />
             </div>
             <p className="text-2xl font-bold text-gray-900">${totalDeposits.toFixed(2)}</p>
-            <p className="text-sm text-gray-600">Total Deposit</p>
+            <p className="text-sm text-gray-600">Total Earnings</p>
           </div>
 
           {/* Total Payout */}
