@@ -94,7 +94,7 @@ export default function FAQPage() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header with Profile */}
-        <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
+        <header className="hidden md:flex bg-white border-b border-gray-200 px-4 md:px-6 py-4 items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
