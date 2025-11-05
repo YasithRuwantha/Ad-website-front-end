@@ -47,7 +47,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   // ✅ Add product
-  const addProduct = async (product: { name: string; description: string; imageFile?: File }) => {
+  const addProduct = async (product: { name: string; description: string; income: string; imageFile?: File }) => {
     const token = localStorage.getItem("token")
     const user = localStorage.getItem("user")
     const email = user ? JSON.parse(user).email : "unknown"
@@ -58,6 +58,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     formData.append("description", product.description)
     formData.append("addedBy", email)
     formData.append("now", now)
+    formData.append("income", product.income)
     if (product.imageFile) formData.append("image", product.imageFile)
     
     // ✅ Debug
@@ -79,7 +80,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   }
 
   // ✅ Update product - handles both text and image updates
-    const updateProduct = async (id: string, updates: Partial<Product> & { imageFile?: File }) => {
+  const updateProduct = async (id: string, updates: Partial<Product> & { imageFile?: File }) => {
     const token = localStorage.getItem("token")
     console.log("update product", updates);
     
@@ -89,7 +90,8 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     if (updates.name !== undefined) formData.append("name", updates.name)
     if (updates.description !== undefined) formData.append("description", updates.description)
     if (updates.rating !== undefined) formData.append("rating", updates.rating.toString())  // Convert to string
-    
+    if (updates.income !== undefined ) formData.append("income", updates.income)
+
     // Add image file if provided
     if (updates.imageFile) {
         formData.append("image", updates.imageFile)

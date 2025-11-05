@@ -31,7 +31,8 @@ export default function AdminUsersPage() {
     status: "",
     adsPerDay: "",
     luckydrawStatus: "",
-    luckydrawAttempt: ""
+    luckydrawAttempt: "",
+    plan: ""
   })
 
   const [adsAdjust, setAdsAdjust] = useState<number>(0)
@@ -70,7 +71,8 @@ export default function AdminUsersPage() {
       status: user.status,
       adsPerDay: user.adsPerDay,
       luckydrawStatus: user.luckydrawStatus,
-      luckydrawAttempt: user.luckydrawAttempt
+      luckydrawAttempt: user.luckydrawAttempt,
+      plan: user.plan
     })
     setAdsAdjust(0)
     setIsModalOpen(true)
@@ -249,6 +251,23 @@ export default function AdminUsersPage() {
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div className="flex items-center">
+                <div className="pl-1 w-full">Account Plan</div>
+                <select
+                  value={editData.plan}
+                  onChange={(e) => setEditData({ ...editData, plan: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                >
+                  <option value="none">none</option>
+                  <option value="Starter">Starter</option>
+                  <option value="Basic">Basic</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Advanced">Advanced</option>
+                  <option value="Professional">Professional</option>
+                  <option value="Premium">Premium</option>
                 </select>
               </div>
 

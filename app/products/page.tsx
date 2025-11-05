@@ -29,6 +29,8 @@ export default function ProductsPage() {
   const [userName, setUserName] = useState("User")
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [incomePerRating, setIncomePerRating] = useState("")
+
 
   // ✅ Fetch Lucky Draw Status
   const fetchLuckyDrawStatus = async () => {
@@ -50,6 +52,26 @@ export default function ProductsPage() {
     } catch (err) {
       console.error("Error checking lucky draw:", err)
     }
+  }
+
+    // 💰 Random earning per ad rating
+  const getIncomePerRating = (planName: string) => {
+    const plans: any = {
+      Starter: [15, 20],
+      Basic: [45, 60],
+      Beginner: [75, 100],
+      Advanced: [150, 200],
+      Professional: [225, 300],
+      Premium: [300, 400],
+    }
+
+    const range = plans[planName]
+    if (!range) return "$0.00"
+
+    const [min, max] = range
+    const randomDailyEarning = Math.random() * (max - min) + min
+    const perAdEarning = randomDailyEarning / 30
+    return `$${perAdEarning.toFixed(2)}`
   }
 
   // ✅ Initialize Data
@@ -97,6 +119,10 @@ export default function ProductsPage() {
       fetchLuckyDrawStatus()
     }
   }, [remaining]) // when remaining updates, check again
+
+  useEffect(() => {
+    setIncomePerRating(getIncomePerRating(user?.plan || "Starter"))
+  }, [user?.plan])
 
   // ⭐ Handle Rating Submission
   const handleSubmitRating = async (rating: number, comment: string) => {
@@ -332,7 +358,8 @@ export default function ProductsPage() {
 
                   <div className="mb-3">
                     <p className="text-sm text-gray-600">Income per rating</p>
-                    <p className="text-2xl font-bold text-green-600">${product.income || 0}</p>
+                    <p className="text-2xl font-bold text-green-600">{incomePerRating}</p>
+
                   </div>
 
                   <div className="flex items-center gap-2 mb-4">

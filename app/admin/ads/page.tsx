@@ -8,9 +8,10 @@ import { useState } from "react"
 
 export default function AdminProductsPage() {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts()
-  const [newProduct, setNewProduct] = useState<{ name: string; description: string; imageFile?: File }>({
+  const [newProduct, setNewProduct] = useState<{ name: string; description: string; income: string; imageFile?: File }>({
     name: "",
     description: "",
+    income: ""
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -19,6 +20,7 @@ export default function AdminProductsPage() {
     id: string
     name: string
     description: string
+    income: string
     imageFile?: File
     currentImageUrl?: string
   }>({
@@ -27,6 +29,7 @@ export default function AdminProductsPage() {
     description: "",
     rating: "",
     currentImageUrl: "",
+    income: ""
   })
   const [isUploading, setIsUploading] = useState(false)
 
@@ -36,7 +39,7 @@ export default function AdminProductsPage() {
     setIsUploading(true)
     try {
       await addProduct(newProduct)
-      setNewProduct({ name: "", description: "" })
+      setNewProduct({ name: "", description: "", income: "" })
       setIsModalOpen(false)
     } catch (e: any) {
       alert(e.message)
@@ -55,6 +58,7 @@ export default function AdminProductsPage() {
         description: editProduct.description,
         rating: editProduct.rating,
         imageFile: editProduct.imageFile, // Include the image file
+        income: editProduct.income
       })
       setIsEditModalOpen(false)
       setEditProduct({
@@ -64,6 +68,7 @@ export default function AdminProductsPage() {
         rating: "",
         imageFile: undefined,
         currentImageUrl: "",
+        income: ""
       })
     } catch (e: any) {
       alert(e.message)
@@ -103,6 +108,13 @@ export default function AdminProductsPage() {
               placeholder="Description"
               value={newProduct.description}
               onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="number"
+              placeholder="Product Income"
+              value={newProduct.income}
+              onChange={(e) => setNewProduct({ ...newProduct, income: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
             <input
@@ -171,6 +183,13 @@ export default function AdminProductsPage() {
               placeholder="Rating"
               value={editProduct.rating}
               onChange={(e) => setEditProduct({ ...editProduct, rating: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="number"
+              placeholder="Product Income"
+              value={editProduct.income}
+              onChange={(e) => setEditProduct({ ...editProduct, income: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
             <input
@@ -243,6 +262,7 @@ export default function AdminProductsPage() {
                             rating: p.rating.toString(),
                             imageFile: undefined,
                             currentImageUrl: p.imageUrl,
+                            income: p.income
                           })
                           setIsEditModalOpen(true)
                         }}
