@@ -129,7 +129,6 @@ export default function PlansPage() {
             <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
             <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
             <a href="/plans" className="text-green-600 font-medium">Plan</a>
-            <a href="/terms" className="text-gray-700 hover:text-green-600 transition-all duration-300">Terms & Condition</a>
           </nav>
         </div>
       </header>
@@ -302,8 +301,6 @@ export default function PlansPage() {
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
-                <li><a href="/faq" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">FAQ</a></li>
-                <li><a href="/terms" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Terms & Condition</a></li>
                 <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Cookie Policy</a></li>
               </ul>
             </div>
