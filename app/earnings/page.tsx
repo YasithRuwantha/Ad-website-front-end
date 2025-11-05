@@ -118,25 +118,23 @@ useEffect(() => {
   //   }
   // }
 
-
-
-  const plans = [
-    {
-      name: "Starter",
-      price: 0,
-      features: ["Post 5 ads/month", "View products", "Basic support"],
-    },
-    {
-      name: "Normal",
-      price: 50,
-      features: ["Post 20 ads/month", "Advanced analytics", "Priority support", "Higher earnings rate"],
-    },
-    {
-      name: "Premium",
-      price: 150,
-      features: ["Unlimited ads", "Full analytics", "24/7 support", "Premium badge", "2x earnings"],
-    },
-  ]
+  // const plans = [
+  //   {
+  //     name: "Starter",
+  //     price: 0,
+  //     features: ["Post 5 ads/month", "View products", "Basic support"],
+  //   },
+  //   {
+  //     name: "Normal",
+  //     price: 50,
+  //     features: ["Post 20 ads/month", "Advanced analytics", "Priority support", "Higher earnings rate"],
+  //   },
+  //   {
+  //     name: "Premium",
+  //     price: 150,
+  //     features: ["Unlimited ads", "Full analytics", "24/7 support", "Premium badge", "2x earnings"],
+  //   },
+  // ]
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -232,19 +230,19 @@ useEffect(() => {
           <p className="text-gray-600">Manage your balance, plans, and transactions</p>
         </div>
         <div className="flex gap-2">
-          <Button
+          {/* <Button
             onClick={() => setShowPlansModal(true)}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
             View Plans
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={() => setShowPaymentModal(true)}
             variant="outline"
             className="border-2 border-green-600 text-green-600 hover:bg-green-50"
           >
             Add Funds
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -292,117 +290,6 @@ useEffect(() => {
           </CardContent>
         </Card>
       </div>
-
-      <Tabs defaultValue="plans" className="space-y-4">
-        <TabsList className="bg-green-50 border-2 border-green-200">
-          <TabsTrigger
-            value="plans"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >
-            Plans
-          </TabsTrigger>
-          <TabsTrigger
-            value="transactions"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >
-            Transaction History
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="transactions" className="space-y-4">
-          {userTransactions.length === 0 ? (
-            <Card className="border-2 border-green-200">
-              <CardContent className="pt-12 pb-12 text-center">
-                <p className="text-gray-600">No transactions yet</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-2 border-green-200">
-              <CardHeader>
-                <CardTitle className="text-gray-900">All Transactions</CardTitle>
-                <CardDescription className="text-gray-600">Your payment and earning history</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {userTransactions
-                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                    .map((transaction) => (
-                      <div
-                        key={transaction.id}
-                        className="flex items-center justify-between p-4 bg-green-50 rounded-lg border-2 border-green-200"
-                      >
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{transaction.description}</p>
-                          <p className="text-xs text-gray-600">
-                            {new Date(transaction.createdAt).toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p
-                            className={`font-bold text-lg ${
-                              transaction.type === "payment" ? "text-red-600" : "text-green-600"
-                            }`}
-                          >
-                            {transaction.type === "payment" ? "-" : "+"}${(transaction.amount ?? 0).toFixed(2)}
-                          </p>
-                          <p className="text-xs text-gray-600 capitalize">{transaction.status ?? "pending"}</p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="plans" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {plans.map((p) => (
-              <Card
-                key={p.name}
-                className={`border-2 transition-all ${
-                  plan === p.name.toLowerCase()
-                    ? "border-green-600 bg-green-50 shadow-lg"
-                    : "border-green-200 hover:border-green-500"
-                }`}
-              >
-                <CardHeader>
-                  <CardTitle className="text-green-700">{p.name}</CardTitle>
-                  <CardDescription>
-                    <span className="text-2xl font-bold text-gray-900">${p.price}</span>
-                    <span className="text-gray-600"> USDT</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2">
-                    {p.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2 text-sm text-gray-700">
-                        <span className="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    onClick={() => handleUpgradePlan(p.name.toLowerCase() as any, p.price)}
-                    disabled={plan === p.name.toLowerCase() || balance < p.price}
-                    className={`w-full ${
-                      plan === p.name.toLowerCase()
-                        ? "bg-gray-400 text-white cursor-not-allowed"
-                        : "bg-green-600 hover:bg-green-700 text-white"
-                    }`}
-                  >
-                    {plan === p.name.toLowerCase()
-                      ? "Current Plan"
-                      : balance < p.price
-                      ? "Insufficient Balance"
-                      : "Upgrade"}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
 
       <PlansModal open={showPlansModal} onOpenChange={setShowPlansModal} />
       {/* <PaymentModal open={showPaymentModal} onOpenChange={setShowPaymentModal} onSubmit={handleAddFunds} /> */}

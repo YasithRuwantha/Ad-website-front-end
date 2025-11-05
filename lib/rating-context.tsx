@@ -17,7 +17,7 @@ export interface Rating {
 }
 
 interface RatingContextType {
-  submitRating: (productId: string, rating: number, comment: string) => Promise<{ success: boolean; remaining?: number; message?: string }>
+  submitRating: (productId: string, rating: number, comment: string, earning:string) => Promise<{ success: boolean; remaining?: number; message?: string }>
   getUserRatings: () => Promise<Rating[]>
   checkUserRating: (productId: string) => Promise<{ rated: boolean; rating?: Rating }>
   getProductRatings: (productId: string) => Promise<Rating[]>
@@ -29,7 +29,7 @@ const RatingContext = createContext<RatingContextType | undefined>(undefined)
 export function RatingProvider({ children }: { children: React.ReactNode }) {
   
   // ✅ Submit or Update Rating
-  const submitRating = async (productId: string, rating: number, comment: string) => {
+  const submitRating = async (productId: string, rating: number, comment: string, earning: string) => {
     try {
       const token = localStorage.getItem("token")
       
@@ -38,6 +38,10 @@ export function RatingProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log("Submitting rating:", { productId, rating, comment })
+
+      const earningValue = typeof earning === "string"
+        ? Number(earning.replace("$", ""))
+        : earning
       
       const res = await fetch(`${API_URL}/api/ratings/submit`, {
         method: "POST",
@@ -45,7 +49,11 @@ export function RatingProvider({ children }: { children: React.ReactNode }) {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ productId, rating, comment })
+        body: JSON.stringify({ 
+          productId, 
+          rating, 
+          comment, 
+          earning: earningValue})
       })
 
       const data = await res.json()
