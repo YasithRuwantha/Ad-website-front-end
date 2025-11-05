@@ -12,6 +12,7 @@ import { TrendingUp, Wallet, CreditCard, User, ChevronDown, LogOut, Settings } f
 import UserSidebar from "@/components/user/user-sidebar"
 import { useRouter } from "next/navigation"
 import { useFundPayments } from "@/lib/fundPayment-context" 
+import { useRatings } from "@/lib/rating-context"
 
 
 export default function EarningsPage() {
@@ -23,11 +24,15 @@ export default function EarningsPage() {
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [cuurentBalance, setCurrentBalance] = useState("")
+  const [userEarnings, setUserEarnings] = useState([]);
+  const [totEarning, setTotEarning] = useState();
+
 
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
 
   const { getCurrentBalance } = useFundPayments()
+  const { getUserEarningsRatings } = useRatings() 
 
 useEffect(() => {
   const fetchUserData = async () => {
@@ -157,6 +162,17 @@ useEffect(() => {
     }
   }, [showProfileMenu])
 
+  useEffect(() => {
+    getUserEarningsRatings().then((data) => {
+      setUserEarnings(data);
+      // ✅ Calculate total earning immediately
+      const total = data.reduce((sum, item) => sum + (item.earning || 0), 0);
+      setTotEarning(total);
+    });
+  }, []);
+
+
+
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background">
       {/* Sidebar — fixed on mobile, static on desktop */}
@@ -264,7 +280,7 @@ useEffect(() => {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
-                <p className="text-3xl font-bold text-green-600">${earnings.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-green-600">${totEarning}</p>
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-green-600" />

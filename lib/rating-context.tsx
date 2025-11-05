@@ -21,6 +21,8 @@ interface RatingContextType {
   getUserRatings: () => Promise<Rating[]>
   checkUserRating: (productId: string) => Promise<{ rated: boolean; rating?: Rating }>
   getProductRatings: (productId: string) => Promise<Rating[]>
+  getUserEarningsRatings: () => Promise<{ rating: number; createdAt: string; earning: number }[]>
+
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -150,12 +152,46 @@ export function RatingProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // ✅ Get User's Earnings & Ratings (only rating, createdAt, earning)
+  const getUserEarningsRatings = async (): Promise<
+    { rating: number; createdAt: string; earning: number }[]
+  > => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.log("No token found, returning empty earnings");
+        return [];
+      }
+
+      const res = await fetch(`${API_URL}/api/ratings/user/earnings`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        console.error("Failed to fetch user earnings ratings");
+        return [];
+      }
+
+      const data = await res.json();
+      console.log("User earnings ratings fetched:", data);
+      return data.ratings || [];
+    } catch (err) {
+      console.error("Error fetching user earnings ratings:", err);
+      return [];
+    }
+  };
+
+
   return (
     <RatingContext.Provider value={{ 
       submitRating, 
       getUserRatings, 
       checkUserRating, 
-      getProductRatings 
+      getProductRatings ,
+      getUserEarningsRatings
     }}>
       {children}
     </RatingContext.Provider>
