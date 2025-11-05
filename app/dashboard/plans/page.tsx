@@ -94,19 +94,19 @@ export default function PlansPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
       {/* Title Section */}
       <div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Choose Your Plan</h1>
-        <p className="text-gray-600">Select the perfect plan to start earning today</p>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Choose Your Plan</h1>
+        <p className="text-sm sm:text-base text-gray-600">Select the perfect plan to start earning today</p>
       </div>
 
       {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {plans.map((plan, index) => (
           <div
             key={index}
-            className={`rounded-2xl p-8 border-2 transition-all duration-500 transform hover:scale-105 relative ${
+            className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border-2 transition-all duration-500 transform hover:scale-105 relative ${
               plan.isPremium 
                 ? 'bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 border-yellow-400 hover:border-yellow-500 hover:shadow-2xl shadow-xl' 
                 : 'bg-white border-gray-200 hover:border-green-500 hover:shadow-2xl'
@@ -114,33 +114,33 @@ export default function PlansPage() {
           >
             {/* Premium Badge */}
             {plan.isPremium && (
-              <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+              <div className="absolute -top-2 sm:-top-3 -right-2 sm:-right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 sm:px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
                 ⭐ PREMIUM
               </div>
             )}
 
             {/* Icon */}
-            <div className="text-5xl mb-4">{plan.icon}</div>
+            <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{plan.icon}</div>
 
             {/* Plan Name */}
-            <h3 className={`text-2xl font-bold mb-2 ${plan.isPremium ? 'text-yellow-900' : 'text-gray-900'}`}>
+            <h3 className={`text-xl sm:text-2xl font-bold mb-2 ${plan.isPremium ? 'text-yellow-900' : 'text-gray-900'}`}>
               {plan.name}
             </h3>
 
             {/* Price */}
-            <div className="mb-4">
-              <span className={`text-5xl font-bold ${plan.isPremium ? 'text-yellow-800' : 'text-gray-900'}`}>
+            <div className="mb-3 sm:mb-4">
+              <span className={`text-3xl sm:text-4xl md:text-5xl font-bold ${plan.isPremium ? 'text-yellow-800' : 'text-gray-900'}`}>
                 {plan.price}
               </span>
             </div>
 
             {/* Description */}
-            <p className={`mb-6 ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+            <p className={`text-sm sm:text-base mb-4 sm:mb-6 ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
               {plan.description}
             </p>
 
             {/* Features */}
-            <div className="space-y-3 mb-6">
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
               <div className="flex items-start gap-3">
                 <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
                   plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
@@ -169,13 +169,13 @@ export default function PlansPage() {
             </div>
 
             {/* Profit Information */}
-            <div className={`rounded-lg p-4 mb-6 ${
+            <div className={`rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 ${
               plan.isPremium ? 'bg-yellow-100 border border-yellow-300' : 'bg-green-50 border border-green-200'
             }`}>
-              <h4 className={`text-sm font-bold mb-3 ${plan.isPremium ? 'text-yellow-900' : 'text-green-900'}`}>
+              <h4 className={`text-xs sm:text-sm font-bold mb-2 sm:mb-3 ${plan.isPremium ? 'text-yellow-900' : 'text-green-900'}`}>
                 Expected Profit (15-20% Return)
               </h4>
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 <div className="flex justify-between items-center">
                   <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
                     15% Profit:
@@ -192,12 +192,12 @@ export default function PlansPage() {
                     {plan.profit20}
                   </span>
                 </div>
-                <div className={`mt-2 pt-2 border-t ${plan.isPremium ? 'border-yellow-300' : 'border-green-300'}`}>
+                <div className={`mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t ${plan.isPremium ? 'border-yellow-300' : 'border-green-300'}`}>
                   <div className="flex justify-between items-center">
                     <span className={`text-xs font-semibold ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
                       Profit Range:
                     </span>
-                    <span className={`text-base font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                    <span className={`text-sm sm:text-base font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
                       {plan.profitRange}
                     </span>
                   </div>
@@ -208,7 +208,7 @@ export default function PlansPage() {
             {/* Purchase Button */}
             <button
               onClick={() => handlePurchase(plan.name)}
-              className={`w-full font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg ${
+              className={`w-full font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg text-sm sm:text-base ${
                 plan.isPremium
                   ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white'
                   : 'bg-green-600 hover:bg-green-700 text-white'

@@ -328,7 +328,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Product Cards */}
-        <div className="pt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="pt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {products.map((product) => {           
             const userRating = userRatings.find((r) => {
               const ratingProductId = typeof r.productId === 'string' ? r.productId : r.productId?._id
@@ -341,7 +341,7 @@ export default function ProductsPage() {
             
             return (
               <Card key={product._id} className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all overflow-hidden">
-                <div className="h-48 bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
+                <div className="h-40 sm:h-48 bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
                   <img
                     src={product.imageUrl || "/placeholder.svg"}
                     alt={product.name}
@@ -349,24 +349,24 @@ export default function ProductsPage() {
                   />
                 </div>
 
-                <CardContent>
-                  <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{product.description}</p>
+                <CardContent className="p-3 sm:p-6">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">{product.name}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 mb-2 sm:mb-3">{product.description}</p>
 
-                  <div className="mb-3">
-                    <p className="text-sm text-gray-600">Income per rating</p>
-                    <p className="text-2xl font-bold text-green-600">{incomePerRating}</p>
+                  <div className="mb-2 sm:mb-3">
+                    <p className="text-xs sm:text-sm text-gray-600">Income per rating</p>
+                    <p className="text-xl sm:text-2xl font-bold text-green-600">{incomePerRating}</p>
 
                   </div>
 
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex items-center gap-1">{renderStars(Number(product.rating) || 0)}</div>
-                    <span className="text-sm font-semibold text-gray-900">{(Number(product.rating) || 0).toFixed(1)}</span>
+                  <div className="flex items-center gap-1 sm:gap-2 mb-3 sm:mb-4">
+                    <div className="flex items-center gap-0.5 sm:gap-1">{renderStars(Number(product.rating) || 0)}</div>
+                    <span className="text-xs sm:text-sm font-semibold text-gray-900">{(Number(product.rating) || 0).toFixed(1)}</span>
                     <span className="text-xs text-gray-600">({product.ratedCount || product.ratedBy || 0})</span>
                   </div>
 
                   {userRating && (
-                    <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="mb-2 sm:mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
                       <p className="text-xs font-semibold text-green-700">
                         Your Rating: {userRating.rating}/5 ⭐
                       </p>
@@ -382,7 +382,7 @@ export default function ProductsPage() {
                   <Button
                     onClick={() => handleRateProduct(product)}
                     disabled={isLoading || (remaining <= 0 && !userRating)}
-                    className={`w-full ${
+                    className={`w-full text-sm sm:text-base ${
                       userRating
                         ? "bg-blue-500 hover:bg-blue-600 text-white border-2 border-blue-300"
                         : remaining > 0
