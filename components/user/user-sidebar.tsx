@@ -56,7 +56,7 @@ export default function UserSidebar() {
     { label: "Privacy and data protection", href: "/help/privacy" },
     { label: "Agreement", href: "/help/agreement" },
     { label: "VIP Level", href: "/help/vip-level" },
-    { label: "Use Policy", href: "/help/terms-conditions" },
+    // { label: "Use Policy", href: "/help/terms-conditions" },
     // { label: "FAQ", href: "/help/faq" },
   ]
 
@@ -171,7 +171,7 @@ export default function UserSidebar() {
                   )
                 })}
 
-                {/* Terms and Conditions with Sub-submenu */}
+                {/* Use Policy with Sub-submenu */}
                 <div>
                   <Button
                     variant="ghost"
@@ -179,7 +179,7 @@ export default function UserSidebar() {
                     className="w-full justify-start text-sm text-gray-600 hover:bg-green-50 hover:text-green-600"
                   >
                     <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity flex-1 text-left">
-                      Terms and conditions
+                      Use Policy
                     </span>
                     <ChevronRight
                       className={`w-3 h-3 flex-shrink-0 transition-transform md:opacity-0 md:group-hover/sidebar:opacity-100 ${
