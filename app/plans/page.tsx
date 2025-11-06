@@ -120,16 +120,13 @@ export default function PlansPage() {
       <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E</span>
-            </div>
-            <span className="font-bold text-gray-900">EarningHub</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
           <nav className="hidden md:flex items-center gap-8">
             <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
             <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
             <a href="/plans" className="text-green-600 font-medium">Plan</a>
-            <a href="/terms" className="text-gray-700 hover:text-green-600 transition-all duration-300">Terms & Condition</a>
+            <a href="/faq" className="text-green-600 font-medium">FAQ</a>
           </nav>
         </div>
       </header>
@@ -272,10 +269,7 @@ export default function PlansPage() {
             {/* Brand Section */}
             <div className={`col-span-1 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">E</span>
-                </div>
-                <span className="font-bold text-white text-lg">EarningHub</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
               </div>
               <p className="text-gray-400 text-sm mb-6">
                 We are a award winning multinational company. We believe quality and standard worldwide consider.
@@ -302,8 +296,6 @@ export default function PlansPage() {
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
-                <li><a href="/faq" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">FAQ</a></li>
-                <li><a href="/terms" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Terms & Condition</a></li>
                 <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Cookie Policy</a></li>
               </ul>
             </div>
@@ -335,7 +327,7 @@ export default function PlansPage() {
         <div className={`border-t border-gray-800 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              Copyright © 2025 <span className="text-green-600 font-semibold">EarningHub</span> All Rights Reserved
+              Copyright © 2025 <span className="text-green-600 font-semibold">Shopify</span> All Rights Reserved
             </p>
             <div className="text-green-600 text-sm font-medium mt-2 md:mt-0">
               English

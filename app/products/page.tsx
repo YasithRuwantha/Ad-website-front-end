@@ -422,7 +422,7 @@ export default function ProductsPage() {
         open={showLuckyDrawPopup}
         onClose={() => setShowLuckyDrawPopup(false)}
         title="🎉 Lucky Draw Active!"
-        navigateTo="/dashboard/payout"
+        navigateTo="/dashboard/add-funds"
       >
         <p>Try your luck now and win exciting rewards!</p>
       </Popup>
