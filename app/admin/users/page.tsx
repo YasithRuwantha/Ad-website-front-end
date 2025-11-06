@@ -57,6 +57,9 @@ export default function AdminUsersPage() {
 
   const [editData, setEditData] = useState({
     fullName: "",
+    firstName: "",
+    lastName: "",
+    username: "",
     email: "",
     phone: "",
     role: "",
@@ -97,6 +100,9 @@ export default function AdminUsersPage() {
     setSelectedUser(user)
     setEditData({
       fullName: user.fullName,
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      username: user.username || "",
       email: user.email,
       phone: user.phone,
       role: user.role,
@@ -271,6 +277,29 @@ export default function AdminUsersPage() {
                 onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg text-sm"
               />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  value={editData.firstName}
+                  onChange={(e) => setEditData({ ...editData, firstName: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  value={editData.lastName}
+                  onChange={(e) => setEditData({ ...editData, lastName: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Username"
+                value={editData.username}
+                onChange={(e) => setEditData({ ...editData, username: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm"
+              />
               <input
                 type="email"
                 placeholder="Email"
@@ -412,6 +441,16 @@ const UserRow = ({ user, openModal, deleteUser }: any) => (
   >
     <div className="text-sm sm:text-base space-y-1">
       <p className="font-semibold break-all">{user.fullName} ({user.email})</p>
+      {(user.firstName || user.lastName) && (
+        <p className="text-muted-foreground text-xs">
+          Name: <span className="font-semibold">{user.firstName} {user.lastName}</span>
+        </p>
+      )}
+      {user.username && (
+        <p className="text-muted-foreground text-xs">
+          Username: <span className="font-semibold">{user.username}</span>
+        </p>
+      )}
       <p className="text-muted-foreground">
         Status: <span className="font-semibold">{user.status}</span>
       </p>

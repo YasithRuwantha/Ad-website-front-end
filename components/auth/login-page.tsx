@@ -15,6 +15,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [username, setUsername] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [referralCode, setReferralCode] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -92,6 +96,13 @@ export default function LoginPage() {
           setIsLoading(false);
           return;
         }
+
+        // Validate password match
+        if (password !== confirmPassword) {
+          setError("Passwords do not match");
+          setIsLoading(false);
+          return;
+        }
         
         // Validate phone before signup
         if (!validatePhone(phone, countryCode)) {
@@ -99,9 +110,14 @@ export default function LoginPage() {
           return;
         }
         
+        // Combine first and last name
+        const fullName = `${firstName} ${lastName}`.trim();
+        
         // Combine country code with phone number
         const fullPhone = `${countryCode}${phone.replace(/\s+/g, '')}`;
-        const message = await signup(email, password, name, fullPhone, referralCode);
+        
+        // Pass all fields including username to signup
+        const message = await signup(email, password, fullName, fullPhone, referralCode, firstName, lastName, username);
         setSuccess(message);
       }
     } catch (err) {
@@ -168,24 +184,50 @@ export default function LoginPage() {
               )}
 
               {!isLogin && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <Input
-                    type="text"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required={!isLogin}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
-                  />
-                </div>
+                <>
+                  {/* First Name and Last Name - Two columns */}
+                  <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="First Name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required={!isLogin}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required={!isLogin}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Username */}
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                    <Input
+                      type="text"
+                      placeholder="Username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required={!isLogin}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                    />
+                  </div>
+                </>
               )}
 
+              {/* Email Address */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <Input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={isLogin ? "Enter your email" : "Email Address"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -193,11 +235,50 @@ export default function LoginPage() {
                 />
               </div>
 
+              {!isLogin && (
+                <>
+                  {/* Phone number with country code */}
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="flex gap-2">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => {
+                          setCountryCode(e.target.value)
+                          if (phone) validatePhone(phone, e.target.value)
+                        }}
+                        className="px-3 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 bg-white text-sm"
+                      >
+                        {countryCodes.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.country} ({country.code})
+                          </option>
+                        ))}
+                      </select>
+                      <Input
+                        type="text"
+                        placeholder="Your Phone Number"
+                        value={phone}
+                        onChange={(e) => {
+                          setPhone(e.target.value)
+                          if (e.target.value) validatePhone(e.target.value, countryCode)
+                        }}
+                        onBlur={() => phone && validatePhone(phone, countryCode)}
+                        required
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                      />
+                    </div>
+                    {phoneError && (
+                      <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                 <Input
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder={isLogin ? "Enter your password" : "Password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -206,40 +287,19 @@ export default function LoginPage() {
               </div>
 
               {!isLogin && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
-                  <div className="flex gap-2">
-                    <select
-                      value={countryCode}
-                      onChange={(e) => {
-                        setCountryCode(e.target.value)
-                        if (phone) validatePhone(phone, e.target.value)
-                      }}
-                      className="px-3 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 bg-white"
-                    >
-                      {countryCodes.map((country) => (
-                        <option key={country.code} value={country.code}>
-                          {country.code} ({country.country})
-                        </option>
-                      ))}
-                    </select>
+                <>
+                  {/* Confirm Password */}
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                     <Input
-                      type="text"
-                      placeholder={countryCodes.find(c => c.code === countryCode)?.format || "Phone number"}
-                      value={phone}
-                      onChange={(e) => {
-                        setPhone(e.target.value)
-                        if (e.target.value) validatePhone(e.target.value, countryCode)
-                      }}
-                      onBlur={() => phone && validatePhone(phone, countryCode)}
-                      required
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                      type="password"
+                      placeholder="Confirm Password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required={!isLogin}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                     />
                   </div>
-                  {phoneError && (
-                    <p className="mt-1 text-sm text-red-600">{phoneError}</p>
-                  )}
-                </div>
+                </>
               )}
 
               {/* {!isLogin && (
@@ -296,6 +356,12 @@ export default function LoginPage() {
                     setError("")
                     setSuccess("")
                     setAcceptedTerms(false)
+                    setFirstName("")
+                    setLastName("")
+                    setUsername("")
+                    setPhone("")
+                    setConfirmPassword("")
+                    setPhoneError("")
                   }}
                   className="text-green-600 hover:text-green-700 font-medium text-sm transition-all duration-300 hover:underline"
                 >
