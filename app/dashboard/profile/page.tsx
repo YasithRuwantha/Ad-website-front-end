@@ -11,6 +11,9 @@ import { useState, useEffect } from "react"
 interface UserProfile {
   _id: string
   fullName: string
+  firstName?: string
+  lastName?: string
+  username?: string
   email: string
   role: string
   phone: string
@@ -180,6 +183,35 @@ export default function UserProfilePage() {
                 </div>
               )}
             </div>
+
+            {(profile.firstName || profile.lastName) && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">First Name</label>
+                  <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                    <UserIcon className="w-5 h-5 text-muted-foreground" />
+                    <p className="font-medium">{profile.firstName || "Not set"}</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Last Name</label>
+                  <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                    <UserIcon className="w-5 h-5 text-muted-foreground" />
+                    <p className="font-medium">{profile.lastName || "Not set"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {profile.username && (
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Username</label>
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                  <UserIcon className="w-5 h-5 text-muted-foreground" />
+                  <p className="font-medium">@{profile.username}</p>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="text-sm font-medium text-muted-foreground">Member Since</label>

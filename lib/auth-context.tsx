@@ -5,6 +5,9 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 export interface User {
   id: string
   fullName: string
+  firstName?: string
+  lastName?: string
+  username?: string
   email: string
   role: string
   balance: number
@@ -17,7 +20,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  signup: (email: string, password: string, name: string, phone: string, referralCode?: string) => Promise<string>
+  signup: (email: string, password: string, name: string, phone: string, referralCode?: string, firstName?: string, lastName?: string, username?: string) => Promise<string>
   logout: () => void
   updateUser: (updates: Partial<User>) => void
 
@@ -81,7 +84,7 @@ const updateUser = (updates: Partial<User>) => {
 
   // 🟢 Signup
   // 🟢 Signup in auth-context.tsx
-const signup = async (email: string, password: string, name: string, phone: string, referralCode?: string) => {
+const signup = async (email: string, password: string, name: string, phone: string, referralCode?: string, firstName?: string, lastName?: string, username?: string) => {
   let extractedReferral: string | undefined = referralCode;
 
   if (referralCode) {
@@ -96,7 +99,16 @@ const signup = async (email: string, password: string, name: string, phone: stri
     const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, fullName: name, phone, referralCode: extractedReferral }),
+    body: JSON.stringify({ 
+      email, 
+      password, 
+      fullName: name, 
+      firstName, 
+      lastName, 
+      username, 
+      phone, 
+      referralCode: extractedReferral 
+    }),
   });
 
   const data = await res.json();
