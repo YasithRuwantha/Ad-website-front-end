@@ -274,12 +274,12 @@ export default function AdminUsersPage() {
                   className="w-full px-3 py-2 border rounded-lg text-sm"
                 >
                   <option value="none">none</option>
-                  <option value="Starter">Starter</option>
-                  <option value="Basic">Basic</option>
-                  <option value="Beginner">Beginner</option>
-                  <option value="Advanced">Advanced</option>
-                  <option value="Professional">Professional</option>
-                  <option value="Premium">Premium</option>
+                  <option value="Starter">Starter  ($100)</option>
+                  <option value="Basic">Basic  ($300)</option>
+                  <option value="Beginner">Beginner  ($500)</option>
+                  <option value="Advanced">Advanced  ($1,000)</option>
+                  <option value="Professional">Professional  ($1,500)</option>
+                  <option value="Premium">Premium  ($2,000)</option>
                 </select>
               </div>
 
