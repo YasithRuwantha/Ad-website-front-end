@@ -528,12 +528,14 @@ export default function LoginPage() {
 
           {/* Right Column - Image */}
           <div className="hidden md:block relative h-[600px] rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
-            <Image
-              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=1000&fit=crop"
-              alt="Earning Platform"
-              fill
-              className="object-cover"
-              priority
+            <video
+              src="/videos/signup-promo.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-cover w-full h-full absolute inset-0"
+              poster="/videos/signup-promo-poster.jpg"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900/30 via-transparent to-gray-900/30"></div>
           </div>
