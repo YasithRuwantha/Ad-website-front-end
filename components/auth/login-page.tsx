@@ -340,8 +340,8 @@ export default function LoginPage() {
 
               {!isLogin && (
                 <>
-                  {/* First Name and Last Name - Two columns */}
-                  <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                  {/* First Name and Last Name - Two columns on md+, stacked on mobile */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
                     <div>
                       <Input
                         type="text"
@@ -394,14 +394,14 @@ export default function LoginPage() {
                 <>
                   {/* Phone number with country code */}
                   <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
                       <select
                         value={countryCode}
                         onChange={(e) => {
                           setCountryCode(e.target.value)
                           if (phone) validatePhone(phone, e.target.value)
                         }}
-                        className="px-3 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 bg-white text-sm"
+                        className="px-3 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 bg-white text-sm w-full sm:w-auto"
                       >
                         {countryCodes.map((country) => (
                           <option key={country.code} value={country.code}>
@@ -419,7 +419,7 @@ export default function LoginPage() {
                         }}
                         onBlur={() => phone && validatePhone(phone, countryCode)}
                         required
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 w-full"
                       />
                     </div>
                     {phoneError && (
