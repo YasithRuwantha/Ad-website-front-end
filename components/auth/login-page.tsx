@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [phone, setPhone] = useState("")
   const [countryCode, setCountryCode] = useState("+1")
   const [phoneError, setPhoneError] = useState("")
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const router = useRouter()
   const [isFooterVisible, setIsFooterVisible] = useState(false)
   const footerRef = useRef<HTMLElement>(null)
@@ -85,6 +86,13 @@ export default function LoginPage() {
       if (isLogin) {
         await login(email, password);
       } else {
+        // Check if terms are accepted
+        if (!acceptedTerms) {
+          setError("You must accept the terms and conditions to create an account");
+          setIsLoading(false);
+          return;
+        }
+        
         // Validate phone before signup
         if (!validatePhone(phone, countryCode)) {
           setIsLoading(false);
@@ -248,9 +256,33 @@ export default function LoginPage() {
                 </div>
               )} */}
 
+              {!isLogin && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 cursor-pointer"
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">
+                      I accept the{" "}
+                      <a  
+                        target="_blank"
+                        className="text-green-600 hover:text-green-700 font-medium underline"
+                      >
+                        Terms and Conditions
+                      </a>
+                      {" "}and agree to the privacy policy
+                    </label>
+                  </div>
+                </div>
+              )}
+
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (!isLogin && !acceptedTerms)}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
@@ -263,6 +295,7 @@ export default function LoginPage() {
                     setIsLogin(!isLogin)
                     setError("")
                     setSuccess("")
+                    setAcceptedTerms(false)
                   }}
                   className="text-green-600 hover:text-green-700 font-medium text-sm transition-all duration-300 hover:underline"
                 >
