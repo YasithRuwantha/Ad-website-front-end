@@ -8,6 +8,38 @@ import { Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useUsers } from "@/lib/user-context"
 
+// Helper function to parse phone number and extract country info
+const parsePhoneNumber = (phone: string) => {
+  if (!phone) return { countryCode: "", number: "", country: "" }
+  
+  const countryCodes = [
+    { code: "+1", country: "US/CA" },
+    { code: "+44", country: "UK" },
+    { code: "+91", country: "India" },
+    { code: "+94", country: "Sri Lanka" },
+    { code: "+61", country: "Australia" },
+    { code: "+81", country: "Japan" },
+    { code: "+86", country: "China" },
+    { code: "+49", country: "Germany" },
+    { code: "+33", country: "France" },
+    { code: "+971", country: "UAE" },
+  ]
+  
+  // Find matching country code (check longest codes first)
+  const sortedCodes = countryCodes.sort((a, b) => b.code.length - a.code.length)
+  for (const { code, country } of sortedCodes) {
+    if (phone.startsWith(code)) {
+      return {
+        countryCode: code,
+        number: phone.substring(code.length),
+        country: country
+      }
+    }
+  }
+  
+  return { countryCode: "", number: phone, country: "" }
+}
+
 export default function AdminUsersPage() {
   const { user } = useAuth()
   const { transactions } = useData()
@@ -383,7 +415,14 @@ const UserRow = ({ user, openModal, deleteUser }: any) => (
       <p className="text-muted-foreground">
         Status: <span className="font-semibold">{user.status}</span>
       </p>
-      <p className="text-muted-foreground">Phone: {user.phone}</p>
+      <p className="text-muted-foreground">
+        Phone: {(() => {
+          const { countryCode, number, country } = parsePhoneNumber(user.phone)
+          return country 
+            ? <span><span className="font-semibold text-green-600">{countryCode}</span> {number} <span className="text-xs text-gray-500">({country})</span></span>
+            : user.phone
+        })()}
+      </p>
       <p className="text-muted-foreground">
         Ads per day: <span className="font-semibold">{user.adsPerDay || 0}</span>
       </p>
