@@ -21,9 +21,40 @@ export default function LoginPage() {
   const { login, signup } = useAuth()
   const [success, setSuccess] = useState("")
   const [phone, setPhone] = useState("")
+  const [countryCode, setCountryCode] = useState("+1")
+  const [phoneError, setPhoneError] = useState("")
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const router = useRouter()
   const [isFooterVisible, setIsFooterVisible] = useState(false)
   const footerRef = useRef<HTMLElement>(null)
+
+  // Country codes with validation patterns
+  const countryCodes = [
+    { code: "+1", country: "USA", pattern: /^\d{10}$/, format: "1234567890" },
+    { code: "+44", country: "UK", pattern: /^\d{10}$/, format: "1234567890" },
+    { code: "+91", country: "India", pattern: /^\d{10}$/, format: "1234567890" },
+    { code: "+94", country: "Sri Lanka", pattern: /^\d{9}$/, format: "771234567" },
+    { code: "+61", country: "Australia", pattern: /^\d{9}$/, format: "412345678" },
+    { code: "+81", country: "Japan", pattern: /^\d{10}$/, format: "9012345678" },
+    { code: "+86", country: "China", pattern: /^\d{11}$/, format: "13812345678" },
+    { code: "+49", country: "Germany", pattern: /^\d{10,11}$/, format: "15112345678" },
+    { code: "+33", country: "France", pattern: /^\d{9}$/, format: "612345678" },
+    { code: "+971", country: "UAE", pattern: /^\d{9}$/, format: "501234567" },
+  ]
+
+  // Validate phone number based on country code
+  const validatePhone = (phoneNumber: string, selectedCode: string) => {
+    const country = countryCodes.find(c => c.code === selectedCode)
+    if (!country) return true
+    
+    const cleanPhone = phoneNumber.replace(/\s+/g, '')
+    if (!country.pattern.test(cleanPhone)) {
+      setPhoneError(`Invalid format for ${country.country}.`)
+      return false
+    }
+    setPhoneError("")
+    return true
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -48,14 +79,30 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setPhoneError("");
     setIsLoading(true);
 
     try {
       if (isLogin) {
         await login(email, password);
       } else {
-        const message = await signup(email, password, name, phone, referralCode);
-        setSuccess(message); // ✅ show success message
+        // Check if terms are accepted
+        if (!acceptedTerms) {
+          setError("You must accept the terms and conditions to create an account");
+          setIsLoading(false);
+          return;
+        }
+        
+        // Validate phone before signup
+        if (!validatePhone(phone, countryCode)) {
+          setIsLoading(false);
+          return;
+        }
+        
+        // Combine country code with phone number
+        const fullPhone = `${countryCode}${phone.replace(/\s+/g, '')}`;
+        const message = await signup(email, password, name, fullPhone, referralCode);
+        setSuccess(message);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -161,18 +208,41 @@ export default function LoginPage() {
               {!isLogin && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
-                  <Input
-                    type="text"
-                    placeholder="+94 77 777 7777"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
-                  />
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={(e) => {
+                        setCountryCode(e.target.value)
+                        if (phone) validatePhone(phone, e.target.value)
+                      }}
+                      className="px-3 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 bg-white"
+                    >
+                      {countryCodes.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.code} ({country.country})
+                        </option>
+                      ))}
+                    </select>
+                    <Input
+                      type="text"
+                      placeholder={countryCodes.find(c => c.code === countryCode)?.format || "Phone number"}
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value)
+                        if (e.target.value) validatePhone(e.target.value, countryCode)
+                      }}
+                      onBlur={() => phone && validatePhone(phone, countryCode)}
+                      required
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                    />
+                  </div>
+                  {phoneError && (
+                    <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+                  )}
                 </div>
               )}
 
-              {!isLogin && (
+              {/* {!isLogin && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Referral Code</label>
                   <Input
@@ -184,11 +254,35 @@ export default function LoginPage() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                   />
                 </div>
+              )} */}
+
+              {!isLogin && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 cursor-pointer"
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">
+                      I accept the{" "}
+                      <a  
+                        target="_blank"
+                        className="text-green-600 hover:text-green-700 font-medium underline"
+                      >
+                        Terms and Conditions
+                      </a>
+                      {" "}and agree to the privacy policy
+                    </label>
+                  </div>
+                </div>
               )}
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (!isLogin && !acceptedTerms)}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
@@ -201,6 +295,7 @@ export default function LoginPage() {
                     setIsLogin(!isLogin)
                     setError("")
                     setSuccess("")
+                    setAcceptedTerms(false)
                   }}
                   className="text-green-600 hover:text-green-700 font-medium text-sm transition-all duration-300 hover:underline"
                 >
