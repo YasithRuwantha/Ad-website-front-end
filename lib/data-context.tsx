@@ -59,9 +59,16 @@ export interface SupportTicket {
   useremail?: string
   subject: string
   message: string
+  imageUrl?: string
   status: "open" | "in-progress" | "resolved"
   createdAt: string
-  replies: Array<{ id: string; message: string; createdAt: string; isAdmin: boolean }>
+  replies: Array<{
+    id: string
+    message: string
+    createdAt: string
+    isAdmin: boolean
+    imageUrl?: string
+  }>
 }
 
 interface DataContextType {
@@ -76,7 +83,7 @@ interface DataContextType {
   addRating: (rating: Rating) => void
   addTransaction: (transaction: Transaction) => void
   addTicket: (ticket: SupportTicket) => Promise<void>
-  replyToTicket: (ticketId: string, message: string, isAdmin: boolean) => Promise<void>
+  replyToTicket: (ticketId: string, message: string, isAdmin: boolean, image?: File) => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -384,6 +391,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     useremail: t.useremail || "",
     subject: t.subject,
     message: t.message,
+    imageUrl: t.imageUrl,
     status: t.status,
     createdAt: typeof t.createdAt === "string" ? t.createdAt : new Date(t.createdAt).toISOString(),
     replies: (t.replies || []).map((r) => ({
@@ -391,6 +399,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       message: r.message,
       createdAt: typeof r.createdAt === "string" ? r.createdAt : new Date(r.createdAt).toISOString(),
       isAdmin: !!r.isAdmin,
+      imageUrl: r.imageUrl,
     })),
   })
 
@@ -490,9 +499,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const replyToTicket = async (ticketId: string, message: string, isAdmin: boolean) => {
+  const replyToTicket = async (ticketId: string, message: string, isAdmin: boolean, image?: File) => {
     try {
-      const updated = await SupportAPI.addReply(ticketId, { message, isAdmin })
+      const updated = await SupportAPI.addReply(ticketId, { message, isAdmin, image })
       const mapped = mapTicket(updated)
       const newTickets = tickets.map((t) => (t.id === ticketId ? mapped : t))
       setTickets(newTickets)
@@ -511,6 +520,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
                   message,
                   createdAt: new Date().toISOString(),
                   isAdmin,
+                  // No imageUrl fallback for local update
                 },
               ],
             }
