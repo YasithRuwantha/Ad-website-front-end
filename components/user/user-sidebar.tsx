@@ -40,7 +40,7 @@ export default function UserSidebar() {
     // { label: "Ads", href: "/ads", icon: FileText },
     { label: "Products", href: "/products", icon: ShoppingBag },
     { label: "Earnings", href: "/earnings", icon: TrendingUp },
-    { label: "Referrals", href: "/referrals", icon: Users },
+    // { label: "Referrals", href: "/referrals", icon: Users },
     { label: "Support", href: "/support", icon: MessageSquare },
     { label: "Plans", href: "/dashboard/plans", icon: CreditCard },
     { label: "Add Funds", href: "/dashboard/add-funds", icon: DollarSign },
@@ -48,7 +48,7 @@ export default function UserSidebar() {
     { label: "Payout", href: "/dashboard/payout", icon: Send },
     { label: "Payout History", href: "/dashboard/payout-history", icon: History },
     { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
-    { label: "test", href: "/test", icon: Send },
+    // { label: "test", href: "/test", icon: Send },
   ]
 
   const helpCenterItems = [

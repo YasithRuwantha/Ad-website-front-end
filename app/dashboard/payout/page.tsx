@@ -4,15 +4,27 @@ import { useAuth } from "@/lib/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { DollarSign, Wallet, TrendingUp, AlertCircle } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRatings } from "@/lib/rating-context"
 
 export default function PayoutPage() {
   const { user, updateUser } = useAuth()
+  const [totalEarnings, setTotalEarnings] = useState("")
+  const { getUserEarningsRatings } = useRatings() 
+
+  useEffect(() => {
+    getUserEarningsRatings().then((data) => {
+      // ✅ Calculate total earning immediately
+      const total = data.reduce((sum, item) => sum + (item.earning || 0), 0);
+      console.log("earnings :",total)
+      setTotalEarnings(total);
+    });
+  }, [])
 
   // --- Provide dummy values if undefined ---
   const safeUser = {
     balance: user?.balance ?? 120,          // dummy balance
-    totalEarnings: user?.totalEarnings ?? 500, // dummy total earnings
+    totalEarnings: user?.totalEarnings, // dummy total earnings
     totalPayouts: user?.totalPayouts ?? 300,   // dummy total payouts
     payoutMethod: user?.payoutMethod ?? "bank",
     bankAccount: user?.bankAccount ?? "",
@@ -77,7 +89,10 @@ export default function PayoutPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
-                <p className="text-3xl font-bold text-gray-900">${safeUser.totalEarnings.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  ${(totalEarnings || 0).toFixed(2)}
+                </p>
+
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-green-600" />

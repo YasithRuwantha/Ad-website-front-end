@@ -6,18 +6,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { TrendingUp, FileText, ShoppingBag, Wallet, CreditCard, DollarSign, User, PlusCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRatings } from "@/lib/rating-context"
 
 export default function DashboardPage() {
   const { user } = useAuth()
   const { ads, transactions, ratings } = useData()
   const router = useRouter()
+  const { getUserEarningsRatings } = useRatings();
 
   const userAds = ads.filter((ad) => ad.userId === user?.id)
   const userTransactions = transactions.filter((t) => t.userId === user?.id)
   const userRatings = ratings.filter((r) => r.userId === user?.id)
+    const [totalEarnings, setTotalEarnings] = useState("")
+  
 
-  // Calculate totals
-  const totalDeposits = 0 // We'll use dummy value for now
+      useEffect(() => {
+        getUserEarningsRatings().then((data) => {
+          // ✅ Calculate total earning immediately
+          const total = data.reduce((sum, item) => sum + (item.earning || 0), 0);
+          console.log("earnings :",total)
+          setTotalEarnings(total);
+        });
+      }, [])
+    
+
   const totalPayouts = 0 // We'll use dummy value for now
 
   const stats = [
@@ -103,8 +116,8 @@ export default function DashboardPage() {
             <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
               <PlusCircle className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">${totalDeposits.toFixed(2)}</p>
-            <p className="text-sm text-gray-600">Total Deposit</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">${(totalEarnings || 0).toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Total Earning</p>
           </div>
 
           {/* Total Payout */}
