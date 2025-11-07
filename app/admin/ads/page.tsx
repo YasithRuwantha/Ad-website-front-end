@@ -8,10 +8,17 @@ import { useState } from "react"
 
 export default function AdminProductsPage() {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts()
-  const [newProduct, setNewProduct] = useState<{ name: string; description: string; income: string; imageFile?: File }>({
+  const [newProduct, setNewProduct] = useState<{
+    name: string;
+    description: string;
+    income: string;
+    plan: string;
+    imageFile?: File;
+  }>({
     name: "",
     description: "",
-    income: ""
+    income: "",
+    plan: "Basic"
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -39,7 +46,7 @@ export default function AdminProductsPage() {
     setIsUploading(true)
     try {
       await addProduct(newProduct)
-      setNewProduct({ name: "", description: "", income: "" })
+  setNewProduct({ name: "", description: "", income: "", plan: "Basic" })
       setIsModalOpen(false)
     } catch (e: any) {
       alert(e.message)
@@ -56,9 +63,9 @@ export default function AdminProductsPage() {
       await updateProduct(editProduct.id, {
         name: editProduct.name,
         description: editProduct.description,
-        rating: editProduct.rating,
-        imageFile: editProduct.imageFile, // Include the image file
-        income: editProduct.income
+        rating: Number(editProduct.rating),
+        ...(editProduct.imageFile ? { imageFile: editProduct.imageFile } : {}),
+        income: Number(editProduct.income)
       })
       setIsEditModalOpen(false)
       setEditProduct({
@@ -117,6 +124,19 @@ export default function AdminProductsPage() {
               onChange={(e) => setNewProduct({ ...newProduct, income: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
+            {/* Plan Dropdown */}
+            <select
+              value={newProduct.plan}
+              onChange={(e) => setNewProduct({ ...newProduct, plan: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            >
+              <option value="Basic">Starter $100</option>
+              <option value="Silver">Basic $300</option>
+              <option value="Gold">Beginner $500</option>
+              <option value="Platinum">Advanced $1,000</option>
+              <option value="Diamond">Professional $1,500</option>
+              <option value="VIP">Premium $2,000</option>
+            </select>
             <input
               type="file"
               accept="image/*"
@@ -262,7 +282,7 @@ export default function AdminProductsPage() {
                             rating: p.rating.toString(),
                             imageFile: undefined,
                             currentImageUrl: p.imageUrl,
-                            income: p.income
+                            income: p.income?.toString() || ""
                           })
                           setIsEditModalOpen(true)
                         }}
@@ -290,6 +310,9 @@ export default function AdminProductsPage() {
                     )}
                     <p className="text-sm text-muted-foreground">
                       Rating: {p.rating} ({p.ratedBy} people rated)
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Plan: {p.plan || "-"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Added: {new Date(p.createdAt).toLocaleString()}
