@@ -18,7 +18,7 @@ export default function AdminProductsPage() {
     name: "",
     description: "",
     income: "",
-    plan: "Basic"
+    plan: "Starter"
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -130,12 +130,12 @@ export default function AdminProductsPage() {
               onChange={(e) => setNewProduct({ ...newProduct, plan: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             >
-              <option value="Basic">Starter $100</option>
-              <option value="Silver">Basic $300</option>
-              <option value="Gold">Beginner $500</option>
-              <option value="Platinum">Advanced $1,000</option>
-              <option value="Diamond">Professional $1,500</option>
-              <option value="VIP">Premium $2,000</option>
+              <option value="Starter">Starter $100</option>
+              <option value="Basic">Basic $300</option>
+              <option value="Beginner">Beginner $500</option>
+              <option value="Advanced">Advanced $1,000</option>
+              <option value="Professional">Professional $1,500</option>
+              <option value="Premium">Premium $2,000</option>
             </select>
             <input
               type="file"
