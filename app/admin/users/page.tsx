@@ -197,8 +197,9 @@ export default function AdminUsersPage() {
   const { user } = useAuth()
   const { transactions } = useData()
   const [copied, setCopied] = useState(false)
-  const { users, isLoading, fetchUsers, updateUser, deleteUser, addRemainingAds } = useUsers()
-
+  const { users, isLoading, fetchUsers, updateUser, deleteUser, addRemainingAds, addToptup } = useUsers()
+  const [adsAdjust, setAdsAdjust] = useState<number>(0)
+  const [topup, setTopup] = useState<number>(0)
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -220,10 +221,15 @@ export default function AdminUsersPage() {
     adsPerDay: "",
     luckydrawStatus: "",
     luckydrawAttempt: "",
-    plan: ""
+    plan: "",
   })
 
-  const [adsAdjust, setAdsAdjust] = useState<number>(0)
+
+
+
+  useEffect(() => {
+    console.log("topup change :", topup, adsAdjust)
+  }, [topup, adsAdjust])
 
   const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all") // <-- role filter
 
@@ -263,7 +269,8 @@ export default function AdminUsersPage() {
       adsPerDay: user.adsPerDay,
       luckydrawStatus: user.luckydrawStatus,
       luckydrawAttempt: user.luckydrawAttempt,
-      plan: user.plan
+      plan: user.plan,
+      topup: user.topup
     })
     setAdsAdjust(0)
     setIsModalOpen(true)
@@ -315,6 +322,33 @@ export default function AdminUsersPage() {
     }
   }
 
+
+  const adjustTopup = async (amount: number) => {
+    if (!selectedUser) return
+    if (!topup || topup <= 0) {
+      setMessage({ type: "error", text: "Enter a valid number" })
+      return
+    }
+    
+    try {
+      await addToptup(
+        selectedUser._id,
+        amount > 0 ? topup : -topup,
+      )
+
+      setSelectedUser({
+        ...selectedUser,
+        balance: Math.max((selectedUser.balance || 0) + amount, 0),
+      })
+      setMessage({ type: "success", text: amount > 0 ? `✅ Added ${topup} topup!` : `✅ Removed ${topup} topup!` })
+      setTopup(0)
+      fetchUsers()
+    } catch (err) {
+      console.error(err)
+      setMessage({ type: "error", text: "❌ Failed to update ads." })
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -325,7 +359,7 @@ export default function AdminUsersPage() {
         </p>
       </div>
 
-      {/* Referral Link - only for Admins */}
+      {/* Referral Link - only for Admins
       {user?.role === "admin" && (
         <Card className="border-2 border-green-300 bg-gradient-to-r from-green-100 to-green-50">
           <CardHeader>
@@ -359,7 +393,7 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-      )}
+      )} */}
 
       {/* Role Filter Buttons */}
       <div className="flex gap-2">
@@ -521,7 +555,6 @@ export default function AdminUsersPage() {
                 />
               </div>
 
-
               <div className="flex items-center">
                 <div className="pl-1 w-full">Attempts per day</div>
                 <select
@@ -562,6 +595,31 @@ export default function AdminUsersPage() {
               </div>
             </div>
 
+            {/* Topup customser Account */}
+            <div className="border-t pt-4 space-y-2">
+              <label className="block text-sm font-medium text-gray-700">Topup customser Account</label>
+              <p className="text-sm text-gray-600">
+                Current Topup customser Account: <span className="font-semibold">{selectedUser.balance || 0}</span>
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  placeholder="Enter topup number"
+                  value={topup || ""}
+                  onChange={(e) => setTopup(Number(e.target.value))}
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                />
+                <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => adjustTopup(topup)}>
+                  ➕ Add
+                </Button>
+                <Button type="button" variant="destructive" className="w-full sm:w-auto" onClick={() => adjustTopup(-topup)}>
+                  ➖ Remove
+                </Button>
+              </div>
+            </div>
+
             {/* Message */}
             {message.text && (
               <p className={`text-center text-sm ${message.type === "success" ? "text-green-600" : "text-red-600"}`}>
@@ -588,7 +646,7 @@ export default function AdminUsersPage() {
 // User Row Component
 const UserRow = ({ user, openModal, deleteUser }: any) => (
   <div
-    className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg gap-2 ${
+    className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg gap-2 mt-2 ${
       user.status === "inactive" ? "bg-red-50" : "bg-background/50"
     }`}
   >

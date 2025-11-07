@@ -34,7 +34,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   // Fetch all products
   const fetchProducts = async () => {
     const token = localStorage.getItem("token")
-    const res = await fetch(`${API_URL}/api/products/all`, {
+      const res = await fetch(`${API_URL}/api/products/get-unrated-30-products`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     const data = await res.json()
