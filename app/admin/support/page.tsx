@@ -12,6 +12,9 @@ export default function AdminSupportPage() {
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null)
   const [replyText, setReplyText] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
+  const [replyImage, setReplyImage] = useState<File | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   const openTickets = tickets.filter(
     (t) =>
@@ -21,11 +24,17 @@ export default function AdminSupportPage() {
         t.useremail?.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
-  const handleReply = (ticketId: string) => {
-    if (!replyText.trim()) return
-    replyToTicket(ticketId, replyText, true)
+
+
+  const handleReply = async (ticketId: string) => {
+    if (!replyText.trim() && !replyImage) return
+    setIsUploading(true)
+    setUploadError(null)
+    await replyToTicket(ticketId, replyText, true, replyImage || undefined)
     setReplyText("")
+    setReplyImage(null)
     setSelectedTicket(null)
+    setIsUploading(false)
   }
 
   return (
@@ -121,6 +130,16 @@ export default function AdminSupportPage() {
                   <div className="p-2 bg-green-50 rounded-lg border border-green-200">
                     <p className="text-sm font-semibold text-gray-900 mb-0.5">Customer</p>
                     <p className="text-sm text-gray-700">{ticket.message}</p>
+                    {ticket.imageUrl && (
+                      <div className="mt-2 flex flex-col items-center">
+                        <img
+                          src={ticket.imageUrl}
+                          alt="Ticket attachment"
+                          className="max-h-64 mx-auto rounded-lg border border-green-200"
+                        />
+                        <p className="mt-2 text-xs text-green-600 font-medium">Image Attachment</p>
+                      </div>
+                    )}
                   </div>
 
                   {ticket.replies.map((reply) => (
@@ -134,35 +153,60 @@ export default function AdminSupportPage() {
                         {reply.isAdmin ? "You (Admin)" : "Customer"}
                       </p>
                       <p className="text-foreground">{reply.message}</p>
+                      {reply.imageUrl && (
+                        <div className="mt-2 flex flex-col items-center">
+                          <img
+                            src={reply.imageUrl}
+                            alt="Reply attachment"
+                            className="max-h-64 mx-auto rounded-lg border border-green-200"
+                          />
+                          <p className="mt-2 text-xs text-green-600 font-medium">Image Attachment</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
 
                 {selectedTicket === ticket.id && (
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Type your reply..."
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      className="flex-1 px-3 py-2 border-2 border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <Button
-                      onClick={() => handleReply(ticket.id)}
-                      disabled={!replyText.trim()}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      Send
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setSelectedTicket(null)
-                        setReplyText("")
-                      }}
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Type your reply..."
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        className="flex-1 px-3 py-2 border-2 border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => setReplyImage(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
+                        className="flex-1 border border-green-300 rounded-lg p-2"
+                      />
+                      <Button
+                        onClick={() => handleReply(ticket.id)}
+                        disabled={isUploading || (!replyText.trim() && !replyImage)}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        {isUploading ? "Sending..." : "Send"}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setSelectedTicket(null)
+                          setReplyText("")
+                          setReplyImage(null)
+                        }}
+                        variant="outline"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    {replyImage && (
+                      <div className="text-xs text-gray-700">Selected: {replyImage.name}</div>
+                    )}
+                    {uploadError && (
+                      <div className="text-xs text-red-600">{uploadError}</div>
+                    )}
                   </div>
                 )}
               </CardContent>

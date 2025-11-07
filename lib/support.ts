@@ -7,6 +7,7 @@ export interface ReplyDTO {
   message: string;
   isAdmin: boolean;
   createdAt: string;
+  imageUrl?: string; // Optional image URL for image replies
 }
 
 export interface TicketDTO {
@@ -16,6 +17,7 @@ export interface TicketDTO {
   useremail?: string;
   subject: string;
   message: string;
+  imageUrl?: string; // Optional image URL for ticket message
   status: TicketStatus;
   createdAt: string;
   replies: ReplyDTO[];
@@ -66,11 +68,14 @@ export async function createTicket(payload: {
   return handle<TicketDTO>(res);
 }
 
-export async function addReply(ticketId: string, payload: { message: string; isAdmin?: boolean }): Promise<TicketDTO> {
+export async function addReply(ticketId: string, payload: { message: string; isAdmin?: boolean; image?: File }): Promise<TicketDTO> {
+  const formData = new FormData();
+  formData.append("message", payload.message);
+  if (payload.isAdmin !== undefined) formData.append("isAdmin", String(payload.isAdmin));
+  if (payload.image) formData.append("image", payload.image);
   const res = await fetch(`${SUPPORT_BASE}/${ticketId}/reply`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: formData,
   });
   return handle<TicketDTO>(res);
 }

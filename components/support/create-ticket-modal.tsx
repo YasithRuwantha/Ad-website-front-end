@@ -9,23 +9,59 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 interface CreateTicketModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmit: (subject: string, message: string) => void
+  onSubmit: (subject: string, message: string, imageUrl?: string) => void
 }
+
 
 export default function CreateTicketModal({ open, onOpenChange, onSubmit }: CreateTicketModalProps) {
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0])
+    } else {
+      setImageFile(null)
+    }
+  }
+
+  const uploadToCloudinary = async (file: File): Promise<string | null> => {
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", "YOUR_CLOUDINARY_UPLOAD_PRESET") // Replace with your preset
+    try {
+      const res = await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUDINARY_CLOUD_NAME/image/upload", {
+        method: "POST",
+        body: formData,
+      })
+      const data = await res.json()
+      if (data.secure_url) return data.secure_url
+      setUploadError("Image upload failed.")
+      return null
+    } catch (err) {
+      setUploadError("Image upload failed.")
+      return null
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!subject || !message) return
 
     setIsLoading(true)
+    setUploadError(null)
+    let imageUrl: string | undefined = undefined
+    if (imageFile) {
+      imageUrl = await uploadToCloudinary(imageFile) || undefined
+    }
     try {
-      onSubmit(subject, message)
+      onSubmit(subject, message, imageUrl)
       setSubject("")
       setMessage("")
+      setImageFile(null)
       onOpenChange(false)
     } finally {
       setIsLoading(false)
@@ -62,6 +98,22 @@ export default function CreateTicketModal({ open, onOpenChange, onSubmit }: Crea
               className="w-full p-2 border border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600"
               rows={5}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Attach Image (optional)</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full border border-green-300 rounded-lg p-2"
+            />
+            {imageFile && (
+              <div className="mt-2 text-xs text-gray-700">Selected: {imageFile.name}</div>
+            )}
+            {uploadError && (
+              <div className="mt-2 text-xs text-red-600">{uploadError}</div>
+            )}
           </div>
 
           <div className="flex gap-2 pt-4">

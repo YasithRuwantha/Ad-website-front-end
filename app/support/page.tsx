@@ -20,6 +20,9 @@ export default function SupportPage() {
   const [userName, setUserName] = useState("User")
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [replyImage, setReplyImage] = useState<File | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   const userTickets = tickets.filter((t) => t.userId === user?.id)
   const openTickets = userTickets.filter((t) => t.status === "open" || t.status === "in-progress")
@@ -67,10 +70,38 @@ export default function SupportPage() {
     setShowCreateModal(false)
   }
 
-  const handleReply = (ticketId: string) => {
-    if (!replyText.trim()) return
-    replyToTicket(ticketId, replyText, false)
+  const uploadToCloudinary = async (file: File): Promise<string | null> => {
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", "YOUR_CLOUDINARY_UPLOAD_PRESET") // Replace with your preset
+    try {
+      const res = await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUDINARY_CLOUD_NAME/image/upload", {
+        method: "POST",
+        body: formData,
+      })
+      const data = await res.json()
+      if (data.secure_url) return data.secure_url
+      setUploadError("Image upload failed.")
+      return null
+    } catch (err) {
+      setUploadError("Image upload failed.")
+      return null
+    }
+  }
+
+  const handleReply = async (ticketId: string) => {
+    if (!replyText.trim() && !replyImage) return
+    setIsUploading(true)
+    setUploadError(null)
+    let imageUrl: string | undefined = undefined
+    if (replyImage) {
+      imageUrl = await uploadToCloudinary(replyImage) || undefined
+    }
+    // @ts-ignore: update replyToTicket to accept imageUrl
+    await replyToTicket(ticketId, replyText, false, imageUrl)
     setReplyText("")
+    setReplyImage(null)
+    setIsUploading(false)
   }
 
   const handleLogout = () => {
@@ -248,6 +279,16 @@ export default function SupportPage() {
                       <div className="p-2 md:p-3 bg-green-50 rounded-lg">
                         <p className="text-xs md:text-sm font-semibold text-gray-900 mb-1">You</p>
                         <p className="text-xs md:text-sm text-gray-900">{ticket.message}</p>
+                        {ticket.imageUrl && (
+                          <div className="mt-2 flex flex-col items-center">
+                            <img
+                              src={ticket.imageUrl}
+                              alt="Ticket attachment"
+                              className="max-h-64 mx-auto rounded-lg border border-green-200"
+                            />
+                            <p className="mt-2 text-xs text-green-600 font-medium">Image Attachment</p>
+                          </div>
+                        )}
                       </div>
 
                       {ticket.replies.map((reply) => (
@@ -261,26 +302,50 @@ export default function SupportPage() {
                             {reply.isAdmin ? "Support Team" : "You"}
                           </p>
                           <p className="text-xs md:text-sm text-gray-900">{reply.message}</p>
+                          {reply.imageUrl && (
+                            <div className="mt-2 flex flex-col items-center">
+                              <img
+                                src={reply.imageUrl}
+                                alt="Reply attachment"
+                                className="max-h-64 mx-auto rounded-lg border border-green-200"
+                              />
+                              <p className="mt-2 text-xs text-green-600 font-medium">Image Attachment</p>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
 
                     {selectedTicket === ticket.id ? (
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="Type your reply..."
-                          value={replyText}
-                          onChange={(e) => setReplyText(e.target.value)}
-                          className="flex-1 px-2 md:px-3 py-1.5 md:py-2 text-sm border border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600"
-                        />
-                        <Button
-                          onClick={() => handleReply(ticket.id)}
-                          disabled={!replyText.trim()}
-                          className="bg-green-600 hover:bg-green-700 text-white px-3 md:px-4"
-                        >
-                          Send
-                        </Button>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Type your reply..."
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            className="flex-1 px-2 md:px-3 py-1.5 md:py-2 text-sm border border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+                          />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={e => setReplyImage(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
+                            className="flex-1 border border-green-300 rounded-lg p-2"
+                          />
+                          <Button
+                            onClick={() => handleReply(ticket.id)}
+                            disabled={isUploading || (!replyText.trim() && !replyImage)}
+                            className="bg-green-600 hover:bg-green-700 text-white px-3 md:px-4"
+                          >
+                            {isUploading ? "Sending..." : "Send"}
+                          </Button>
+                        </div>
+                        {replyImage && (
+                          <div className="text-xs text-gray-700">Selected: {replyImage.name}</div>
+                        )}
+                        {uploadError && (
+                          <div className="text-xs text-red-600">{uploadError}</div>
+                        )}
                       </div>
                     ) : (
                       <Button
