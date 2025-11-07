@@ -15,6 +15,7 @@ export interface User {
   remaining?: number
   status?: string // pending, approved, rejected
   luckydrawStatus?: string
+  topup: string
 }
 
 interface UserContextType {
@@ -25,6 +26,7 @@ interface UserContextType {
   deleteUser: (id: string) => Promise<void>
   updateUser: (id: string, data: Partial<User>) => Promise<void>
   addRemainingAds: (id: string, extra: number, luckydrawAttempt?: number) => Promise<void>; 
+  addToptup: (id: string, extra: number) => Promise<void>;
 
 }
 
@@ -141,6 +143,34 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
 
+    // Add Remaining Ads
+  const addToptup = async (id: string, extra: number) => {
+    console.log("add remaining ads front end runned", extra);
+
+    try {
+      const res = await fetch(`${API_URL}/api/user/add-topup/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ extra }), // ✅ include luckydrawAttempt here
+      });
+
+      if (!res.ok) throw new Error("Failed to add topup");
+
+      const updatedUser = await res.json();
+      setUsers((prev) =>
+        prev.map((u) => (u._id === id ? updatedUser : u))
+      );
+    } catch (err) {
+      console.error("❌ Error adding topup:", err);
+      throw err;
+    }
+  };
+
+
+
 
   return (
     <UserContext.Provider 
@@ -152,6 +182,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         deleteUser, 
         updateUser,
         addRemainingAds,
+        addToptup
     }}>
       {children}
     </UserContext.Provider>
