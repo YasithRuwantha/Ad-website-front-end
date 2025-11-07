@@ -15,14 +15,18 @@ import {
   Menu,
   X,
   DollarSign,
+  User,
 } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminSidebar() {
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  // Profile info
+  const userName = user?.fullName || "Admin"
+  const userEmail = user?.email || ""
 
   const menuItems = [
     { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -44,8 +48,8 @@ export default function AdminSidebar() {
       {/* Mobile Menu Toggle Button */}
       <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center gap-2">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-6" />
-          <span className="text-lg font-bold text-gray-900">Admin</span>
+          {/* <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-6" /> */}
+          <span className="text-lg font-bold text-gray-900">Admin panel</span>
         </div>
         <Button
           variant="ghost"
@@ -62,9 +66,15 @@ export default function AdminSidebar() {
         className={`fixed md:static top-0 left-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-50 transform transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
-        <div className="hidden md:block p-6 border-b border-gray-200">
-          <div className="flex items-center gap-2 mb-1">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
+        {/* Profile View Section */}
+        <div className="p-4 border-b border-gray-200 flex flex-col items-center gap-2">
+          <div className="w-14 h-14 bg-green-600 rounded-full flex items-center justify-center mb-1">
+            <User className="w-7 h-7 text-white" />
+          </div>
+          <div className="text-center">
+            <p className="text-base font-semibold text-gray-900">{userName}</p>
+            <p className="text-xs text-gray-500">{userEmail}</p>
+            <p className="text-xs text-green-600 font-semibold mt-1">Admin</p>
           </div>
         </div>
 

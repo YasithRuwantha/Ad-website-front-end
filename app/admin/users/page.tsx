@@ -452,10 +452,10 @@ export default function AdminUsersPage() {
 
       {/* Edit Modal */}
       {isModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-4">
-          <div className="bg-white p-2 sm:p-8 rounded-2xl w-full max-w-[98vw] sm:max-w-xl space-y-4 sm:space-y-6 shadow-2xl border border-green-200 animate-in fade-in slide-in-from-top-4 duration-300 overflow-y-auto max-h-[98vh]">
-            <h2 className="text-lg sm:text-2xl font-bold text-center text-green-700 mb-2 sm:mb-4 tracking-tight">Edit User</h2>
-            <form className="space-y-3 sm:space-y-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white p-1 sm:p-6 rounded-xl w-full max-w-xs sm:max-w-xl space-y-2 sm:space-y-6 shadow-2xl border border-green-200 animate-in fade-in slide-in-from-top-4 duration-300 overflow-y-auto max-h-[90vh] sm:max-h-[98vh] min-h-[60vh] sm:min-h-0">
+            <h2 className="text-base sm:text-2xl font-bold text-center text-green-700 mb-1 sm:mb-4 tracking-tight">Edit User</h2>
+            <form className="space-y-2 sm:space-y-4 text-xs sm:text-sm">
               {/* Personal Info Section */}
               <div className="mb-2 p-2 sm:p-3 rounded-lg bg-gray-50 border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <div className="sm:col-span-2 flex flex-row items-center gap-2 sm:gap-3">
@@ -681,11 +681,11 @@ export default function AdminUsersPage() {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row justify-end gap-2 mt-3 sm:mt-4 w-full">
-                <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSaving} className="w-full sm:w-auto min-w-[100px] sm:min-w-[120px]">
-                  Cancel
-                </Button>
                 <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full sm:w-auto min-w-[100px] sm:min-w-[120px] bg-green-600 hover:bg-green-700 text-white">
                   {isSaving ? "Saving..." : "Save"}
+                </Button>
+                <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSaving} className="w-full sm:w-auto min-w-[100px] sm:min-w-[120px]">
+                  Cancel
                 </Button>
               </div>
             </form>
