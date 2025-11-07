@@ -452,190 +452,243 @@ export default function AdminUsersPage() {
 
       {/* Edit Modal */}
       {isModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md space-y-4 shadow-lg">
-            <h2 className="text-xl font-bold text-center">Edit User</h2>
-
-            <div className="space-y-2">
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={editData.fullName}
-                onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  value={editData.firstName}
-                  onChange={(e) => setEditData({ ...editData, firstName: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  value={editData.lastName}
-                  onChange={(e) => setEditData({ ...editData, lastName: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="Username"
-                value={editData.username}
-                onChange={(e) => setEditData({ ...editData, username: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={editData.email}
-                onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
-              />
-              <input
-                type="text"
-                placeholder="Phone"
-                value={editData.phone}
-                onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm"
-              />
-
-              <div className="flex items-center">
-                <div className="pl-1 w-full">Account Status</div>
-                <select
-                  value={editData.status}
-                  onChange={(e) => setEditData({ ...editData, status: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-
-              <div className="flex items-center">
-                <div className="pl-1 w-full">Account Plan</div>
-                <select
-                  value={editData.plan}
-                  onChange={(e) => setEditData({ ...editData, plan: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  <option value="none">none</option>
-                  <option value="Starter">Starter  ($100)</option>
-                  <option value="Basic">Basic  ($300)</option>
-                  <option value="Beginner">Beginner  ($500)</option>
-                  <option value="Advanced">Advanced  ($1,000)</option>
-                  <option value="Professional">Professional  ($1,500)</option>
-                  <option value="Premium">Premium  ($2,000)</option>
-                </select>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-1 sm:p-4">
+          <div className="bg-white p-2 sm:p-8 rounded-2xl w-full max-w-[98vw] sm:max-w-xl space-y-4 sm:space-y-6 shadow-2xl border border-green-200 animate-in fade-in slide-in-from-top-4 duration-300 overflow-y-auto max-h-[98vh]">
+            <h2 className="text-lg sm:text-2xl font-bold text-center text-green-700 mb-2 sm:mb-4 tracking-tight">Edit User</h2>
+            <form className="space-y-3 sm:space-y-4">
+              {/* Personal Info Section */}
+              <div className="mb-2 p-2 sm:p-3 rounded-lg bg-gray-50 border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                <div className="sm:col-span-2 flex flex-row items-center gap-2 sm:gap-3">
+                  <label className="block text-xs font-semibold text-gray-600 min-w-[80px] sm:min-w-[100px] text-right">Full Name</label>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={editData.fullName}
+                    onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
+                    className="flex-1 max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <label className="block text-xs font-semibold text-gray-600 mb-0.5 self-start">First Name</label>
+                  <input
+                    type="text"
+                    placeholder="First Name"
+                    value={editData.firstName}
+                    onChange={(e) => setEditData({ ...editData, firstName: e.target.value })}
+                    className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <label className="block text-xs font-semibold text-gray-600 mb-0.5 self-start">Last Name</label>
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={editData.lastName}
+                    onChange={(e) => setEditData({ ...editData, lastName: e.target.value })}
+                    className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <label className="block text-xs font-semibold text-gray-600 mb-0.5 self-start">Username</label>
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    value={editData.username}
+                    onChange={(e) => setEditData({ ...editData, username: e.target.value })}
+                    className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <label className="block text-xs font-semibold text-gray-600 mb-0.5 self-start">Email</label>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={editData.email}
+                    onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                    className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <label className="block text-xs font-semibold text-gray-600 mb-0.5 self-start">Phone</label>
+                  <input
+                    type="text"
+                    placeholder="Phone"
+                    value={editData.phone}
+                    onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                    className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
               </div>
 
-              <div className="flex items-center">
-                <div className="pl-1 w-full">Luckydraw Status</div>
-                <select
-                  value={editData.luckydrawStatus}
-                  onChange={(e) => setEditData({ ...editData, luckydrawStatus: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+              {/* Account Settings Section */}
+              <div className="mt-4 sm:mt-6 mb-2 p-2 sm:p-4 rounded-xl bg-green-50 border border-green-200 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Account Status</label>
+                  <select
+                    value={editData.status}
+                    onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Account Plan</label>
+                  <select
+                    value={editData.plan}
+                    onChange={(e) => setEditData({ ...editData, plan: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  >
+                    <option value="none">none</option>
+                    <option value="Starter">Starter  ($100)</option>
+                    <option value="Basic">Basic  ($300)</option>
+                    <option value="Beginner">Beginner  ($500)</option>
+                    <option value="Advanced">Advanced  ($1,000)</option>
+                    <option value="Professional">Professional  ($1,500)</option>
+                    <option value="Premium">Premium  ($2,000)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Luckydraw Status</label>
+                  <select
+                    value={editData.luckydrawStatus}
+                    onChange={(e) => setEditData({ ...editData, luckydrawStatus: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Lucky Draw Trigger</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.luckydrawAttempt || ""}
+                    onChange={(e) => setEditData({ ...editData, luckydrawAttempt: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                    placeholder="Enter attempts needed"
+                  />
+                </div>
+                <div className="col-span-1 sm:col-span-2">
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Attempts per day</label>
+                  <select
+                    value={editData.adsPerDay}
+                    onChange={(e) => setEditData({ ...editData, adsPerDay: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  >
+                    <option value={0}>0 Ads / Day</option>
+                    <option value={30}>30 Ads / Day</option>
+                    <option value={50}>50 Ads / Day</option>
+                    <option value={100}>100 Ads / Day</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="flex items-center">
-                <div className="pl-1 w-full">Lucky Draw Trigger</div>
-                <input
-                  type="number"
-                  min={1}
-                  value={editData.luckydrawAttempt || ""}
-                  onChange={(e) => setEditData({ ...editData, luckydrawAttempt: Number(e.target.value) })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                  placeholder="Enter attempts needed"
-                />
+              {/* Remaining Ads */}
+              <div className="border-t pt-3 sm:pt-4 mt-3 sm:mt-4 space-y-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Manage Remaining Ads</label>
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                  <span>Current Remaining Ads:</span>
+                  <span className="font-bold text-green-700 text-base">{selectedUser.remaining || 0}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
+                  <input
+                    type="number"
+                    min={1}
+                    placeholder="Enter number"
+                    value={adsAdjust || ""}
+                    onChange={(e) => setAdsAdjust(Number(e.target.value))}
+                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full sm:w-auto"
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to add ${adsAdjust} ads to this user?`)) {
+                        adjustAds(adsAdjust)
+                      }
+                    }}
+                  >
+                    ➕ Add
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="w-full sm:w-auto"
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to remove ${adsAdjust} ads from this user?`)) {
+                        adjustAds(-adsAdjust)
+                      }
+                    }}
+                  >
+                    ➖ Remove
+                  </Button>
+                </div>
               </div>
 
-              <div className="flex items-center">
-                <div className="pl-1 w-full">Attempts per day</div>
-                <select
-                  value={editData.adsPerDay}
-                  onChange={(e) => setEditData({ ...editData, adsPerDay: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                >
-                  <option value={0}>0 Ads / Day</option>
-                  <option value={30}>30 Ads / Day</option>
-                  <option value={50}>50 Ads / Day</option>
-                  <option value={100}>100 Ads / Day</option>
-                </select>
+              {/* Topup customser Account */}
+              <div className="border-t pt-3 sm:pt-4 mt-3 sm:mt-4 space-y-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Topup Customer Account</label>
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                  <span>Current Topup:</span>
+                  <span className="font-bold text-green-700 text-base">{selectedUser.balance || 0}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
+                  <input
+                    type="number"
+                    min={1}
+                    placeholder="Enter topup number"
+                    value={topup || ""}
+                    onChange={(e) => setTopup(Number(e.target.value))}
+                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full sm:w-auto"
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to add ${topup} to this user's topup?`)) {
+                        adjustTopup(topup)
+                      }
+                    }}
+                  >
+                    ➕ Add
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="w-full sm:w-auto"
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to remove ${topup} from this user's topup?`)) {
+                        adjustTopup(-topup)
+                      }
+                    }}
+                  >
+                    ➖ Remove
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            {/* Remaining Ads */}
-            <div className="border-t pt-4 space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Manage Remaining Ads</label>
-              <p className="text-sm text-gray-600">
-                Current Remaining Ads: <span className="font-semibold">{selectedUser.remaining || 0}</span>
-              </p>
+              {/* Message */}
+              {message.text && (
+                <p className={`text-center text-sm ${message.type === "success" ? "text-green-600" : "text-red-600"}`}>
+                  {message.text}
+                </p>
+              )}
 
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  placeholder="Enter number"
-                  value={adsAdjust || ""}
-                  onChange={(e) => setAdsAdjust(Number(e.target.value))}
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                />
-                <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => adjustAds(adsAdjust)}>
-                  ➕ Add
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row justify-end gap-2 mt-3 sm:mt-4 w-full">
+                <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSaving} className="w-full sm:w-auto min-w-[100px] sm:min-w-[120px]">
+                  Cancel
                 </Button>
-                <Button type="button" variant="destructive" className="w-full sm:w-auto" onClick={() => adjustAds(-adsAdjust)}>
-                  ➖ Remove
+                <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full sm:w-auto min-w-[100px] sm:min-w-[120px] bg-green-600 hover:bg-green-700 text-white">
+                  {isSaving ? "Saving..." : "Save"}
                 </Button>
               </div>
-            </div>
-
-            {/* Topup customser Account */}
-            <div className="border-t pt-4 space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Topup customser Account</label>
-              <p className="text-sm text-gray-600">
-                Current Topup customser Account: <span className="font-semibold">{selectedUser.balance || 0}</span>
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  placeholder="Enter topup number"
-                  value={topup || ""}
-                  onChange={(e) => setTopup(Number(e.target.value))}
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                />
-                <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => adjustTopup(topup)}>
-                  ➕ Add
-                </Button>
-                <Button type="button" variant="destructive" className="w-full sm:w-auto" onClick={() => adjustTopup(-topup)}>
-                  ➖ Remove
-                </Button>
-              </div>
-            </div>
-
-            {/* Message */}
-            {message.text && (
-              <p className={`text-center text-sm ${message.type === "success" ? "text-green-600" : "text-red-600"}`}>
-                {message.text}
-              </p>
-            )}
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSaving} className="w-full sm:w-auto">
-                Cancel
-              </Button>
-              <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full sm:w-auto">
-                {isSaving ? "Saving..." : "Save"}
-              </Button>
-            </div>
+            </form>
           </div>
         </div>
       )}
@@ -681,9 +734,16 @@ const UserRow = ({ user, openModal, deleteUser }: any) => (
       <Button size="sm" variant="outline" onClick={() => openModal(user)} className="w-full sm:w-auto">
         Update
       </Button>
-      <Button size="sm" variant="destructive" onClick={() => deleteUser(user._id)} className="w-full sm:w-auto">
-            {/* <Button size="sm" variant="destructive" onClick={() => console.log("deleting user: ", user._id)} className="w-full sm:w-auto"> */}
-
+      <Button
+        size="sm"
+        variant="destructive"
+        onClick={() => {
+          if (window.confirm(`Are you sure you want to delete this user? This action cannot be undone.`)) {
+            deleteUser(user._id)
+          }
+        }}
+        className="w-full sm:w-auto"
+      >
         Delete
       </Button>
     </div>
