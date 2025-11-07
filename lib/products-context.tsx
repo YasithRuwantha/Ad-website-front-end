@@ -15,12 +15,13 @@ export interface Product {
   addedBy: string
   price?: number      // Added price field
   income?: number     // Added income field
+  plan?: string       // Added plan field
 }
 
 interface ProductsContextType {
   products: Product[]
-  addProduct: (product: { name: string; description: string; imageFile?: File }) => Promise<void>
-  updateProduct: (id: string, updates: Partial<Product>) => Promise<void>
+  addProduct: (product: { name: string; description: string; income: string; plan: string; imageFile?: File }) => Promise<void>
+  updateProduct: (id: string, updates: Partial<Product> & { imageFile?: File; plan?: string; income?: string }) => Promise<void>
   deleteProduct: (id: string) => Promise<void>
   fetchProducts: () => Promise<void>
 }
@@ -47,7 +48,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   // ✅ Add product
-  const addProduct = async (product: { name: string; description: string; income: string; imageFile?: File }) => {
+  const addProduct = async (product: { name: string; description: string; income: string; plan: string; imageFile?: File }) => {
     const token = localStorage.getItem("token")
     const user = localStorage.getItem("user")
     const email = user ? JSON.parse(user).email : "unknown"
@@ -59,7 +60,8 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     formData.append("addedBy", email)
     formData.append("now", now)
     formData.append("income", product.income)
-    if (product.imageFile) formData.append("image", product.imageFile)
+  if (product.imageFile) formData.append("image", product.imageFile)
+  if (product.plan) formData.append("plan", product.plan)
     
     // ✅ Debug
     for (let [key, value] of formData.entries()) {
@@ -80,7 +82,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   }
 
   // ✅ Update product - handles both text and image updates
-  const updateProduct = async (id: string, updates: Partial<Product> & { imageFile?: File }) => {
+  const updateProduct = async (id: string, updates: Partial<Product> & { imageFile?: File; plan?: string; income?: string }) => {
     const token = localStorage.getItem("token")
     console.log("update product", updates);
     
@@ -89,8 +91,9 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     // Add text fields
     if (updates.name !== undefined) formData.append("name", updates.name)
     if (updates.description !== undefined) formData.append("description", updates.description)
-    if (updates.rating !== undefined) formData.append("rating", updates.rating.toString())  // Convert to string
-    if (updates.income !== undefined ) formData.append("income", updates.income)
+  if (updates.rating !== undefined) formData.append("rating", updates.rating.toString())  // Convert to string
+  if (updates.income !== undefined ) formData.append("income", String(updates.income))
+  if (updates.plan !== undefined ) formData.append("plan", updates.plan)
 
     // Add image file if provided
     if (updates.imageFile) {
