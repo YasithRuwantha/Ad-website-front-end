@@ -15,15 +15,205 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [username, setUsername] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [referralCode, setReferralCode] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { login, signup } = useAuth()
   const [success, setSuccess] = useState("")
   const [phone, setPhone] = useState("")
+  const [countryCode, setCountryCode] = useState("+1")
+  const [phoneError, setPhoneError] = useState("")
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const router = useRouter()
   const [isFooterVisible, setIsFooterVisible] = useState(false)
   const footerRef = useRef<HTMLElement>(null)
+
+  // Country codes with validation patterns
+  const countryCodes = [
+    { code: "+93", country: "Afghanistan", pattern: /^\d{9}$/, format: "701234567" },
+    { code: "+355", country: "Albania", pattern: /^\d{9}$/, format: "672123456" },
+    { code: "+213", country: "Algeria", pattern: /^\d{9}$/, format: "551234567" },
+    { code: "+376", country: "Andorra", pattern: /^\d{6}$/, format: "312345" },
+    { code: "+244", country: "Angola", pattern: /^\d{9}$/, format: "923123456" },
+    { code: "+54", country: "Argentina", pattern: /^\d{10}$/, format: "1123456789" },
+    { code: "+374", country: "Armenia", pattern: /^\d{8}$/, format: "77123456" },
+    { code: "+61", country: "Australia", pattern: /^\d{9}$/, format: "412345678" },
+    { code: "+43", country: "Austria", pattern: /^\d{10}$/, format: "6641234567" },
+    { code: "+994", country: "Azerbaijan", pattern: /^\d{9}$/, format: "401234567" },
+    { code: "+973", country: "Bahrain", pattern: /^\d{8}$/, format: "36001234" },
+    { code: "+880", country: "Bangladesh", pattern: /^\d{10}$/, format: "1712345678" },
+    { code: "+375", country: "Belarus", pattern: /^\d{9}$/, format: "291234567" },
+    { code: "+32", country: "Belgium", pattern: /^\d{9}$/, format: "470123456" },
+    { code: "+501", country: "Belize", pattern: /^\d{7}$/, format: "6221234" },
+    { code: "+229", country: "Benin", pattern: /^\d{8}$/, format: "90123456" },
+    { code: "+975", country: "Bhutan", pattern: /^\d{8}$/, format: "17123456" },
+    { code: "+591", country: "Bolivia", pattern: /^\d{8}$/, format: "71234567" },
+    { code: "+387", country: "Bosnia", pattern: /^\d{8}$/, format: "61123456" },
+    { code: "+267", country: "Botswana", pattern: /^\d{8}$/, format: "71123456" },
+    { code: "+55", country: "Brazil", pattern: /^\d{11}$/, format: "11961234567" },
+    { code: "+673", country: "Brunei", pattern: /^\d{7}$/, format: "7123456" },
+    { code: "+359", country: "Bulgaria", pattern: /^\d{9}$/, format: "876543210" },
+    { code: "+226", country: "Burkina Faso", pattern: /^\d{8}$/, format: "70123456" },
+    { code: "+257", country: "Burundi", pattern: /^\d{8}$/, format: "79123456" },
+    { code: "+855", country: "Cambodia", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+237", country: "Cameroon", pattern: /^\d{9}$/, format: "671234567" },
+  { code: "+1", country: "United States/Canada", pattern: /^\d{10}$/, format: "2021234567 or 2041234567" },
+    { code: "+238", country: "Cape Verde", pattern: /^\d{7}$/, format: "9912345" },
+    { code: "+236", country: "Central African Republic", pattern: /^\d{8}$/, format: "70123456" },
+    { code: "+235", country: "Chad", pattern: /^\d{8}$/, format: "63012345" },
+    { code: "+56", country: "Chile", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+86", country: "China", pattern: /^\d{11}$/, format: "13812345678" },
+    { code: "+57", country: "Colombia", pattern: /^\d{10}$/, format: "3211234567" },
+    { code: "+269", country: "Comoros", pattern: /^\d{7}$/, format: "3212345" },
+    { code: "+506", country: "Costa Rica", pattern: /^\d{8}$/, format: "83123456" },
+    { code: "+385", country: "Croatia", pattern: /^\d{9}$/, format: "921234567" },
+    { code: "+53", country: "Cuba", pattern: /^\d{8}$/, format: "51234567" },
+    { code: "+357", country: "Cyprus", pattern: /^\d{8}$/, format: "96123456" },
+    { code: "+420", country: "Czech Republic", pattern: /^\d{9}$/, format: "601123456" },
+    { code: "+243", country: "Democratic Republic of Congo", pattern: /^\d{9}$/, format: "991234567" },
+    { code: "+45", country: "Denmark", pattern: /^\d{8}$/, format: "32123456" },
+    { code: "+253", country: "Djibouti", pattern: /^\d{8}$/, format: "77123456" },
+    { code: "+593", country: "Ecuador", pattern: /^\d{9}$/, format: "991234567" },
+    { code: "+20", country: "Egypt", pattern: /^\d{10}$/, format: "1001234567" },
+    { code: "+503", country: "El Salvador", pattern: /^\d{8}$/, format: "70123456" },
+    { code: "+372", country: "Estonia", pattern: /^\d{7,8}$/, format: "51234567" },
+    { code: "+251", country: "Ethiopia", pattern: /^\d{9}$/, format: "911234567" },
+    { code: "+679", country: "Fiji", pattern: /^\d{7}$/, format: "7012345" },
+    { code: "+358", country: "Finland", pattern: /^\d{9}$/, format: "412345678" },
+    { code: "+33", country: "France", pattern: /^\d{9}$/, format: "612345678" },
+    { code: "+995", country: "Georgia", pattern: /^\d{9}$/, format: "555123456" },
+    { code: "+49", country: "Germany", pattern: /^\d{10,11}$/, format: "15112345678" },
+    { code: "+233", country: "Ghana", pattern: /^\d{9}$/, format: "231234567" },
+    { code: "+30", country: "Greece", pattern: /^\d{10}$/, format: "6912345678" },
+    { code: "+299", country: "Greenland", pattern: /^\d{6}$/, format: "221234" },
+    { code: "+502", country: "Guatemala", pattern: /^\d{8}$/, format: "51234567" },
+    { code: "+224", country: "Guinea", pattern: /^\d{9}$/, format: "601123456" },
+    { code: "+592", country: "Guyana", pattern: /^\d{7}$/, format: "6091234" },
+    { code: "+509", country: "Haiti", pattern: /^\d{8}$/, format: "34101234" },
+    { code: "+504", country: "Honduras", pattern: /^\d{8}$/, format: "91234567" },
+    { code: "+852", country: "Hong Kong", pattern: /^\d{8}$/, format: "51234567" },
+    { code: "+36", country: "Hungary", pattern: /^\d{9}$/, format: "201234567" },
+    { code: "+354", country: "Iceland", pattern: /^\d{7}$/, format: "6111234" },
+    { code: "+91", country: "India", pattern: /^\d{10}$/, format: "9876543210" },
+    { code: "+62", country: "Indonesia", pattern: /^\d{10,12}$/, format: "81234567890" },
+    { code: "+98", country: "Iran", pattern: /^\d{10}$/, format: "9123456789" },
+    { code: "+964", country: "Iraq", pattern: /^\d{10}$/, format: "7901234567" },
+    { code: "+353", country: "Ireland", pattern: /^\d{9}$/, format: "851234567" },
+    { code: "+972", country: "Israel", pattern: /^\d{9}$/, format: "501234567" },
+    { code: "+39", country: "Italy", pattern: /^\d{10}$/, format: "3123456789" },
+    { code: "+225", country: "Ivory Coast", pattern: /^\d{10}$/, format: "0123456789" },
+    { code: "+1876", country: "Jamaica", pattern: /^\d{7}$/, format: "2101234" },
+    { code: "+81", country: "Japan", pattern: /^\d{10}$/, format: "9012345678" },
+    { code: "+962", country: "Jordan", pattern: /^\d{9}$/, format: "790123456" },
+  { code: "+76", country: "Kazakhstan", pattern: /^\d{10}$/, format: "7011234567" },
+    { code: "+254", country: "Kenya", pattern: /^\d{9}$/, format: "712123456" },
+    { code: "+965", country: "Kuwait", pattern: /^\d{8}$/, format: "50012345" },
+    { code: "+996", country: "Kyrgyzstan", pattern: /^\d{9}$/, format: "700123456" },
+    { code: "+856", country: "Laos", pattern: /^\d{9}$/, format: "2023123456" },
+    { code: "+371", country: "Latvia", pattern: /^\d{8}$/, format: "21234567" },
+    { code: "+961", country: "Lebanon", pattern: /^\d{7,8}$/, format: "71123456" },
+    { code: "+266", country: "Lesotho", pattern: /^\d{8}$/, format: "50123456" },
+    { code: "+231", country: "Liberia", pattern: /^\d{7,9}$/, format: "770123456" },
+    { code: "+218", country: "Libya", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+370", country: "Lithuania", pattern: /^\d{8}$/, format: "61234567" },
+    { code: "+352", country: "Luxembourg", pattern: /^\d{9}$/, format: "621123456" },
+    { code: "+853", country: "Macau", pattern: /^\d{8}$/, format: "66123456" },
+    { code: "+389", country: "Macedonia", pattern: /^\d{8}$/, format: "70123456" },
+    { code: "+261", country: "Madagascar", pattern: /^\d{9}$/, format: "321234567" },
+    { code: "+265", country: "Malawi", pattern: /^\d{9}$/, format: "991234567" },
+    { code: "+60", country: "Malaysia", pattern: /^\d{9,10}$/, format: "123456789" },
+    { code: "+960", country: "Maldives", pattern: /^\d{7}$/, format: "7712345" },
+    { code: "+223", country: "Mali", pattern: /^\d{8}$/, format: "65012345" },
+    { code: "+356", country: "Malta", pattern: /^\d{8}$/, format: "79123456" },
+    { code: "+222", country: "Mauritania", pattern: /^\d{8}$/, format: "22123456" },
+    { code: "+230", country: "Mauritius", pattern: /^\d{8}$/, format: "52512345" },
+    { code: "+52", country: "Mexico", pattern: /^\d{10}$/, format: "5512345678" },
+    { code: "+373", country: "Moldova", pattern: /^\d{8}$/, format: "69123456" },
+    { code: "+377", country: "Monaco", pattern: /^\d{8}$/, format: "61234567" },
+    { code: "+976", country: "Mongolia", pattern: /^\d{8}$/, format: "88123456" },
+    { code: "+382", country: "Montenegro", pattern: /^\d{8}$/, format: "67123456" },
+    { code: "+212", country: "Morocco", pattern: /^\d{9}$/, format: "650123456" },
+    { code: "+258", country: "Mozambique", pattern: /^\d{9}$/, format: "821234567" },
+    { code: "+95", country: "Myanmar", pattern: /^\d{9,10}$/, format: "912345678" },
+    { code: "+264", country: "Namibia", pattern: /^\d{9}$/, format: "811234567" },
+    { code: "+977", country: "Nepal", pattern: /^\d{10}$/, format: "9841234567" },
+    { code: "+31", country: "Netherlands", pattern: /^\d{9}$/, format: "612345678" },
+    { code: "+64", country: "New Zealand", pattern: /^\d{9,10}$/, format: "212345678" },
+    { code: "+505", country: "Nicaragua", pattern: /^\d{8}$/, format: "81234567" },
+    { code: "+227", country: "Niger", pattern: /^\d{8}$/, format: "93123456" },
+    { code: "+234", country: "Nigeria", pattern: /^\d{10}$/, format: "8021234567" },
+    { code: "+47", country: "Norway", pattern: /^\d{8}$/, format: "40612345" },
+    { code: "+968", country: "Oman", pattern: /^\d{8}$/, format: "92123456" },
+    { code: "+92", country: "Pakistan", pattern: /^\d{10}$/, format: "3001234567" },
+    { code: "+970", country: "Palestine", pattern: /^\d{9}$/, format: "599123456" },
+    { code: "+507", country: "Panama", pattern: /^\d{8}$/, format: "61234567" },
+    { code: "+595", country: "Paraguay", pattern: /^\d{9}$/, format: "961234567" },
+    { code: "+51", country: "Peru", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+63", country: "Philippines", pattern: /^\d{10}$/, format: "9171234567" },
+    { code: "+48", country: "Poland", pattern: /^\d{9}$/, format: "501234567" },
+    { code: "+351", country: "Portugal", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+974", country: "Qatar", pattern: /^\d{8}$/, format: "33123456" },
+    { code: "+242", country: "Republic of Congo", pattern: /^\d{9}$/, format: "061234567" },
+    { code: "+40", country: "Romania", pattern: /^\d{9}$/, format: "712345678" },
+  { code: "+7", country: "Russia", pattern: /^\d{10}$/, format: "9161234567" },
+    { code: "+250", country: "Rwanda", pattern: /^\d{9}$/, format: "720123456" },
+    { code: "+966", country: "Saudi Arabia", pattern: /^\d{9}$/, format: "501234567" },
+    { code: "+221", country: "Senegal", pattern: /^\d{9}$/, format: "701234567" },
+    { code: "+381", country: "Serbia", pattern: /^\d{9}$/, format: "601234567" },
+    { code: "+65", country: "Singapore", pattern: /^\d{8}$/, format: "81234567" },
+    { code: "+421", country: "Slovakia", pattern: /^\d{9}$/, format: "901123456" },
+    { code: "+386", country: "Slovenia", pattern: /^\d{8}$/, format: "31234567" },
+    { code: "+252", country: "Somalia", pattern: /^\d{8}$/, format: "90123456" },
+    { code: "+27", country: "South Africa", pattern: /^\d{9}$/, format: "711234567" },
+    { code: "+82", country: "South Korea", pattern: /^\d{10}$/, format: "1012345678" },
+    { code: "+211", country: "South Sudan", pattern: /^\d{9}$/, format: "977123456" },
+    { code: "+34", country: "Spain", pattern: /^\d{9}$/, format: "612345678" },
+    { code: "+94", country: "Sri Lanka", pattern: /^\d{9}$/, format: "771234567" },
+    { code: "+249", country: "Sudan", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+597", country: "Suriname", pattern: /^\d{7}$/, format: "7412345" },
+    { code: "+268", country: "Swaziland", pattern: /^\d{8}$/, format: "76123456" },
+    { code: "+46", country: "Sweden", pattern: /^\d{9}$/, format: "701234567" },
+    { code: "+41", country: "Switzerland", pattern: /^\d{9}$/, format: "781234567" },
+    { code: "+963", country: "Syria", pattern: /^\d{9}$/, format: "944567890" },
+    { code: "+886", country: "Taiwan", pattern: /^\d{9}$/, format: "912345678" },
+    { code: "+992", country: "Tajikistan", pattern: /^\d{9}$/, format: "917123456" },
+    { code: "+255", country: "Tanzania", pattern: /^\d{9}$/, format: "621234567" },
+    { code: "+66", country: "Thailand", pattern: /^\d{9}$/, format: "812345678" },
+    { code: "+228", country: "Togo", pattern: /^\d{8}$/, format: "90112345" },
+    { code: "+216", country: "Tunisia", pattern: /^\d{8}$/, format: "20123456" },
+    { code: "+90", country: "Turkey", pattern: /^\d{10}$/, format: "5321234567" },
+    { code: "+993", country: "Turkmenistan", pattern: /^\d{8}$/, format: "65123456" },
+    { code: "+971", country: "UAE", pattern: /^\d{9}$/, format: "501234567" },
+    { code: "+256", country: "Uganda", pattern: /^\d{9}$/, format: "712345678" },
+    { code: "+380", country: "Ukraine", pattern: /^\d{9}$/, format: "501234567" },
+    { code: "+44", country: "United Kingdom", pattern: /^\d{10}$/, format: "7400123456" },
+  // Removed duplicate '+1' for United States to ensure unique keys
+    { code: "+598", country: "Uruguay", pattern: /^\d{8}$/, format: "94123456" },
+    { code: "+998", country: "Uzbekistan", pattern: /^\d{9}$/, format: "901234567" },
+    { code: "+58", country: "Venezuela", pattern: /^\d{10}$/, format: "4121234567" },
+    { code: "+84", country: "Vietnam", pattern: /^\d{9,10}$/, format: "912345678" },
+    { code: "+967", country: "Yemen", pattern: /^\d{9}$/, format: "712345678" },
+    { code: "+260", country: "Zambia", pattern: /^\d{9}$/, format: "955123456" },
+    { code: "+263", country: "Zimbabwe", pattern: /^\d{9}$/, format: "712345678" },
+  ]
+
+  // Validate phone number based on country code
+  const validatePhone = (phoneNumber: string, selectedCode: string) => {
+    const country = countryCodes.find(c => c.code === selectedCode)
+    if (!country) return true
+    
+    const cleanPhone = phoneNumber.replace(/\s+/g, '')
+    if (!country.pattern.test(cleanPhone)) {
+      setPhoneError(`Invalid format for ${country.country}.`)
+      return false
+    }
+    setPhoneError("")
+    return true
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -48,14 +238,42 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setPhoneError("");
     setIsLoading(true);
 
     try {
       if (isLogin) {
         await login(email, password);
       } else {
-        const message = await signup(email, password, name, phone, referralCode);
-        setSuccess(message); // ✅ show success message
+        // Check if terms are accepted
+        if (!acceptedTerms) {
+          setError("You must accept the terms and conditions to create an account");
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate password match
+        if (password !== confirmPassword) {
+          setError("Passwords do not match");
+          setIsLoading(false);
+          return;
+        }
+        
+        // Validate phone before signup
+        if (!validatePhone(phone, countryCode)) {
+          setIsLoading(false);
+          return;
+        }
+        
+        // Combine first and last name
+        const fullName = `${firstName} ${lastName}`.trim();
+        
+        // Combine country code with phone number
+        const fullPhone = `${countryCode}${phone.replace(/\s+/g, '')}`;
+        
+        // Pass all fields including username to signup
+        const message = await signup(email, password, fullName, fullPhone, referralCode, firstName, lastName, username);
+        setSuccess(message);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -121,24 +339,50 @@ export default function LoginPage() {
               )}
 
               {!isLogin && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <Input
-                    type="text"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required={!isLogin}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
-                  />
-                </div>
+                <>
+                  {/* First Name and Last Name - Two columns on md+, stacked on mobile */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="First Name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required={!isLogin}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required={!isLogin}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Username */}
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                    <Input
+                      type="text"
+                      placeholder="Username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required={!isLogin}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                    />
+                  </div>
+                </>
               )}
 
+              {/* Email Address */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <Input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={isLogin ? "Enter your email" : "Email Address"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -146,11 +390,50 @@ export default function LoginPage() {
                 />
               </div>
 
+              {!isLogin && (
+                <>
+                  {/* Phone number with country code */}
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => {
+                          setCountryCode(e.target.value)
+                          if (phone) validatePhone(phone, e.target.value)
+                        }}
+                        className="px-3 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 bg-white text-sm w-full sm:w-auto"
+                      >
+                        {countryCodes.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.country} ({country.code})
+                          </option>
+                        ))}
+                      </select>
+                      <Input
+                        type="text"
+                        placeholder="Your Phone Number"
+                        value={phone}
+                        onChange={(e) => {
+                          setPhone(e.target.value)
+                          if (e.target.value) validatePhone(e.target.value, countryCode)
+                        }}
+                        onBlur={() => phone && validatePhone(phone, countryCode)}
+                        required
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 w-full"
+                      />
+                    </div>
+                    {phoneError && (
+                      <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                 <Input
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder={isLogin ? "Enter your password" : "Password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -159,20 +442,22 @@ export default function LoginPage() {
               </div>
 
               {!isLogin && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
-                  <Input
-                    type="text"
-                    placeholder="+94 77 777 7777"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
-                  />
-                </div>
+                <>
+                  {/* Confirm Password */}
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                    <Input
+                      type="password"
+                      placeholder="Confirm Password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required={!isLogin}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
+                    />
+                  </div>
+                </>
               )}
 
-              {!isLogin && (
+              {/* {!isLogin && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Referral Code</label>
                   <Input
@@ -184,11 +469,35 @@ export default function LoginPage() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300"
                   />
                 </div>
+              )} */}
+
+              {!isLogin && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 cursor-pointer"
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">
+                      I accept the{" "}
+                      <a  
+                        target="_blank"
+                        className="text-green-600 hover:text-green-700 font-medium underline"
+                      >
+                        Terms and Conditions
+                      </a>
+                      {" "}and agree to the privacy policy
+                    </label>
+                  </div>
+                </div>
               )}
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (!isLogin && !acceptedTerms)}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
@@ -201,6 +510,13 @@ export default function LoginPage() {
                     setIsLogin(!isLogin)
                     setError("")
                     setSuccess("")
+                    setAcceptedTerms(false)
+                    setFirstName("")
+                    setLastName("")
+                    setUsername("")
+                    setPhone("")
+                    setConfirmPassword("")
+                    setPhoneError("")
                   }}
                   className="text-green-600 hover:text-green-700 font-medium text-sm transition-all duration-300 hover:underline"
                 >
@@ -212,12 +528,14 @@ export default function LoginPage() {
 
           {/* Right Column - Image */}
           <div className="hidden md:block relative h-[600px] rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
-            <Image
-              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=1000&fit=crop"
-              alt="Earning Platform"
-              fill
-              className="object-cover"
-              priority
+            <video
+              src="/videos/signup-promo.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-cover w-full h-full absolute inset-0"
+              poster="/videos/signup-promo-poster.jpg"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900/30 via-transparent to-gray-900/30"></div>
           </div>
