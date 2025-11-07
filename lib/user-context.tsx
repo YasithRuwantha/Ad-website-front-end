@@ -27,6 +27,7 @@ interface UserContextType {
   updateUser: (id: string, data: Partial<User>) => Promise<void>
   addRemainingAds: (id: string, extra: number, luckydrawAttempt?: number) => Promise<void>; 
   addToptup: (id: string, extra: number) => Promise<void>;
+  fetchRemainingAttempts: () => Promise<void> // ✅ add this
 
 }
 
@@ -170,6 +171,39 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
 
+  // Fetch user's remaining attempts
+const fetchRemainingAttempts = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const res = await fetch(`${API_URL}/api/user/remaining`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch remaining attempts");
+    const data = await res.json();
+
+    // keep localStorage in sync
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      user.remaining = data.remaining;
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    // also update user state if available in the current list
+    setUsers((prev) =>
+      prev.map((u) =>
+        u._id === u._id ? { ...u, remaining: data.remaining } : u
+      )
+    );
+  } catch (err) {
+    console.error("Error fetching remaining attempts:", err);
+  }
+};
+
+
 
 
   return (
@@ -182,7 +216,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         deleteUser, 
         updateUser,
         addRemainingAds,
-        addToptup
+        addToptup,
+        fetchRemainingAttempts
     }}>
       {children}
     </UserContext.Provider>

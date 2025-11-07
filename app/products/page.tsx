@@ -8,6 +8,7 @@ import { Star, User, ChevronDown, LogOut, Settings } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
 import RatingModal from "@/components/products/rating-modal"
 import { useAuth } from "@/lib/auth-context"
+import { useUsers } from "@/lib/user-context"
 import { useProducts } from "@/lib/products-context"
 import { useRatings } from "@/lib/rating-context"
 import Popup from "@/components/luckydrawPopup"
@@ -16,6 +17,8 @@ export default function ProductsPage() {
   const { user } = useAuth()
   const { products, fetchProducts } = useProducts()
   const { submitRating, getUserRatings } = useRatings()
+  const { fetchRemainingAttempts } = useUsers()
+
   const router = useRouter()
 
   const [isChecking, setIsChecking] = useState(true)
@@ -125,39 +128,39 @@ export default function ProductsPage() {
   }, [user?.plan])
 
   // ⭐ Handle Rating Submission
-  const handleSubmitRating = async (rating: number, comment: string, earning: string) => {
-    if (!selectedProduct) return
-    setIsLoading(true)
+const handleSubmitRating = async (rating: number, comment: string, earning: string) => {
+  if (!selectedProduct) return;
+  setIsLoading(true);
 
-    try {
-      const result = await submitRating(selectedProduct._id, rating, comment, earning)
-      if (result.success) {
-        if (result.remaining !== undefined) {
-          setRemaining(result.remaining)
-          const storedUser = localStorage.getItem("user")
-          if (storedUser) {
-            const user = JSON.parse(storedUser)
-            user.remaining = result.remaining
-            localStorage.setItem("user", JSON.stringify(user))
-          }
-        }
+  try {
+    const result = await submitRating(selectedProduct._id, rating, comment, earning);
+    if (result.success) {
+      await fetchRemainingAttempts(); // refresh attempts after rating
 
-        const ratings = await getUserRatings()
-        setUserRatings(ratings)
-        await fetchProducts()
+      const ratings = await getUserRatings();
+      setUserRatings(ratings);
+      await fetchProducts();
 
-        setShowRatingModal(false)
-        setSelectedProduct(null)
-        alert(result.message || "✅ Rating submitted successfully!")
-      } else {
-        alert(result.message || "❌ Failed to submit rating")
-      }
-    } catch (err: any) {
-      alert(err.message || "Failed to submit rating")
-    } finally {
-      setIsLoading(false)
+      setShowRatingModal(false);
+      setSelectedProduct(null);
+      alert(result.message || "✅ Rating submitted successfully!");
+    } else {
+      alert(result.message || "❌ Failed to submit rating");
     }
+  } catch (err: any) {
+    alert(err.message || "Failed to submit rating");
+  } finally {
+    setIsLoading(false);
   }
+};
+
+
+  
+useEffect(() => {
+  if (!isChecking) {
+    fetchRemainingAttempts(); // load once user is checked
+  }
+}, [isChecking]);
 
   // ⭐ Handle Product Rating Modal
   const handleRateProduct = (product: any) => {
