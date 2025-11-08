@@ -88,6 +88,17 @@ export default function AdminSupportPage() {
             <Card key={ticket.id} className="border-4 border-[#008060] bg-[#f6f7f8] rounded-2xl max-w-full md:max-w-4xl mx-auto w-full p-2 md:p-6 shadow-2xl flex flex-col">
               <div className="rounded-t-2xl bg-[#008060] px-4 py-2 flex items-center justify-between">
                 <div className="flex-1 min-w-0">
+                  {/* Customer details big and bold */}
+                  <div className="mb-2">
+                    <span className="block text-2xl md:text-3xl font-extrabold text-white tracking-wide">
+                      {ticket.username || ticket.userId}
+                    </span>
+                    {ticket.useremail && (
+                      <span className="block text-lg md:text-xl font-semibold text-[#b6e2d8] break-all">
+                        {ticket.useremail}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-white font-semibold text-sm md:text-base line-clamp-1">{ticket.subject}</span>
                   <span className="block text-xs text-[#b6e2d8]">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                   <div className="flex flex-wrap gap-2 mt-1">
@@ -133,12 +144,12 @@ export default function AdminSupportPage() {
                 {/* ...existing code... */}
               </div>
               {/* Reply button: visible at bottom on mobile only */}
-              <div className="sm:hidden flex justify-end px-4 pb-3 pt-2 mt-auto">
+              <div className="sm:hidden flex px-0 pb-2 pt-2 mt-auto">
                 <Button
                   onClick={() => setSelectedTicket(ticket.id)}
                   size="sm"
-                  className="bg-[#008060] hover:bg-[#36c160] text-white px-4 py-2 rounded-full w-full max-w-xs"
-                >
+                  className="bg-[#008060] hover:bg-[#36c160] text-white px-0 py-2 rounded-full w-full max-w-[200px] mx-auto shadow-none"
+                  style={{minWidth:0, justifyContent:'center'}}>
                   <ReplyIcon className="w-4 h-4 mr-1" /> Reply
                 </Button>
               </div>
@@ -243,7 +254,7 @@ export default function AdminSupportPage() {
                         {replyImage && (
                           <span className="text-xs text-gray-700 truncate max-w-[100px] self-center">{replyImage.name}</span>
                         )}
-                        <div className="flex flex-1 justify-end items-end">
+                        <div className="flex flex-1 flex-row justify-end items-end gap-2">
                           <Button
                             onClick={() => handleReply(ticket.id)}
                             disabled={isUploading || (!replyText.trim() && !replyImage)}
@@ -251,18 +262,18 @@ export default function AdminSupportPage() {
                           >
                             {isUploading ? "Sending..." : "Send"}
                           </Button>
+                          <Button
+                            onClick={() => {
+                              setSelectedTicket(null)
+                              setReplyText("")
+                              setReplyImage(null)
+                            }}
+                            variant="outline"
+                            className="rounded-full border border-[#e1e3e4] px-4 py-2 min-w-[60px]"
+                          >
+                            Cancel
+                          </Button>
                         </div>
-                        <Button
-                          onClick={() => {
-                            setSelectedTicket(null)
-                            setReplyText("")
-                            setReplyImage(null)
-                          }}
-                          variant="outline"
-                          className="rounded-full border border-[#e1e3e4] px-4 py-2 min-w-[60px] ml-2"
-                        >
-                          Cancel
-                        </Button>
                       </div>
                     </div>
                     {replyImage && (
