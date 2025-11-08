@@ -633,7 +633,7 @@ export default function AdminUsersPage() {
               <div className="border-t pt-3 sm:pt-4 mt-3 sm:mt-4 space-y-2">
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Topup Customer Account</label>
                 <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                  <span>Current Topup:</span>
+                  <span>Current Acoount balance:</span>
                   <span className="font-bold text-green-700 text-base">{selectedUser.balance || 0}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 w-full">

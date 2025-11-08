@@ -4,21 +4,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Trash2, Edit } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts()
+  const {fetchAllProducts, addProduct, updateProduct, deleteProduct } = useProducts()
+    const [products, setProducts] = useState([]);
+
   const [newProduct, setNewProduct] = useState<{
     name: string;
     description: string;
     income: string;
     plan: string;
     imageFile?: File;
+    isLuckyOrderProduct: string
   }>({
     name: "",
     description: "",
     income: "",
-    plan: "Starter"
+    plan: "Starter",
+    isLuckyOrderProduct: ""
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -28,15 +32,19 @@ export default function AdminProductsPage() {
     name: string
     description: string
     income: string
+    plan: string
     imageFile?: File
     currentImageUrl?: string
+    isLuckyOrderProduct?: string
   }>({
     id: "",
     name: "",
     description: "",
     rating: "",
     currentImageUrl: "",
-    income: ""
+    income: "",
+    plan: "",
+    isLuckyOrderProduct: ""
   })
   const [isUploading, setIsUploading] = useState(false)
 
@@ -46,7 +54,7 @@ export default function AdminProductsPage() {
     setIsUploading(true)
     try {
       await addProduct(newProduct)
-  setNewProduct({ name: "", description: "", income: "", plan: "Basic" })
+      setNewProduct({ name: "", description: "", income: "", plan: "Basic", isLuckyOrderProduct: "" })
       setIsModalOpen(false)
     } catch (e: any) {
       alert(e.message)
@@ -65,7 +73,9 @@ export default function AdminProductsPage() {
         description: editProduct.description,
         rating: Number(editProduct.rating),
         ...(editProduct.imageFile ? { imageFile: editProduct.imageFile } : {}),
-        income: Number(editProduct.income)
+        income: Number(editProduct.income),
+        plan: editProduct.plan,
+        isLuckyOrderProduct: editProduct.isLuckyOrderProduct
       })
       setIsEditModalOpen(false)
       setEditProduct({
@@ -75,7 +85,9 @@ export default function AdminProductsPage() {
         rating: "",
         imageFile: undefined,
         currentImageUrl: "",
-        income: ""
+        income: "",
+        plan: "",
+        isLuckyOrderProduct: ""
       })
     } catch (e: any) {
       alert(e.message)
@@ -83,6 +95,17 @@ export default function AdminProductsPage() {
       setIsUploading(false)
     }
   }
+
+  
+  useEffect(() => {
+    const getProducts = async () => {
+      const allProducts = await fetchAllProducts();
+      console.log("Products:", allProducts);
+      setProducts(allProducts); // optional, if you want local state
+    };
+    getProducts();
+  }, []);
+
 
   return (
     <div className="space-y-6">
@@ -124,6 +147,18 @@ export default function AdminProductsPage() {
               onChange={(e) => setNewProduct({ ...newProduct, income: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
+
+            {/* Is it lucky order */}
+            <select
+              value={newProduct.isLuckyOrderProduct}
+              onChange={(e) => setNewProduct({ ...newProduct, isLuckyOrderProduct: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            >
+              <option value="no">Normal Product</option>
+              <option value="yes">Add as LuckyOrder</option>
+            </select>
+
+            
             {/* Plan Dropdown */}
             <select
               value={newProduct.plan}
@@ -212,6 +247,31 @@ export default function AdminProductsPage() {
               onChange={(e) => setEditProduct({ ...editProduct, income: e.target.value })}
               className="border p-2 rounded w-full mb-2"
             />
+
+            {/* Is it lucky order */}
+            <select
+              value={editProduct.isLuckyOrderProduct}
+              onChange={(e) => setEditProduct({ ...editProduct, isLuckyOrderProduct: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            >
+              <option value="no">Normal Product</option>
+              <option value="yes">Add as LuckyOrder</option>
+            </select>
+
+
+            {/* Plan Dropdown */}
+            <select
+              value={editProduct.plan}
+              onChange={(e) => setEditProduct({ ...editProduct, plan: e.target.value })}
+              className="border p-2 rounded w-full mb-2"
+            >
+              <option value="Starter">Starter $100</option>
+              <option value="Basic">Basic $300</option>
+              <option value="Beginner">Beginner $500</option>
+              <option value="Advanced">Advanced $1,000</option>
+              <option value="Professional">Professional $1,500</option>
+              <option value="Premium">Premium $2,000</option>
+            </select>
             <input
               type="file"
               accept="image/*"
@@ -282,7 +342,8 @@ export default function AdminProductsPage() {
                             rating: p.rating.toString(),
                             imageFile: undefined,
                             currentImageUrl: p.imageUrl,
-                            income: p.income?.toString() || ""
+                            income: p.income?.toString() || "",
+                            plan: p.plan
                           })
                           setIsEditModalOpen(true)
                         }}

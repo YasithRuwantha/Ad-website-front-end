@@ -421,14 +421,18 @@ useEffect(() => {
       </div>
 
       {/* 🎯 Lucky Draw Popup */}
-      <Popup
-        open={showLuckyDrawPopup}
-        onClose={() => setShowLuckyDrawPopup(false)}
-        title="🎉 Lucky Draw Active!"
-        navigateTo="/dashboard/add-funds"
-      >
-        <p>Try your luck now and win exciting rewards!</p>
-      </Popup>
+<Popup
+  open={showLuckyDrawPopup}
+  onClose={() => setShowLuckyDrawPopup(false)}
+  title="🎉 Lucky Draw Active!"
+  navigateTo="/support"
+  imageURL="/images/lucky-draw.png"
+  planName="Professional"
+>
+  <p>Try your luck now and win exciting rewards!</p>
+</Popup>
+
+
    
     </div>
   )
