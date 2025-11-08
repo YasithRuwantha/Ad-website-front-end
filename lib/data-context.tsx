@@ -69,6 +69,7 @@ export interface SupportTicket {
     isAdmin: boolean
     imageUrl?: string
   }>
+  unread?: boolean // true if there are unread messages for this ticket
 }
 
 interface DataContextType {
