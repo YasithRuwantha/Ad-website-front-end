@@ -70,35 +70,13 @@ export default function SupportPage() {
     setShowCreateModal(false)
   }
 
-  const uploadToCloudinary = async (file: File): Promise<string | null> => {
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("upload_preset", "YOUR_CLOUDINARY_UPLOAD_PRESET") // Replace with your preset
-    try {
-      const res = await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUDINARY_CLOUD_NAME/image/upload", {
-        method: "POST",
-        body: formData,
-      })
-      const data = await res.json()
-      if (data.secure_url) return data.secure_url
-      setUploadError("Image upload failed.")
-      return null
-    } catch (err) {
-      setUploadError("Image upload failed.")
-      return null
-    }
-  }
 
   const handleReply = async (ticketId: string) => {
     if (!replyText.trim() && !replyImage) return
     setIsUploading(true)
     setUploadError(null)
-    let imageUrl: string | undefined = undefined
-    if (replyImage) {
-      imageUrl = await uploadToCloudinary(replyImage) || undefined
-    }
-    // @ts-ignore: update replyToTicket to accept imageUrl
-    await replyToTicket(ticketId, replyText, false, imageUrl)
+    // Always pass isAdmin: false for user replies
+    await replyToTicket(ticketId, replyText, false, replyImage || undefined)
     setReplyText("")
     setReplyImage(null)
     setIsUploading(false)
@@ -258,93 +236,138 @@ export default function SupportPage() {
           ) : (
             <div className="space-y-3 md:space-y-4">
               {openTickets.map((ticket) => (
-                <Card key={ticket.id} className="border-green-200 hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-3 md:pb-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-base md:text-lg text-gray-900 mb-1">{ticket.subject}</CardTitle>
-                        <CardDescription className="text-xs md:text-sm">Created {new Date(ticket.createdAt).toLocaleDateString()}</CardDescription>
-                      </div>
-                      <span
-                        className={`text-xs font-semibold px-2 md:px-3 py-1 rounded-full whitespace-nowrap ${
-                          ticket.status === "open" ? "bg-blue-100 text-blue-700" : "bg-yellow-100 text-yellow-700"
-                        }`}
-                      >
-                        {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                      </span>
+                <Card key={ticket.id} className="border border-[#e1e3e4] bg-[#f6f7f8] rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl mx-auto p-2 md:p-6 shadow-2xl">
+                  <div className="rounded-t-2xl bg-[#00a63d] px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-white font-semibold text-base sm:text-lg md:text-2xl line-clamp-1 break-words">{ticket.subject}</span>
+                      <span className="block text-xs sm:text-sm md:text-base text-[#b6e2d8]">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3 md:space-y-4 pt-0">
-                    <div className="space-y-2 md:space-y-3 max-h-48 md:max-h-64 overflow-y-auto">
-                      <div className="p-2 md:p-3 bg-green-50 rounded-lg">
-                        <p className="text-xs md:text-sm font-semibold text-gray-900 mb-1">You</p>
-                        <p className="text-xs md:text-sm text-gray-900">{ticket.message}</p>
-                        {ticket.imageUrl && (
-                          <div className="mt-2 flex flex-col items-center">
-                            <img
-                              src={ticket.imageUrl}
-                              alt="Ticket attachment"
-                              className="max-h-64 mx-auto rounded-lg border border-green-200"
-                            />
-                            <p className="mt-2 text-xs text-green-600 font-medium">Image Attachment</p>
+                    <span
+                      className={`text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                        ticket.status === "open" ? "bg-[#00a63d] text-white" : "bg-yellow-400/80 text-white"
+                      }`}
+                    >
+                      {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col justify-between h-[420px] sm:h-[500px] md:h-[600px]">
+                    <div className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-8 py-3 sm:py-4 bg-white rounded-b-2xl space-y-2 sm:space-y-3 md:space-y-5 border-b border-[#e1e3e4]">
+
+                    {/* Chat bubbles area */}
+                      {/* Initial user message */}
+                      <div className="flex w-full justify-end">
+                        <div className="flex flex-col items-end w-fit max-w-[90vw] sm:max-w-[75vw] md:max-w-md">
+                          <div className="bg-[#008060] text-white rounded-2xl rounded-br-sm px-4 sm:px-5 md:px-8 py-2 sm:py-3 md:py-4 shadow-md mb-2 chat-bubble-user w-fit">
+                            <div className="text-sm sm:text-base md:text-lg font-semibold mb-1 text-right">You</div>
+                            {ticket.message && (
+                              <div className="text-sm sm:text-base md:text-lg break-words">{ticket.message}</div>
+                            )}
+                            {ticket.imageUrl && (
+                              <div className="mt-2 flex flex-col items-end">
+                                <a href={ticket.imageUrl} target="_blank" rel="noopener noreferrer">
+                                  <img
+                                    src={ticket.imageUrl}
+                                    alt="Ticket attachment"
+                                    className="max-h-40 sm:max-h-60 md:max-h-80 rounded-lg border border-green-200 cursor-pointer hover:opacity-90 transition w-full max-w-xs sm:max-w-sm"
+                                  />
+                                </a>
+                                <span className="mt-1 text-[10px] sm:text-[11px] md:text-sm text-green-100">Image Attachment</span>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
 
+                      {/* Replies as chat bubbles */}
                       {ticket.replies.map((reply) => (
                         <div
                           key={reply.id}
-                          className={`p-2 md:p-3 rounded-lg ${
-                            reply.isAdmin ? "bg-blue-50 border border-blue-200" : "bg-muted"
-                          }`}
+                          className={`flex w-full ${reply.isAdmin ? "justify-start" : "justify-end"}`}
                         >
-                          <p className="text-xs md:text-sm font-semibold text-gray-900 mb-1">
-                            {reply.isAdmin ? "Support Team" : "You"}
-                          </p>
-                          <p className="text-xs md:text-sm text-gray-900">{reply.message}</p>
-                          {reply.imageUrl && (
-                            <div className="mt-2 flex flex-col items-center">
-                              <img
-                                src={reply.imageUrl}
-                                alt="Reply attachment"
-                                className="max-h-64 mx-auto rounded-lg border border-green-200"
-                              />
-                              <p className="mt-2 text-xs text-green-600 font-medium">Image Attachment</p>
+                          <div className={`flex flex-col ${reply.isAdmin ? "items-start" : "items-end"} w-fit max-w-[90vw] sm:max-w-[75vw] md:max-w-md`}>
+                            <div
+                              className={`px-4 sm:px-5 md:px-8 py-2 sm:py-3 md:py-4 rounded-2xl shadow-md mb-2 break-words chat-bubble w-fit ${
+                                reply.isAdmin
+                                  ? "bg-white border border-blue-200 text-gray-900 rounded-br-sm"
+                                  : "bg-[#008060] text-white rounded-br-sm"
+                              }`}
+                            >
+                              <div className={`text-sm sm:text-base md:text-lg font-semibold mb-1 ${reply.isAdmin ? "text-blue-700 text-left" : "text-white text-right"}`}>
+                                {reply.isAdmin ? "Support Team" : "You"}
+                              </div>
+                              {reply.message && (
+                                <div className="text-sm sm:text-base md:text-lg">{reply.message}</div>
+                              )}
+                              {reply.imageUrl && (
+                                <div className={`mt-2 flex flex-col ${reply.isAdmin ? "items-start" : "items-end"}`}>
+                                  <a href={reply.imageUrl} target="_blank" rel="noopener noreferrer">
+                                    <img
+                                      src={reply.imageUrl}
+                                      alt="Reply attachment"
+                                      className="max-h-40 sm:max-h-60 md:max-h-80 rounded-lg border border-green-200 cursor-pointer hover:opacity-90 transition w-full max-w-xs sm:max-w-sm"
+                                    />
+                                  </a>
+                                  <span className={`mt-1 text-[10px] sm:text-[11px] md:text-sm ${reply.isAdmin ? 'text-blue-400' : 'text-green-100'}`}>Image Attachment</span>
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
                         </div>
                       ))}
                     </div>
 
                     {selectedTicket === ticket.id ? (
-                      <div className="flex flex-col gap-2">
-                        <div className="flex gap-2">
+                      <div className="w-full px-2 md:px-4 pb-2 bg-[#f6f7f8] rounded-b-2xl border-t border-[#e1e3e4]">
+                        <div className="flex flex-col gap-2 w-full pt-2">
                           <input
                             type="text"
                             placeholder="Type your reply..."
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
-                            className="flex-1 px-2 md:px-3 py-1.5 md:py-2 text-sm border border-green-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+                            className="w-full min-w-0 px-3 py-2 text-sm border border-[#e1e3e4] rounded-full text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#008060] bg-white"
                           />
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={e => setReplyImage(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
-                            className="flex-1 border border-green-300 rounded-lg p-2"
-                          />
-                          <Button
-                            onClick={() => handleReply(ticket.id)}
-                            disabled={isUploading || (!replyText.trim() && !replyImage)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-3 md:px-4"
-                          >
-                            {isUploading ? "Sending..." : "Send"}
-                          </Button>
+                          <div className="flex flex-row gap-2 w-full items-stretch">
+                            <div className="relative flex items-center justify-center">
+                              <input
+                                id={`file-upload-${ticket.id}`}
+                                type="file"
+                                accept="image/*"
+                                onChange={e => setReplyImage(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
+                                className="absolute left-0 top-0 w-10 h-10 opacity-0 cursor-pointer z-10"
+                                tabIndex={-1}
+                              />
+                              <button
+                                type="button"
+                                aria-label="Attach photo"
+                                onClick={() => document.getElementById(`file-upload-${ticket.id}`)?.click()}
+                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border-2 border-[#008060] text-[#008060] hover:bg-[#e3f1eb] active:bg-[#d1ede3] shadow transition focus:outline-none focus:ring-2 focus:ring-[#008060]"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                                  <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
+                                  <circle cx="8.5" cy="10.5" r="1.5" stroke="currentColor" strokeWidth="2" fill="none" />
+                                  <path d="M21 19l-5.5-7-4.5 6-3-4L3 19" stroke="currentColor" strokeWidth="2" fill="none" />
+                                </svg>
+                              </button>
+                            </div>
+                            {replyImage && (
+                              <span className="text-xs text-gray-700 truncate max-w-[100px] self-center">{replyImage.name}</span>
+                            )}
+                            <div className="flex flex-1 justify-end items-end">
+                              <Button
+                                onClick={() => handleReply(ticket.id)}
+                                disabled={isUploading || (!replyText.trim() && !replyImage)}
+                                className="bg-[#008060] hover:bg-[#36c160] text-white px-4 py-2 min-w-[60px] rounded-full shadow-none"
+                              >
+                                {isUploading ? "Sending..." : "Send"}
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                         {replyImage && (
-                          <div className="text-xs text-gray-700">Selected: {replyImage.name}</div>
+                          <div className="text-xs text-gray-700 pt-1">Selected: {replyImage.name}</div>
                         )}
                         {uploadError && (
-                          <div className="text-xs text-red-600">{uploadError}</div>
+                          <div className="text-xs text-red-600 pt-1">{uploadError}</div>
                         )}
                       </div>
                     ) : (
@@ -356,7 +379,7 @@ export default function SupportPage() {
                         Reply
                       </Button>
                     )}
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>
