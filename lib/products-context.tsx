@@ -26,6 +26,7 @@ interface ProductsContextType {
   deleteProduct: (id: string) => Promise<void>
   fetchProducts: () => Promise<void>
   fetchAllProducts: () => Promise<Product[]>  // ✅ add this
+  fetchLuckyOrderProducts: () => Promise<Product[]>
 
 }
 
@@ -171,6 +172,29 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+
+  const fetchLuckyOrderProducts = async (): Promise<Product[]> => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return [];
+
+      const res = await fetch(`${API_URL}/api/products/lucky-products`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch lucky order products");
+
+      return data; // ✅ Returns only lucky order products
+    } catch (err) {
+      console.error("❌ Error fetching lucky order products:", err);
+      return [];
+    }
+  };
+
+
   return (
     <ProductsContext.Provider value={{ 
       products, 
@@ -178,7 +202,8 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
       updateProduct, 
       deleteProduct, 
       fetchProducts,
-      fetchAllProducts 
+      fetchAllProducts,
+      fetchLuckyOrderProducts  
       }}>
       {children}
     </ProductsContext.Provider>

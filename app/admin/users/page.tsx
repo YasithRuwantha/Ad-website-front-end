@@ -7,10 +7,23 @@ import { useState, useEffect } from "react"
 import { Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useUsers } from "@/lib/user-context"
+import { useProducts } from "@/lib/products-context"
+
 
 // Helper function to parse phone number and extract country info
 const parsePhoneNumber = (phone: string) => {
   if (!phone) return { countryCode: "", number: "", country: "" }
+
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  rating: number;
+  imageUrl: string;
+  income: number;
+  plan: string;
+  isLuckyOrderProduct: boolean;
+}
   
   const countryCodes = [
     { code: "+93", country: "Afghanistan" },
@@ -203,6 +216,7 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [luckyProducts, setLuckyProducts] = useState<Product[]>([]);
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error" | ""; text: string }>({
     type: "",
@@ -225,6 +239,14 @@ export default function AdminUsersPage() {
   })
 
 
+  const { fetchLuckyOrderProducts } = useProducts()
+
+useEffect(() => {
+  fetchLuckyOrderProducts().then((data) => {
+    console.log("Fetched lucky products:", data) // log here
+    setLuckyProducts(data)
+  })
+}, [])
 
 
   useEffect(() => {
