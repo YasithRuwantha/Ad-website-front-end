@@ -7,10 +7,12 @@ import { DataProvider } from "@/lib/data-context"
 import { UserProvider } from "@/lib/user-context" // ✅ import UserProvider
 import { RatingProvider } from "@/lib/rating-context" // ✅ Add RatingProvider
 
+
 import "./globals.css"
 import { User } from "lucide-react"
 import { ProductsProvider } from "@/lib/products-context"
 import { FundPaymentProvider } from "@/lib/fundPayment-context"
+import ClientFloatingSupportChatWrapper from "@/components/support/ClientFloatingSupportChatWrapper"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -36,6 +38,7 @@ export default function RootLayout({
                 <FundPaymentProvider>
                   <DataProvider>
                     {children}
+                    <ClientFloatingSupportChatWrapper />
                   </DataProvider>
                 </FundPaymentProvider>
               </RatingProvider>
