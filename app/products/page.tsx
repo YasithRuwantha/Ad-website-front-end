@@ -38,6 +38,7 @@ export default function ProductsPage() {
     email: string;
     luckydrawStatus: string;
     luckyProduct: { name: string; imageUrl: string; income: number } | null;
+    topgradeStatus: string;
   } | null>(null);  
 
 
@@ -60,7 +61,7 @@ export default function ProductsPage() {
 
       setLuckyDrawData(data); // ✅ save to state
 
-      if (data.luckydrawStatus === "active") {
+      if (data.luckydrawStatus === "active" || data.topgradeStatus === "active") {
         setShowLuckyDrawPopup(true);
       } else {
         setShowLuckyDrawPopup(false);
@@ -459,6 +460,8 @@ useEffect(() => {
         navigateTo="/support"
         imageURL={luckyDrawData?.luckyProduct?.imageUrl || ""}
         planName="Professional"
+        luckorder={luckyDrawData?.luckydrawStatus}
+        topgradeorder={luckyDrawData?.topgradeStatus}
       >
         <p>Please Contact the customer Service to Proceed</p>
       </Popup>
