@@ -154,7 +154,7 @@ export default function PlansPage() {
                 </span>
               </div>
 
-              <div className="flex items-start gap-3">
+              {/* <div className="flex items-start gap-3">
                 <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
                   plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
                 }`}>
@@ -165,7 +165,7 @@ export default function PlansPage() {
                 <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
                   Daily Product Limit: {plan.productLimit}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Profit Information */}
