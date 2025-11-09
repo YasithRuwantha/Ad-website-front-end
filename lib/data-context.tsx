@@ -424,8 +424,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       }
     }
     if (user) loadTickets()
+
+    // Listen for polling event to refresh tickets
+    const handler = () => {
+      if (user) loadTickets()
+    };
+    window.addEventListener("refresh-support-tickets", handler);
     return () => {
       cancelled = true
+      window.removeEventListener("refresh-support-tickets", handler)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, user?.role])

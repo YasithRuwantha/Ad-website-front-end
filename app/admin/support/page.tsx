@@ -4,11 +4,18 @@ import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Mail, User, Calendar, Reply as ReplyIcon, Search } from "lucide-react"
 
 export default function AdminSupportPage() {
   const { tickets, replyToTicket } = useData()
+  // Polling for real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      window.dispatchEvent(new Event("refresh-support-tickets"));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null)
   const [replyText, setReplyText] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
