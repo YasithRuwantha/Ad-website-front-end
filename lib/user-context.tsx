@@ -28,6 +28,7 @@ interface UserContextType {
   addRemainingAds: (id: string, extra: number, luckydrawAttempt?: number) => Promise<void>; 
   addToptup: (id: string, extra: number) => Promise<void>;
   fetchRemainingAttempts: () => Promise<void> // ✅ add this
+  getUser: () => Promise<User | null> // ✅ add this
 
 }
 
@@ -204,6 +205,50 @@ const fetchRemainingAttempts = async () => {
 };
 
 
+  // ✅ Fetch Lucky Draw Status
+  // const fetchLuckyDrawStatus = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token")
+  //     if (!token) return
+
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //     if (res.ok) {
+  //       const data = await res.json()
+  //       if (data.luckydrawStatus === "active") {
+  //       } else {
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error("Error checking lucky draw:", err)
+  //   }
+  // }
+
+  const getUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        console.error("❌ Failed to fetch user:", await res.text());
+        return null;
+      }
+
+      const data = await res.json();
+      console.log("🎯 User data fetched:", data);
+      return data; // ✅ return user data instead of setting state
+    } catch (err) {
+      console.error("⚠️ Error fetching user:", err);
+      return null;
+    }
+  };
 
 
   return (
@@ -217,7 +262,8 @@ const fetchRemainingAttempts = async () => {
         updateUser,
         addRemainingAds,
         addToptup,
-        fetchRemainingAttempts
+        fetchRemainingAttempts,
+        getUser
     }}>
       {children}
     </UserContext.Provider>

@@ -8,28 +8,37 @@ import { TrendingUp, FileText, ShoppingBag, Wallet, CreditCard, DollarSign, User
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { useRatings } from "@/lib/rating-context"
+import { useUsers } from "@/lib/user-context"
 
 export default function DashboardPage() {
   const { user } = useAuth()
   const { ads, transactions, ratings } = useData()
   const router = useRouter()
   const { getUserEarningsRatings } = useRatings();
+  const { getUser } = useUsers();
 
   const userAds = ads.filter((ad) => ad.userId === user?.id)
   const userTransactions = transactions.filter((t) => t.userId === user?.id)
   const userRatings = ratings.filter((r) => r.userId === user?.id)
-    const [totalEarnings, setTotalEarnings] = useState("")
+  const [totalEarnings, setTotalEarnings] = useState("")
+  const [tempUser, setTempUser] = useState("")  
   
 
-      useEffect(() => {
-        getUserEarningsRatings().then((data) => {
-          // ✅ Calculate total earning immediately
-          const total = data.reduce((sum, item) => sum + (item.earning || 0), 0);
-          console.log("earnings :",total)
-          setTotalEarnings(total);
-        });
-      }, [])
-    
+useEffect(() => {
+  const fetchData = async () => {
+    // 1️⃣ Calculate total earnings
+    const earningsData = await getUserEarningsRatings();
+    const total = earningsData.reduce((sum, item) => sum + (item.earning || 0), 0);
+    setTotalEarnings(total);
+
+    // 2️⃣ Fetch current user info
+    const currentUser = await getUser();
+    setTempUser(currentUser); // ✅ store actual user data
+  };
+
+  fetchData();
+}, []);
+
 
   const totalPayouts = 0 // We'll use dummy value for now
 
@@ -107,7 +116,7 @@ export default function DashboardPage() {
             <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
               <Wallet className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">${user?.balance?.toFixed(2) || "0.00"}</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">${tempUser?.balance?.toFixed(2) || "0.00"}</p>
             <p className="text-sm text-gray-600">Main Balance</p>
           </div>
 
@@ -117,7 +126,7 @@ export default function DashboardPage() {
               <PlusCircle className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
             <p className="text-xl sm:text-2xl font-bold text-gray-900">${(totalEarnings || 0).toFixed(2)}</p>
-            <p className="text-sm text-gray-600">Total Earning</p>
+            <p className="text-sm text-gray-600">Today Earning</p>
           </div>
 
           {/* Total Payout */}

@@ -15,7 +15,7 @@ import Popup from "@/components/luckydrawPopup"
 
 export default function ProductsPage() {
   const { user } = useAuth()
-  const { products, fetchProducts } = useProducts()
+  const { products, fetchProducts, fetchProductById  } = useProducts()
   const { submitRating, getUserRatings } = useRatings()
   const { fetchRemainingAttempts } = useUsers()
 
@@ -33,32 +33,48 @@ export default function ProductsPage() {
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [incomePerRating, setIncomePerRating] = useState("")
+  const [luckyDrawData, setLuckyDrawData] = useState<{
+    fullName: string;
+    email: string;
+    luckydrawStatus: string;
+    luckyProduct: { name: string; imageUrl: string; income: number } | null;
+  } | null>(null);  
 
 
   // ✅ Fetch Lucky Draw Status
   const fetchLuckyDrawStatus = async () => {
-    try {
-      const token = localStorage.getItem("token")
-      if (!token) return
+  try {
+    const user = localStorage.getItem("user");
+    const userID = user ? JSON.parse(user).id : null;
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        if (data.luckydrawStatus === "active") {
-          setShowLuckyDrawPopup(true)
-        } else {
-          setShowLuckyDrawPopup(false)
-        }
+    const token = localStorage.getItem("token");
+    if (!token || !userID) return;
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log("Lucky Draw Data:", data);
+
+      setLuckyDrawData(data); // ✅ save to state
+
+      if (data.luckydrawStatus === "active") {
+        setShowLuckyDrawPopup(true);
+      } else {
+        setShowLuckyDrawPopup(false);
       }
-    } catch (err) {
-      console.error("Error checking lucky draw:", err)
     }
+  } catch (err) {
+    console.error("Error checking lucky draw:", err);
   }
+};
+
 
     // 💰 Random earning per ad rating
   const getIncomePerRating = (planName: string) => {
+    console.log("income rating : :", planName)
     const plans: any = {
       Starter: [15, 15],
       Basic: [45, 45],
@@ -99,8 +115,8 @@ export default function ProductsPage() {
 
         // Fetch user ratings
         const ratings = await getUserRatings()
-        console.log("🔍 All user ratings received:", ratings)
-        console.log("🔍 Number of ratings:", ratings.length)
+        // console.log("🔍 All user ratings received:", ratings)
+        // console.log("🔍 Number of ratings:", ratings.length)
         setUserRatings(ratings)
 
         // Fetch Lucky Draw status
@@ -126,6 +142,19 @@ export default function ProductsPage() {
   useEffect(() => {
     setIncomePerRating(getIncomePerRating(user?.plan || "Starter"))
   }, [user?.plan])
+
+
+// useEffect(() => {
+//   fetchProductById().then(product => {
+//     if (product) {
+//       console.log("Product details:", product);
+//     } else {
+//       console.log("Product not found");
+//     }
+//   }).catch(err => console.error("Error fetching product:", err));
+// }, []);
+
+
 
   // ⭐ Handle Rating Submission
 const handleSubmitRating = async (rating: number, comment: string, earning: string) => {
@@ -164,11 +193,11 @@ useEffect(() => {
 
   // ⭐ Handle Product Rating Modal
   const handleRateProduct = (product: any) => {
-    console.log("handleRateProduct called for:", product.name)
+    // console.log("handleRateProduct called for:", product.name)
     const userRating = userRatings.find((r) => r.productId === product._id)
-    console.log("User rating found:", userRating)
+    // console.log("User rating found:", userRating)
     if (userRating) {
-      console.log("Showing already rated alert")
+      // console.log("Showing already rated alert")
       setShowAlreadyRatedPopup(true)
       return
     }
@@ -358,7 +387,9 @@ useEffect(() => {
 
                   <div className="mb-2 sm:mb-3">
                     <p className="text-xs sm:text-sm text-gray-600">Income per rating</p>
-                    <p className="text-xl sm:text-2xl font-bold text-green-600">{incomePerRating}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-green-600">
+                      {getIncomePerRating(user?.plan || "Starter")}
+                    </p>
 
                   </div>
 
@@ -424,11 +455,15 @@ useEffect(() => {
       <Popup
         open={showLuckyDrawPopup}
         onClose={() => setShowLuckyDrawPopup(false)}
-        title="🎉 Lucky Draw Active!"
-        navigateTo="/dashboard/add-funds"
+        title="Congratulations You Received a Lucky Order"
+        navigateTo="/support"
+        imageURL={luckyDrawData?.luckyProduct?.imageUrl || ""}
+        planName="Professional"
       >
-        <p>Try your luck now and win exciting rewards!</p>
+        <p>Please Contact the customer Service to Proceed</p>
       </Popup>
+
+
    
     </div>
   )
