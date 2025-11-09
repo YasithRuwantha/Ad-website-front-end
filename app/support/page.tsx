@@ -14,6 +14,14 @@ import { useRouter } from "next/navigation"
 export default function SupportPage({ isFloatingChat = false, hideTitle = false }: { isFloatingChat?: boolean, hideTitle?: boolean } = {}) {
   const { user } = useAuth()
   const { tickets, addTicket, replyToTicket } = useData()
+  // Polling for real-time chat updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // This will trigger the useEffect in data-context to reload tickets
+      window.dispatchEvent(new Event("refresh-support-tickets"));
+    }, 3000); // 3 seconds
+    return () => clearInterval(interval);
+  }, []);
   const [replyText, setReplyText] = useState("")
   const [firstMessage, setFirstMessage] = useState("")
   const [userName, setUserName] = useState("User")
