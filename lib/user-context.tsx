@@ -206,24 +206,24 @@ const fetchRemainingAttempts = async () => {
 
 
   // ✅ Fetch Lucky Draw Status
-  const fetchLuckyDrawStatus = async () => {
-    try {
-      const token = localStorage.getItem("token")
-      if (!token) return
+  // const fetchLuckyDrawStatus = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token")
+  //     if (!token) return
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        if (data.luckydrawStatus === "active") {
-        } else {
-        }
-      }
-    } catch (err) {
-      console.error("Error checking lucky draw:", err)
-    }
-  }
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //     if (res.ok) {
+  //       const data = await res.json()
+  //       if (data.luckydrawStatus === "active") {
+  //       } else {
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error("Error checking lucky draw:", err)
+  //   }
+  // }
 
   const getUser = async () => {
     try {

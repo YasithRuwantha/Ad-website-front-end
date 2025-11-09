@@ -217,6 +217,9 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [luckyProducts, setLuckyProducts] = useState<Product[]>([]);
+  const [isLuckyModalOpen, setIsLuckyModalOpen] = useState(false)
+  const [selectedLuckyProduct, setSelectedLuckyProduct] = useState<Product | null>(null)
+
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error" | ""; text: string }>({
     type: "",
@@ -236,17 +239,29 @@ export default function AdminUsersPage() {
     luckydrawStatus: "",
     luckydrawAttempt: "",
     plan: "",
+    luckyOrderId: ""
   })
+
+  const openLuckyModal = () => {
+  if (selectedUser && selectedUser.luckyOrderId) {
+    const preSelected = luckyProducts.find(p => p._id === selectedUser.luckyOrderId)
+    setSelectedLuckyProduct(preSelected || null)
+  } else {
+    setSelectedLuckyProduct(null)
+  }
+  setIsLuckyModalOpen(true)
+}
+
 
 
   const { fetchLuckyOrderProducts } = useProducts()
 
-useEffect(() => {
-  fetchLuckyOrderProducts().then((data) => {
-    console.log("Fetched lucky products:", data) // log here
-    setLuckyProducts(data)
-  })
-}, [])
+  useEffect(() => {
+    fetchLuckyOrderProducts().then((data) => {
+      console.log("Fetched lucky products:", data) // log here
+      setLuckyProducts(data)
+    })
+  }, [])
 
 
   useEffect(() => {
@@ -277,27 +292,40 @@ useEffect(() => {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const openModal = (user: any) => {
-    setSelectedUser(user)
-    setEditData({
-      fullName: user.fullName,
-      firstName: user.firstName || "",
-      lastName: user.lastName || "",
-      username: user.username || "",
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
-      adsPerDay: user.adsPerDay,
-      luckydrawStatus: user.luckydrawStatus,
-      luckydrawAttempt: user.luckydrawAttempt,
-      plan: user.plan,
-      topup: user.topup
-    })
-    setAdsAdjust(0)
-    setIsModalOpen(true)
-    setMessage({ type: "", text: "" }) // clear previous messages
+const openModal = (user: any) => {
+  setSelectedUser(user)
+  
+  // Initialize edit data
+  setEditData({
+    fullName: user.fullName,
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    username: user.username || "",
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    status: user.status,
+    adsPerDay: user.adsPerDay,
+    luckydrawStatus: user.luckydrawStatus,
+    luckydrawAttempt: user.luckydrawAttempt,
+    plan: user.plan,
+    topup: user.topup,
+    luckyOrderId: user.luckyOrderId
+  })
+
+  // ✅ Preselect Lucky Product if user has one
+  if (user.luckyOrderId && luckyProducts.length > 0) {
+    const preSelected = luckyProducts.find(p => p._id === user.luckyOrderId)
+    setSelectedLuckyProduct(preSelected || null)
+  } else {
+    setSelectedLuckyProduct(null)
   }
+
+  setAdsAdjust(0)
+  setIsModalOpen(true)
+  setMessage({ type: "", text: "" })
+}
+
 
   const handleSaveChanges = async () => {
     if (!selectedUser) return
@@ -593,6 +621,27 @@ useEffect(() => {
                     placeholder="Enter attempts needed"
                   />
                 </div>
+
+
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Lucky Order Product</label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setIsLuckyModalOpen(true)}
+                    >
+                      Select Lucky Product
+                    </Button>
+                    <span className="text-sm text-gray-700">
+                      {selectedLuckyProduct ? selectedLuckyProduct.name : "None selected"}
+                    </span>
+                  </div>
+                </div>
+
+
+
+
                 <div className="col-span-1 sm:col-span-2">
                   <label className="block text-xs font-semibold text-green-700 mb-1">Attempts per day</label>
                   <select
@@ -714,9 +763,65 @@ useEffect(() => {
           </div>
         </div>
       )}
+
+     {isLuckyModalOpen && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+    <div className="bg-white p-4 rounded-xl w-full max-w-md shadow-2xl overflow-hidden">
+      <h3 className="text-lg font-bold text-green-700 text-center mb-2">Select Lucky Product</h3>
+      
+      {/* Scrollable product list */}
+      <div className="overflow-y-auto max-h-[60vh] space-y-3">
+        {luckyProducts.map((product) => (
+          <div
+            key={product._id}
+            className={`flex items-center gap-3 p-2 border rounded-lg cursor-pointer ${
+              selectedLuckyProduct?._id === product._id ? "bg-green-100 border-green-400" : "bg-white border-gray-200"
+            }`}
+            onClick={() => setSelectedLuckyProduct(product)}
+          >
+            <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded-lg" />
+            <div className="flex-1 text-sm">
+              <p className="font-semibold">{product.name}</p>
+              <p className="text-gray-500">Plan: {product.plan}</p>
+              <p className="text-gray-500">Income: ${product.income}</p>
+            </div>
+            {selectedLuckyProduct?._id === product._id && (
+              <Check className="text-green-600" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-end gap-2 mt-2">
+        <Button type="button" variant="secondary" onClick={() => setIsLuckyModalOpen(false)}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          variant="green"
+          onClick={() => {
+            if (selectedLuckyProduct) {
+              setEditData({ ...editData, luckyOrderId: selectedLuckyProduct._id })
+              setIsLuckyModalOpen(false)
+            }
+          }}
+        >
+          Select
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
     </div>
   )
 }
+
+
+
 
 // User Row Component
 const UserRow = ({ user, openModal, deleteUser }: any) => (

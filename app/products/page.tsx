@@ -15,7 +15,7 @@ import Popup from "@/components/luckydrawPopup"
 
 export default function ProductsPage() {
   const { user } = useAuth()
-  const { products, fetchProducts } = useProducts()
+  const { products, fetchProducts, fetchProductById  } = useProducts()
   const { submitRating, getUserRatings } = useRatings()
   const { fetchRemainingAttempts } = useUsers()
 
@@ -33,29 +33,44 @@ export default function ProductsPage() {
   const [userEmail, setUserEmail] = useState("")
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [incomePerRating, setIncomePerRating] = useState("")
+  const [luckyDrawData, setLuckyDrawData] = useState<{
+    fullName: string;
+    email: string;
+    luckydrawStatus: string;
+    luckyProduct: { name: string; imageUrl: string; income: number } | null;
+  } | null>(null);  
 
 
   // ✅ Fetch Lucky Draw Status
   const fetchLuckyDrawStatus = async () => {
-    try {
-      const token = localStorage.getItem("token")
-      if (!token) return
+  // try {
+  //   const user = localStorage.getItem("user");
+  //   const userID = user ? JSON.parse(user).id : null;
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        if (data.luckydrawStatus === "active") {
-          setShowLuckyDrawPopup(true)
-        } else {
-          setShowLuckyDrawPopup(false)
-        }
-      }
-    } catch (err) {
-      console.error("Error checking lucky draw:", err)
-    }
-  }
+  //   const token = localStorage.getItem("token");
+  //   if (!token || !userID) return;
+
+  //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw/${userID}`, {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   });
+
+  //   if (res.ok) {
+  //     const data = await res.json();
+  //     console.log("Lucky Draw Data:", data);
+
+  //     setLuckyDrawData(data); // ✅ save to state
+
+  //     if (data.luckydrawStatus === "active") {
+  //       setShowLuckyDrawPopup(true);
+  //     } else {
+  //       setShowLuckyDrawPopup(false);
+  //     }
+  //   }
+  // } catch (err) {
+  //   console.error("Error checking lucky draw:", err);
+  // }
+};
+
 
     // 💰 Random earning per ad rating
   const getIncomePerRating = (planName: string) => {
@@ -126,6 +141,19 @@ export default function ProductsPage() {
   useEffect(() => {
     setIncomePerRating(getIncomePerRating(user?.plan || "Starter"))
   }, [user?.plan])
+
+
+// useEffect(() => {
+//   fetchProductById().then(product => {
+//     if (product) {
+//       console.log("Product details:", product);
+//     } else {
+//       console.log("Product not found");
+//     }
+//   }).catch(err => console.error("Error fetching product:", err));
+// }, []);
+
+
 
   // ⭐ Handle Rating Submission
 const handleSubmitRating = async (rating: number, comment: string, earning: string) => {
