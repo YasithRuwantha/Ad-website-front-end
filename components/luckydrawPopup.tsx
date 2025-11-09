@@ -70,7 +70,7 @@ export default function Popup({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="relative bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-2xl w-96 max-w-sm transform transition-transform duration-300 scale-95 animate-scaleIn">
+      <div className="relative bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-2xl w-150 max-w-sm transform transition-transform duration-300 scale-95 animate-scaleIn">
         {/* Image */}
         {imageURL && (
           <div className="mb-4">
@@ -89,25 +89,6 @@ export default function Popup({
           </h2>
         )}
 
-        {/* User Info */}
-        {user && (
-          <div className="text-gray-700 dark:text-gray-200 text-sm mb-4 space-y-2">
-            <p><strong>💰 Balance:</strong> ${user.balance}</p>
-            <p><strong>📦 Current Plan:</strong> {user.plan}</p>
-            {planName && (
-              <p>
-                <strong>🎯 Target Plan:</strong> {planName}
-              </p>
-            )}
-            {depositNeeded !== null && planName && (
-              <p>
-                <strong>🪙 Additional Deposit Needed:</strong>{" "}
-                {depositNeeded > 0 ? `$${depositNeeded}` : "You already qualify!"}
-              </p>
-            )}
-          </div>
-        )}
-
         {/* Children content */}
         <div className="text-gray-700 dark:text-gray-200 text-sm space-y-2 text-center">
           {children}
@@ -119,7 +100,7 @@ export default function Popup({
             onClick={handleClaim}
             className="w-full py-2 px-4 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition-transform"
           >
-            Claim !
+            Claim now!
           </button>
         </div>
       </div>

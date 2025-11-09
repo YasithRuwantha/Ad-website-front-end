@@ -43,6 +43,8 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
       headers: { Authorization: `Bearer ${token}` },
     })
     const data = await res.json()
+    // console.log("Fetched products 30 unrated:", data);
+
     if (res.ok) setProducts(data)
     else throw new Error(data.message || "Failed to fetch products")
   }

@@ -43,32 +43,32 @@ export default function ProductsPage() {
 
   // ✅ Fetch Lucky Draw Status
   const fetchLuckyDrawStatus = async () => {
-  // try {
-  //   const user = localStorage.getItem("user");
-  //   const userID = user ? JSON.parse(user).id : null;
+  try {
+    const user = localStorage.getItem("user");
+    const userID = user ? JSON.parse(user).id : null;
 
-  //   const token = localStorage.getItem("token");
-  //   if (!token || !userID) return;
+    const token = localStorage.getItem("token");
+    if (!token || !userID) return;
 
-  //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw/${userID}`, {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  //   if (res.ok) {
-  //     const data = await res.json();
-  //     console.log("Lucky Draw Data:", data);
+    if (res.ok) {
+      const data = await res.json();
+      console.log("Lucky Draw Data:", data);
 
-  //     setLuckyDrawData(data); // ✅ save to state
+      setLuckyDrawData(data); // ✅ save to state
 
-  //     if (data.luckydrawStatus === "active") {
-  //       setShowLuckyDrawPopup(true);
-  //     } else {
-  //       setShowLuckyDrawPopup(false);
-  //     }
-  //   }
-  // } catch (err) {
-  //   console.error("Error checking lucky draw:", err);
-  // }
+      if (data.luckydrawStatus === "active") {
+        setShowLuckyDrawPopup(true);
+      } else {
+        setShowLuckyDrawPopup(false);
+      }
+    }
+  } catch (err) {
+    console.error("Error checking lucky draw:", err);
+  }
 };
 
 
@@ -114,8 +114,8 @@ export default function ProductsPage() {
 
         // Fetch user ratings
         const ratings = await getUserRatings()
-        console.log("🔍 All user ratings received:", ratings)
-        console.log("🔍 Number of ratings:", ratings.length)
+        // console.log("🔍 All user ratings received:", ratings)
+        // console.log("🔍 Number of ratings:", ratings.length)
         setUserRatings(ratings)
 
         // Fetch Lucky Draw status
@@ -192,11 +192,11 @@ useEffect(() => {
 
   // ⭐ Handle Product Rating Modal
   const handleRateProduct = (product: any) => {
-    console.log("handleRateProduct called for:", product.name)
+    // console.log("handleRateProduct called for:", product.name)
     const userRating = userRatings.find((r) => r.productId === product._id)
-    console.log("User rating found:", userRating)
+    // console.log("User rating found:", userRating)
     if (userRating) {
-      console.log("Showing already rated alert")
+      // console.log("Showing already rated alert")
       setShowAlreadyRatedPopup(true)
       return
     }
@@ -449,16 +449,16 @@ useEffect(() => {
       </div>
 
       {/* 🎯 Lucky Draw Popup */}
-<Popup
-  open={showLuckyDrawPopup}
-  onClose={() => setShowLuckyDrawPopup(false)}
-  title="🎉 Lucky Draw Active!"
-  navigateTo="/support"
-  imageURL="/images/lucky-draw.png"
-  planName="Professional"
->
-  <p>Try your luck now and win exciting rewards!</p>
-</Popup>
+      <Popup
+        open={showLuckyDrawPopup}
+        onClose={() => setShowLuckyDrawPopup(false)}
+        title="Congratulations You Received a Lucky Order"
+        navigateTo="/support"
+        imageURL={luckyDrawData?.luckyProduct?.imageUrl || ""}
+        planName="Professional"
+      >
+        <p>Please Contact the customer Service to Proceed</p>
+      </Popup>
 
 
    
