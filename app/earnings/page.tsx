@@ -73,11 +73,11 @@ const displayedBalance = useMemo(() => {
   let balance = tempUser.balance || 0
 
   // only deduct if luckyOrder exists and is active
-  if (luckyOrder?.luckydrawStatus === "active") {
+  if (luckyOrder?.luckydrawStatus === "active" && luckyOrder.luckyProduct != undefined) {
     balance -= luckyOrder.luckyProduct.income
   }
 
-  console.log("display balance", balance, luckyOrder?.luckyProduct.income)
+  // console.log("display balance", balance, luckyOrder?.luckyProduct.income)
   return balance
 }, [tempUser, luckyOrder])
 
