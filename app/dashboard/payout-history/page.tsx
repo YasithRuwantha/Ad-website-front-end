@@ -4,16 +4,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, DollarSign, CheckCircle, Clock, XCircle } from "lucide-react"
-
-// Mock payout history data
-const MOCK_PAYOUT_HISTORY = [
-  { id: "1", amount: 500, method: "bank", status: "completed", date: "2024-10-20", reference: "PAY-2024-10-001" },
-  { id: "2", amount: 750, method: "paypal", status: "completed", date: "2024-10-15", reference: "PAY-2024-10-002" },
-  { id: "3", amount: 300, method: "bank", status: "pending", date: "2024-10-25", reference: "PAY-2024-10-003" },
-  { id: "4", amount: 1200, method: "stripe", status: "completed", date: "2024-10-10", reference: "PAY-2024-10-004" },
-  { id: "5", amount: 450, method: "bank", status: "failed", date: "2024-10-05", reference: "PAY-2024-10-005" },
-  { id: "6", amount: 600, method: "paypal", status: "completed", date: "2024-09-28", reference: "PAY-2024-09-001" },
-]
+import { useEffect, useState } from "react"
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -38,14 +29,43 @@ const getMethodLabel = (method: string) => {
     case "bank": return "Bank Transfer"
     case "paypal": return "PayPal"
     case "stripe": return "Stripe"
+    case "usdt": return "USDT"
     default: return method
   }
 }
 
 export default function PayoutHistoryPage() {
   const { user } = useAuth()
+  const [payouts, setPayouts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Safe dummy values if user or fields are undefined
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+
+  useEffect(() => {
+    const fetchPayouts = async () => {
+      try {
+        if (!token) return
+        const res = await fetch(`${API_URL}/api/payout/history`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || "Failed to fetch payouts")
+        setPayouts(data.payouts || data) // in case backend returns array directly
+      } catch (err) {
+        console.error("Fetch payouts error:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPayouts()
+  }, [API_URL, token])
+
+  // Safe dummy values if user fields are undefined
   const safeUser = {
     totalPayouts: user?.totalPayouts ?? 0,
     balance: user?.balance ?? 0,
@@ -54,9 +74,11 @@ export default function PayoutHistoryPage() {
 
   const stats = [
     { label: "Total Payouts", value: `$${safeUser.totalPayouts.toFixed(2)}`, icon: DollarSign, color: "text-blue-600", bgColor: "bg-blue-50" },
-    { label: "Completed", value: MOCK_PAYOUT_HISTORY.filter((p) => p.status === "completed").length, icon: CheckCircle, color: "text-green-600", bgColor: "bg-green-50" },
-    { label: "Pending", value: MOCK_PAYOUT_HISTORY.filter((p) => p.status === "pending").length, icon: Clock, color: "text-amber-600", bgColor: "bg-amber-50" },
+    { label: "Completed", value: payouts.filter((p) => p.status === "completed").length, icon: CheckCircle, color: "text-green-600", bgColor: "bg-green-50" },
+    { label: "Pending", value: payouts.filter((p) => p.status === "pending").length, icon: Clock, color: "text-amber-600", bgColor: "bg-amber-50" },
   ]
+
+  if (loading) return <p className="text-center mt-10">Loading payout history...</p>
 
   return (
     <div className="space-y-6">
@@ -106,16 +128,16 @@ export default function PayoutHistoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {MOCK_PAYOUT_HISTORY.map((payout) => (
-                  <tr key={payout.id} className="border-b hover:bg-green-50 transition-colors">
+                {payouts.map((payout) => (
+                  <tr key={payout._id || payout.id} className="border-b hover:bg-green-50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-600" />
-                        <span className="text-gray-900">{new Date(payout.date).toLocaleDateString()}</span>
+                        <span className="text-gray-900">{new Date(payout.requestedAt || payout.date).toLocaleDateString()}</span>
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-mono text-sm text-gray-600">{payout.reference}</span>
+                      <span className="font-mono text-sm text-gray-600">{payout.reference || payout._id}</span>
                     </td>
                     <td className="py-3 px-4">
                       <span className="font-bold text-gray-900">${(payout.amount ?? 0).toFixed(2)}</span>
@@ -134,19 +156,6 @@ export default function PayoutHistoryPage() {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Download Statement */}
-      <Card className="border-green-200">
-        <CardHeader>
-          <CardTitle>Export Statement</CardTitle>
-          <CardDescription>Download your payout history as a CSV file</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-            Download CSV
-          </button>
         </CardContent>
       </Card>
     </div>
