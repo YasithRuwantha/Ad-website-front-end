@@ -90,11 +90,11 @@ export default function AdminPayoutRequestsPage() {
     if (search.trim()) {
       const term = search.toLowerCase();
       list = list.filter(r =>
-        r.fullName.toLowerCase().includes(term) ||
-        r.email.toLowerCase().includes(term) ||
-        r.username.toLowerCase().includes(term) ||
-        r._id.includes(term) ||
-        (r.tempId !== null && String(r.tempId).includes(term))   // ← tempId search
+        (typeof r.fullName === 'string' && r.fullName.toLowerCase().includes(term)) ||
+        (typeof r.email === 'string' && r.email.toLowerCase().includes(term)) ||
+        (typeof r.username === 'string' && r.username.toLowerCase().includes(term)) ||
+        (typeof r._id === 'string' && r._id.includes(term)) ||
+        (r.tempId !== null && typeof r.tempId !== 'undefined' && String(r.tempId).includes(term))
       );
     }
 
