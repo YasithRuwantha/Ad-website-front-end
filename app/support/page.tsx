@@ -11,7 +11,7 @@ import { MessageSquare, Plus, User, ChevronDown, LogOut, Settings, MessageCircle
 import UserSidebar from "@/components/user/user-sidebar"
 import { useRouter } from "next/navigation"
 
-export default function SupportPage({ isFloatingChat = false }: { isFloatingChat?: boolean } = {}) {
+export default function SupportPage({ isFloatingChat = false, hideTitle = false }: { isFloatingChat?: boolean, hideTitle?: boolean } = {}) {
   const { user } = useAuth()
   const { tickets, addTicket, replyToTicket } = useData()
   const [replyText, setReplyText] = useState("")
@@ -182,15 +182,17 @@ export default function SupportPage({ isFloatingChat = false }: { isFloatingChat
       {/* Main Content */}
       <div className="flex-1 overflow-auto md:ml-0 p-4 md:p-6">
 
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Customer Support 💬</h1>
-          {unread && (
-            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse">Unread</span>
-          )}
+      {!hideTitle && (
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Customer Support 💬</h1>
+            {unread && (
+              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse">Unread</span>
+            )}
+          </div>
+          {/* No create ticket button since only one chat */}
         </div>
-        {/* No create ticket button since only one chat */}
-      </div>
+      )}
 
       {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
         <Card className="border-green-200 hover:shadow-md transition-shadow">
