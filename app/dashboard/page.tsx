@@ -45,7 +45,9 @@ export default function DashboardPage() {
 
         if (res.ok) {
           const data = await res.json()
+          console.log("luck and topgrade :",data)
           setLuckyOrder(data)
+          
         }
       } catch (err) {
         console.error("Error fetching data:", err)
