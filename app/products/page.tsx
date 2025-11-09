@@ -74,6 +74,7 @@ export default function ProductsPage() {
 
     // 💰 Random earning per ad rating
   const getIncomePerRating = (planName: string) => {
+    console.log("income rating : :", planName)
     const plans: any = {
       Starter: [15, 15],
       Basic: [45, 45],
@@ -386,7 +387,9 @@ useEffect(() => {
 
                   <div className="mb-2 sm:mb-3">
                     <p className="text-xs sm:text-sm text-gray-600">Income per rating</p>
-                    <p className="text-xl sm:text-2xl font-bold text-green-600">{incomePerRating}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-green-600">
+                      {getIncomePerRating(user?.plan || "Starter")}
+                    </p>
 
                   </div>
 
