@@ -256,7 +256,7 @@ export default function FundApprovalsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div><p className="text-sm text-gray-600">Full Name</p><p className="font-semibold">{selectedRequest.fullName || "—"}</p></div>
                   <div><p className="text-sm text-gray-600">Email</p><p className="font-semibold">{selectedRequest.email}</p></div>
-                  <div><p className="text-sm text-gray-600">User ID</p><p className="font-semibold font-mono">{selectedRequest.userId}</p></div>
+                  {/* <div><p className="text-sm text-gray-600">User ID</p><p className="font-semibold font-mono">{selectedRequest.userId}</p></div> */}
                   <div><p className="text-sm text-gray-600">Temp ID</p><p className="font-semibold font-mono">{selectedRequest.tempId ?? "—"}</p></div>
                   <div><p className="text-sm text-gray-600">Submitted At</p><p className="font-semibold">{formatDate(selectedRequest.submittedAt)}</p></div>
                 </div>
