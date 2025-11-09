@@ -14,6 +14,14 @@ import { useRouter } from "next/navigation"
 export default function SupportPage({ isFloatingChat = false, hideTitle = false }: { isFloatingChat?: boolean, hideTitle?: boolean } = {}) {
   const { user } = useAuth()
   const { tickets, addTicket, replyToTicket } = useData()
+  // Polling for real-time chat updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // This will trigger the useEffect in data-context to reload tickets
+      window.dispatchEvent(new Event("refresh-support-tickets"));
+    }, 3000); // 3 seconds
+    return () => clearInterval(interval);
+  }, []);
   const [replyText, setReplyText] = useState("")
   const [firstMessage, setFirstMessage] = useState("")
   const [userName, setUserName] = useState("User")
@@ -187,7 +195,7 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
           <div className="flex items-center gap-2">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Customer Support 💬</h1>
             {unread && (
-              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse">Unread</span>
+              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse"></span>
             )}
           </div>
           {/* No create ticket button since only one chat */}
