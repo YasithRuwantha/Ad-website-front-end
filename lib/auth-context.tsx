@@ -115,7 +115,7 @@ const signup = async (email: string, password: string, name: string, phone: stri
   if (!res.ok) throw new Error(data.message || "Signup failed");
 
   // ✅ Return message instead of alert
-  return "Signup successful! Please wait for admin approval.";
+  return "Signup successful! Please Sign In.";
 };
 
 
