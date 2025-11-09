@@ -1,138 +1,191 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, CheckCircle, XCircle, Clock, User, Search, Eye } from "lucide-react";
+import {
+  DollarSign,
+  CheckCircle,
+  XCircle,
+  Clock,
+  User,
+  Search,
+  Eye,
+  Loader2,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-const mockPayoutRequests = [
-  {
-    id: "1",
-    user: "john_doe",
-    email: "john@example.com",
-    amount: 120.0,
-    method: "USDT",
-    address: "TQ2...9XyZ",
-    status: "pending",
-    date: "2025-11-08T10:00:00Z",
-  },
-  {
-    id: "2",
-    user: "jane_smith",
-    email: "jane@example.com",
-    amount: 300.0,
-    method: "Bank",
-    bank: "Bank of Example",
-    account: "1234567890",
-    status: "approved",
-    date: "2025-11-07T14:30:00Z",
-  },
-  {
-    id: "3",
-    user: "alice",
-    email: "alice@example.com",
-    amount: 75.5,
-    method: "USDT",
-    address: "TP1...7AbC",
-    status: "rejected",
-    date: "2025-11-06T09:15:00Z",
-  },
-];
+type Status = "pending" | "completed" | "rejected";
 
-type Status = "pending" | "approved" | "rejected";
+interface Payout {
+  _id: string;
+  userId: {
+    _id: string;
+    fullName: string;
+    email: string;
+    username: string;
+  };
+  amount: number;
+  method: "usdt" | "bank";
+  status: Status;
+  details: any;
+  requestedAt: string;
+  processedAt?: string;
+  processedBy?: { fullName: string };
+}
 
 export default function AdminPayoutRequestsPage() {
-  const [requests] = useState(mockPayoutRequests);
-  const [filteredRequests, setFilteredRequests] = useState(mockPayoutRequests);
-  const [selectedRequest, setSelectedRequest] = useState<typeof mockPayoutRequests[0] | null>(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | Status>("all");
+  const [requests, setRequests] = useState<Payout[]>([]);
+  const [filtered, setFiltered] = useState<Payout[]>([]);
+  const [selected, setSelected] = useState<Payout | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | Status>("all");
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-  // Filter requests based on search and status
-  const filterRequests = () => {
-    let filtered = requests;
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (req) =>
-          req.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          req.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          req.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  // Fetch all payouts using native fetch
+  useEffect(() => {
+    const fetchPayouts = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/api/payout/admin/all`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch");
+
+        const data = await res.json();
+        setRequests(data);
+        setFiltered(data);
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load payout requests");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPayouts();
+  }, [token]);
+
+  // Filter logic
+  useEffect(() => {
+    let list = requests;
+    if (search) {
+      list = list.filter(
+        (r) =>
+          r.userId.fullName.toLowerCase().includes(search.toLowerCase()) ||
+          r.userId.email.toLowerCase().includes(search.toLowerCase()) ||
+          r._id.includes(search)
       );
     }
-    if (filterStatus !== "all") {
-      filtered = filtered.filter((req) => req.status === filterStatus);
-    }
-    setFilteredRequests(filtered);
-  };
+    if (filter !== "all") list = list.filter((r) => r.status === filter);
+    setFiltered(list);
+  }, [search, filter, requests]);
 
-  // Run filter on search/filter change
-  React.useEffect(() => {
-    filterRequests();
-    // eslint-disable-next-line
-  }, [searchTerm, filterStatus, requests]);
+  // Update status using fetch
+  const updateStatus = async (id: string, status: "completed" | "rejected") => {
+    if (!confirm(`Mark as ${status}?`)) return;
+    setUpdating(true);
 
-  const getStatusBadge = (status: Status) => {
-    switch (status) {
-      case "approved":
-        return (
-          <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-            <CheckCircle className="w-3 h-3 mr-1" /> Approved
-          </Badge>
-        );
-      case "pending":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
-            <Clock className="w-3 h-3 mr-1" /> Pending
-          </Badge>
-        );
-      case "rejected":
-        return (
-          <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
-            <XCircle className="w-3 h-3 mr-1" /> Rejected
-          </Badge>
-        );
-      default:
-        return <Badge>{status}</Badge>;
+    try {
+      const res = await fetch(`${API_URL}/api/payout/admin/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Update failed");
+      }
+
+      const updated = await res.json();
+      setRequests((prev) => prev.map((p) => (p._id === id ? updated.payout : p)));
+      setSelected(updated.payout);
+    } catch (err: any) {
+      alert(err.message || "Failed to update status");
+    } finally {
+      setUpdating(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
+  const getBadge = (status: Status) => {
+    const map = {
+      pending: { color: "bg-yellow-100 text-yellow-700", icon: Clock },
+      completed: { color: "bg-green-100 text-green-700", icon: CheckCircle },
+      rejected: { color: "bg-red-100 text-red-700", icon: XCircle },
+    };
+    const { color, icon: Icon } = map[status];
+    return (
+      <Badge className={`${color} hover:${color}`}>
+        <Icon className="w-3 h-3 mr-1" /> {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
+  };
+
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
+
+  const stats = {
+    pending: requests.filter((r) => r.status === "pending").length,
+    approved: requests.filter((r) => r.status === "completed").length,
+    rejected: requests.filter((r) => r.status === "rejected").length,
+    totalApproved: requests
+      .filter((r) => r.status === "completed")
+      .reduce((sum, r) => sum + r.amount, 0),
   };
 
-  const pendingCount = requests.filter((r) => r.status === "pending").length;
-  const approvedCount = requests.filter((r) => r.status === "approved").length;
-  const rejectedCount = requests.filter((r) => r.status === "rejected").length;
-  const totalAmount = requests
-    .filter((r) => r.status === "approved")
-    .reduce((sum, r) => sum + r.amount, 0);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
+    <div className="space-y-6 p-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Payout Requests</h1>
         <p className="text-gray-600">Review and manage user payout requests</p>
       </div>
 
-      {/* Summary Cards */}
+      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="border-2 border-yellow-200">
           <CardContent className="pt-6 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Pending Requests</p>
-              <p className="text-3xl font-bold text-gray-900">{pendingCount}</p>
+              <p className="text-sm text-gray-600 mb-1">Pending</p>
+              <p className="text-3xl font-bold text-gray-900">{stats.pending}</p>
             </div>
             <Clock className="w-6 h-6 text-yellow-600" />
           </CardContent>
@@ -141,7 +194,7 @@ export default function AdminPayoutRequestsPage() {
           <CardContent className="pt-6 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-600 mb-1">Approved</p>
-              <p className="text-3xl font-bold text-gray-900">{approvedCount}</p>
+              <p className="text-3xl font-bold text-gray-900">{stats.approved}</p>
             </div>
             <CheckCircle className="w-6 h-6 text-green-600" />
           </CardContent>
@@ -150,7 +203,7 @@ export default function AdminPayoutRequestsPage() {
           <CardContent className="pt-6 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-600 mb-1">Rejected</p>
-              <p className="text-3xl font-bold text-gray-900">{rejectedCount}</p>
+              <p className="text-3xl font-bold text-gray-900">{stats.rejected}</p>
             </div>
             <XCircle className="w-6 h-6 text-red-600" />
           </CardContent>
@@ -158,8 +211,10 @@ export default function AdminPayoutRequestsPage() {
         <Card className="border-2 border-blue-200">
           <CardContent className="pt-6 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Approved</p>
-              <p className="text-3xl font-bold text-gray-900">${totalAmount}</p>
+              <p className="text-sm text-gray-600 mb-1">Total Paid</p>
+              <p className="text-3xl font-bold text-gray-900">
+                ${stats.totalApproved.toFixed(2)}
+              </p>
             </div>
             <DollarSign className="w-6 h-6 text-blue-600" />
           </CardContent>
@@ -172,61 +227,50 @@ export default function AdminPayoutRequestsPage() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
-              type="text"
-              placeholder="Search by name, email, or ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-gray-300 focus:border-green-600 focus:ring-2 focus:ring-green-200"
+              placeholder="Search user, email, ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
             />
           </div>
           <div className="flex gap-2">
-            <Button
-              onClick={() => setFilterStatus("all")}
-              className={`${filterStatus === "all" ? "bg-green-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
-            >
-              All
-            </Button>
-            <Button
-              onClick={() => setFilterStatus("pending")}
-              className={`${filterStatus === "pending" ? "bg-yellow-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
-            >
-              Pending
-            </Button>
-            <Button
-              onClick={() => setFilterStatus("approved")}
-              className={`${filterStatus === "approved" ? "bg-green-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
-            >
-              Approved
-            </Button>
-            <Button
-              onClick={() => setFilterStatus("rejected")}
-              className={`${filterStatus === "rejected" ? "bg-red-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
-            >
-              Rejected
-            </Button>
+            {(["all", "pending", "completed", "rejected"] as const).map((f) => (
+              <Button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={
+                  filter === f
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }
+              >
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Requests List */}
+      {/* List */}
       <Card className="border-2 border-green-200">
         <CardHeader>
-          <CardTitle className="text-gray-900 flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-green-600" />
-            Payout Requests ({filteredRequests.length})
+            Payout Requests ({filtered.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {filteredRequests.length === 0 ? (
-            <div className="text-center py-12">
-              <DollarSign className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">No payout requests found</p>
-              <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filters</p>
+          {filtered.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              No requests found
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredRequests.map((request) => (
-                <div key={request.id} className="border-2 border-gray-200 rounded-lg p-4 hover:border-green-500 transition-all">
+              {filtered.map((req) => (
+                <div
+                  key={req._id}
+                  className="border-2 border-gray-200 rounded-lg p-4 hover:border-green-500 transition-all"
+                >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-start gap-3 mb-3">
@@ -235,46 +279,46 @@ export default function AdminPayoutRequestsPage() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-gray-900">{request.user}</span>
-                            {getStatusBadge(request.status as Status)}
+                            <span className="font-bold text-gray-900">
+                              {req.userId.fullName || req.userId.username}
+                            </span>
+                            {getBadge(req.status)}
                           </div>
-                          <p className="text-sm text-gray-600">{request.email}</p>
-                          <p className="text-xs text-gray-500">Request ID: {request.id}</p>
+                          <p className="text-sm text-gray-600">{req.userId.email}</p>
+                          <p className="text-xs text-gray-500">ID: {req._id.slice(-6)}</p>
                         </div>
                       </div>
                       <div className="ml-11 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                         <div>
-                          <p className="text-gray-500 text-xs">Amount</p>
-                          <p className="font-semibold text-gray-900">
-                            ${request.amount} {request.method === "USDT" ? "USDT" : "USD"}
+                          <p className="text-xs text-gray-500">Amount</p>
+                          <p className="font-semibold">${req.amount.toFixed(2)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Method</p>
+                          <p className="font-semibold">
+                            {req.method === "usdt" ? "USDT (TRC20)" : "Bank"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-gray-500 text-xs">Method</p>
-                          <p className="font-semibold text-gray-900">
-                            {request.method === "USDT" ? "USDT (TRC20)" : "Bank Transfer"}
-                          </p>
+                          <p className="text-xs text-gray-500">Date</p>
+                          <p className="font-semibold">{formatDate(req.requestedAt)}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500 text-xs">Submitted</p>
-                          <p className="font-semibold text-gray-900">{formatDate(request.date)}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-500 text-xs">Status</p>
-                          <p className="font-semibold text-gray-900 capitalize">{request.status}</p>
+                          <p className="text-xs text-gray-500">Status</p>
+                          <p className="font-semibold capitalize">{req.status}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex md:flex-col gap-2 ml-11 md:ml-0">
                       <Button
                         onClick={() => {
-                          setSelectedRequest(request);
-                          setShowDetailModal(true);
+                          setSelected(req);
+                          setModalOpen(true);
                         }}
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                       >
                         <Eye className="w-4 h-4 mr-2" />
-                        View Details
+                        View
                       </Button>
                     </div>
                   </div>
@@ -285,78 +329,125 @@ export default function AdminPayoutRequestsPage() {
         </CardContent>
       </Card>
 
-      {/* Detail Modal */}
-      {selectedRequest && (
-        <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
-          <DialogContent className="max-w-3xl border-2 border-green-200 max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl text-green-700">Payout Request Details</DialogTitle>
-            </DialogHeader>
+      {/* Modal */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-green-700">
+              Payout Request Details
+            </DialogTitle>
+          </DialogHeader>
+          {selected && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Current Status</h3>
-                {getStatusBadge(selectedRequest.status as Status)}
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Status</h3>
+                {getBadge(selected.status)}
               </div>
-              <div className="bg-gray-50 rounded-lg p-4 border-2 border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">User Information</h3>
-                <div className="grid grid-cols-2 gap-4">
+
+              <div className="bg-gray-50 p-4 rounded-lg border">
+                <h3 className="font-semibold mb-3">User</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-sm text-gray-600">User Name</p>
-                    <p className="font-semibold text-gray-900">{selectedRequest.user}</p>
+                    <p className="text-gray-600">Name</p>
+                    <p className="font-medium">
+                      {selected.userId.fullName || selected.userId.username}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Email</p>
-                    <p className="font-semibold text-gray-900">{selectedRequest.email}</p>
+                    <p className="text-gray-600">Email</p>
+                    <p className="font-medium">{selected.userId.email}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Request ID</p>
-                    <p className="font-semibold text-gray-900">{selectedRequest.id}</p>
+                    <p className="text-gray-600">Request ID</p>
+                    <p className="font-medium">{selected._id}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Submitted At</p>
-                    <p className="font-semibold text-gray-900">{formatDate(selectedRequest.date)}</p>
+                    <p className="text-gray-600">Submitted</p>
+                    <p className="font-medium">{formatDate(selected.requestedAt)}</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Payout Information</h3>
-                <div className="grid grid-cols-2 gap-4">
+
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h3 className="font-semibold mb-3">Payout Details</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-sm text-gray-600">Amount</p>
-                    <p className="font-bold text-2xl text-green-600">
-                      ${selectedRequest.amount} {selectedRequest.method === "USDT" ? "USDT" : "USD"}
+                    <p className="text-gray-600">Amount</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      ${selected.amount.toFixed(2)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Method</p>
-                    <p className="font-semibold text-gray-900">
-                      {selectedRequest.method === "USDT" ? "USDT (TRC20)" : "Bank Transfer"}
+                    <p className="text-gray-600">Method</p>
+                    <p className="font-medium">
+                      {selected.method === "usdt" ? "USDT (TRC20)" : "Bank Transfer"}
                     </p>
                   </div>
-                  {selectedRequest.method === "Bank" && (
+                  {selected.method === "usdt" && (
                     <>
                       <div>
-                        <p className="text-sm text-gray-600">Bank Name</p>
-                        <p className="font-semibold text-gray-900">{selectedRequest.bank}</p>
+                        <p className="text-gray-600">Name</p>
+                        <p className="font-medium">{selected.details.usdtName}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Account Number</p>
-                        <p className="font-semibold text-gray-900">{selectedRequest.account}</p>
+                        <p className="text-gray-600">Address</p>
+                        <p className="font-medium break-all">{selected.details.usdtAddress}</p>
                       </div>
                     </>
                   )}
-                  {selectedRequest.method === "USDT" && (
-                    <div>
-                      <p className="text-sm text-gray-600">USDT Address</p>
-                      <p className="font-semibold text-gray-900">{selectedRequest.address}</p>
-                    </div>
+                  {selected.method === "bank" && (
+                    <>
+                      <div>
+                        <p className="text-gray-600">Account Holder</p>
+                        <p className="font-medium">{selected.details.bankAccountHolder}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Account Number</p>
+                        <p className="font-medium">{selected.details.bankAccountNumber}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Bank</p>
+                        <p className="font-medium">{selected.details.bankName}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Branch</p>
+                        <p className="font-medium">{selected.details.bankBranch}</p>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
+
+              {selected.status === "pending" && (
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => updateStatus(selected._id, "completed")}
+                    disabled={updating}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {updating ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Approve"
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => updateStatus(selected._id, "rejected")}
+                    disabled={updating}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    {updating ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Reject"
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
-          </DialogContent>
-        </Dialog>
-      )}
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
