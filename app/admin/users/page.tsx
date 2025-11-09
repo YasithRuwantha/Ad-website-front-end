@@ -275,10 +275,14 @@ export default function AdminUsersPage() {
   }, [])
 
   const filteredUsers = users
-    .filter(u =>
-      u.fullName?.toLowerCase().includes(search.toLowerCase()) ||
-      u.email?.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter(u => {
+      const searchLower = search.toLowerCase();
+      return (
+        u.fullName?.toLowerCase().includes(searchLower) ||
+        u.email?.toLowerCase().includes(searchLower) ||
+        (u.tempId && u.tempId.toString().includes(search))
+      );
+    })
     .filter(u => roleFilter === "all" ? true : u.role === roleFilter) // <-- filter by role
 
   const userString = localStorage.getItem("user")
