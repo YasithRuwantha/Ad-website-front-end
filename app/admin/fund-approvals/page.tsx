@@ -80,11 +80,11 @@ export default function FundApprovalsPage() {
     if (searchTerm) {
       const term = searchTerm.trim().toLowerCase()
       list = list.filter(r =>
-        r.userName.toLowerCase().includes(term) ||
-        r.email.toLowerCase().includes(term) ||
-        r.id.toLowerCase().includes(term) ||
-        r.userId.toLowerCase().includes(term) ||
-        (r.tempId !== null && String(r.tempId).includes(term))   // ← tempId search
+        (typeof r.userName === 'string' && r.userName.toLowerCase().includes(term)) ||
+        (typeof r.email === 'string' && r.email.toLowerCase().includes(term)) ||
+        (typeof r.id === 'string' && r.id.toLowerCase().includes(term)) ||
+        (typeof r.userId === 'string' && r.userId.toLowerCase().includes(term)) ||
+        (r.tempId !== null && typeof r.tempId !== 'undefined' && String(r.tempId).includes(term))
       )
     }
 
