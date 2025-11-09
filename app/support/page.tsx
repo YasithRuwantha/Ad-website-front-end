@@ -195,7 +195,7 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
           <div className="flex items-center gap-2">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Customer Support 💬</h1>
             {unread && (
-              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse">Unread</span>
+              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white animate-pulse"></span>
             )}
           </div>
           {/* No create ticket button since only one chat */}
