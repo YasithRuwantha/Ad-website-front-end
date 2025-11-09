@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
+// @ts-ignore
+import { openFloatingSupportChat } from "@/components/support/FloatingSupportChat"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -14,6 +16,7 @@ export default function AddFundsPage() {
   const [selectedCurrency, setSelectedCurrency] = useState("USDT")
   const [amount, setAmount] = useState("")
   const [showPreview, setShowPreview] = useState(false)
+  const [showContactSupport, setShowContactSupport] = useState(false)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [fullName, setFullName] = useState("")
   const [note, setNote] = useState("")
@@ -68,6 +71,11 @@ export default function AddFundsPage() {
   }
 
   const handleMakePayment = () => {
+    setShowContactSupport(true)
+    if (typeof window !== "undefined" && openFloatingSupportChat) {
+      openFloatingSupportChat()
+    }
+    setTimeout(() => setShowContactSupport(false), 4000)
     setShowPaymentForm(true)
   }
 
@@ -297,6 +305,11 @@ if (paymentSuccess) {
                     >
                       Make Payment
                     </Button>
+                    {showContactSupport && (
+                      <div className="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded shadow animate-fade-in">
+                        Please contact customer support for assistance with your payment.
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -325,21 +338,41 @@ if (paymentSuccess) {
                     Please follow the instruction below
                   </h3>
                   <div className="text-center mb-4">
-                    <p className="text-gray-700 mb-2">
-                      You have requested to deposit <span className="font-bold text-gray-900">{amount}</span>. Please Pay <span className="font-bold text-gray-900">{amount} {selectedCurrency}</span> for successful payment
-                    </p>
+                    <div className="mb-4 flex items-center justify-center">
+                      <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-200 border-2 border-yellow-500 shadow-lg animate-pulse">
+                        <svg className="w-7 h-7 text-yellow-700 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
+                        </svg>
+                        <span className="font-extrabold text-lg text-yellow-900 drop-shadow">
+                          You have requested to deposit <span className="font-bold text-gray-900">{amount} {selectedCurrency}</span>. Please contact <span className="underline decoration-yellow-700 underline-offset-4">customer service</span> to pay <span className="font-bold text-gray-900">{amount} {selectedCurrency}</span> for successful payment.
+                        </span>
+                      </div>
+                    </div>
                     {selectedPayment === "usdt" ? (
                       <div className="mt-4">
                         <p className="text-sm font-semibold text-gray-700 mb-2">USDT ADDRESS:</p>
-                        <div className="bg-yellow-200 px-4 py-2 rounded inline-block">
-                          <code className="font-mono font-bold text-gray-900">TbhQA9YV4qKxDQJGj4KjojpaDR6cHATacb</code>
-                        </div>
+                        <button
+                          className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold px-4 py-2 rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-600"
+                          onClick={() => window.location.href = '/support'}
+                          type="button"
+                        >
+                          Contact Customer Service
+                        </button>
                       </div>
                     ) : (
                       <div className="mt-4">
-                        <p className="text-sm text-gray-700">
-                          If you only have a USD bank account, use this method. Enter the amount you want to deposit and submit. After contact Cou. If you want to deposit in any other currency, please reach out to our Customer Service for any assistance.
-                        </p>
+                        <div className="flex flex-col items-center my-4">
+                          <p className="text-2xl font-bold text-center text-yellow-900 mb-2">
+                            Please contact Customer Support for any assistance.
+                          </p>
+                          <button
+                            className="text-sm px-4 py-2 rounded bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-semibold shadow focus:outline-none focus:ring-2 focus:ring-yellow-600"
+                            onClick={() => window.location.href = '/support'}
+                            type="button"
+                          >
+                            Go to Support
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
