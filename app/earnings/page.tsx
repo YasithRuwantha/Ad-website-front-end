@@ -5,7 +5,7 @@ import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import PlansModal from "@/components/earnings/plans-modal"
 import PaymentModal from "@/components/earnings/payment-modal"
 import { TrendingUp, Wallet, CreditCard, User, ChevronDown, LogOut, Settings } from "lucide-react"
@@ -13,6 +13,7 @@ import UserSidebar from "@/components/user/user-sidebar"
 import { useRouter } from "next/navigation"
 import { useFundPayments } from "@/lib/fundPayment-context" 
 import { useRatings } from "@/lib/rating-context"
+import { useUsers } from "@/lib/user-context"
 
 
 export default function EarningsPage() {
@@ -26,13 +27,65 @@ export default function EarningsPage() {
   const [cuurentBalance, setCurrentBalance] = useState("")
   const [userEarnings, setUserEarnings] = useState<{ rating: number; createdAt: string; earning: number }[]>([]);
   const [totEarning, setTotEarning] = useState<number>(0);
-
+  const [tempUser, setTempUser] = useState();
+  const { getUser } = useUsers()
+  const [luckyOrder, setLuckyOrder] = useState<any>(null)
 
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
 
   const { getCurrentBalance } = useFundPayments()
   const { getUserEarningsRatings } = useRatings() 
+
+// Fetch data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Current user
+        const currentUser = await getUser()
+        setTempUser(currentUser)
+
+        // Lucky order
+        const token = localStorage.getItem("token")
+        if (!token) return
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/luckydraw`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          setLuckyOrder(data)
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err)
+      }
+    }
+
+    fetchData()
+  }, [getUserEarningsRatings, getUser])
+
+  // Calculate displayed balance
+const displayedBalance = useMemo(() => {
+  if (!tempUser) return 0
+
+  // start with user's balance
+  let balance = tempUser.balance || 0
+
+  // only deduct if luckyOrder exists and is active
+  if (luckyOrder?.luckydrawStatus === "active") {
+    balance -= luckyOrder.luckyProduct.income
+  }
+
+  console.log("display balance", balance, luckyOrder?.luckyProduct.income)
+  return balance
+}, [tempUser, luckyOrder])
+
+  const balanceColor = displayedBalance < 0 ? "text-red-600" : "text-gray-900"
+
+
+
+
 
 useEffect(() => {
   const fetchUserData = async () => {
@@ -266,8 +319,11 @@ useEffect(() => {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Current Balance</p>
-                <p className="text-3xl font-bold text-green-700">${cuurentBalance}</p>
-              </div>
+                <p className={`text-xl sm:text-2xl font-bold ${balanceColor}`}>
+                  ${Math.abs(displayedBalance).toFixed(2)}
+                  {displayedBalance < 0 && <span className="text-sm ml-1">(Overdue)</span>}
+                </p>              
+            </div>
               <div className="bg-green-600 p-3 rounded-lg">
                 <Wallet className="w-6 h-6 text-white" />
               </div>
