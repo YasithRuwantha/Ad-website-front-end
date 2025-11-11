@@ -65,11 +65,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data.user);
 
     // Optional: verify it's stored
-    console.log("Saved user:", localStorage.getItem("user"));
-    console.log("Saved token:", localStorage.getItem("token"));
+    // console.log("Saved user:", localStorage.getItem("user"));
+    // console.log("Saved token:", localStorage.getItem("token"));
 
-    // Optional: alert for debugging
-    alert(`Login success!\nUser: ${JSON.stringify(data.user, null, 2)}`);
+    // // Optional: alert for debugging
+    // alert(`Login success!\nUser: ${JSON.stringify(data.user, null, 2)}`);
     setUser(data.user); // ✅ this is enough
 
 };
