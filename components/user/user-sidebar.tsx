@@ -47,7 +47,7 @@ export default function UserSidebar() {
     { label: "Add Funds History", href: "/dashboard/add-funds-history", icon: Receipt },
     { label: "Payout", href: "/dashboard/payout", icon: Send },
     { label: "Payout History", href: "/dashboard/payout-history", icon: History },
-    { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
+    // { label: "Fund Transfer", href: "/dashboard/fund-transfer", icon: Send },
     // { label: "test", href: "/test", icon: Send },
   ]
 

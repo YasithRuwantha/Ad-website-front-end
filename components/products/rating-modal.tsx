@@ -22,7 +22,7 @@ export default function RatingModal({
   onSubmit, 
   isLoading   // <-- use this instead
 }: RatingModalProps) {
-  const [rating, setRating] = useState(5)
+  const [rating, setRating] = useState(0)
   const [comment, setComment] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
