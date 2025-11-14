@@ -1,11 +1,26 @@
 "use client"
 
+
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default function PlansPage() {
+
   const { user } = useAuth()
   const router = useRouter()
+  const [promoOpen, setPromoOpen] = useState(false)
+  const [promoCode, setPromoCode] = useState("")
+  const [promoError, setPromoError] = useState("")
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null)
+  const validCodes = [
+    "Z4KP", "L9TX", "Q7RM", "B2HF", "V8QJ",
+    "S3NK", "W5YD", "H6PX", "T1GV", "R4ZM"
+  ]
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const plans = [
     {
@@ -88,140 +103,190 @@ export default function PlansPage() {
     }
   ]
 
+
   const handlePurchase = (planName: string) => {
-    // Redirect to add funds page
-    router.push('/dashboard/add-funds')
+    setPendingPlan(planName)
+    setPromoOpen(true)
+    setPromoCode("")
+    setPromoError("")
+  }
+
+  const handlePromoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setPromoError("")
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a promo code.")
+      return
+    }
+    if (!validCodes.includes(promoCode.trim().toUpperCase())) {
+      setPromoError("Invalid promo code.")
+      return
+    }
+    setIsSubmitting(true)
+    try {
+      // PATCH promoCode to user
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${user?.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ promoCode: promoCode.trim().toUpperCase() })
+      })
+      if (!res.ok) {
+        setPromoError("Failed to save promo code. Try again.")
+        setIsSubmitting(false)
+        return
+      }
+      setPromoOpen(false)
+      setIsSubmitting(false)
+      setPromoCode("")
+      setPromoError("")
+      setPendingPlan(null)
+      router.push('/dashboard/add-funds')
+    } catch (err) {
+      setPromoError("Network error. Try again.")
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
-      {/* Title Section */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Choose Your Plan</h1>
-        <p className="text-sm sm:text-base text-gray-600">Select the perfect plan to start earning today</p>
-      </div>
-
-      {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {plans.map((plan, index) => (
-          <div
-            key={index}
-            className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border-2 transition-all duration-500 transform hover:scale-105 relative ${
-              plan.isPremium 
-                ? 'bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 border-yellow-400 hover:border-yellow-500 hover:shadow-2xl shadow-xl' 
-                : 'bg-white border-gray-200 hover:border-green-500 hover:shadow-2xl'
-            }`}
-          >
-            {/* Premium Badge */}
-            {plan.isPremium && (
-              <div className="absolute -top-2 sm:-top-3 -right-2 sm:-right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 sm:px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                ⭐ PREMIUM
-              </div>
-            )}
-
-            {/* Icon */}
-            <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{plan.icon}</div>
-
-            {/* Plan Name */}
-            <h3 className={`text-xl sm:text-2xl font-bold mb-2 ${plan.isPremium ? 'text-yellow-900' : 'text-gray-900'}`}>
-              {plan.name}
-            </h3>
-
-            {/* Price */}
-            <div className="mb-3 sm:mb-4">
-              <span className={`text-3xl sm:text-4xl md:text-5xl font-bold ${plan.isPremium ? 'text-yellow-800' : 'text-gray-900'}`}>
-                {plan.price}
-              </span>
-            </div>
-
-            {/* Description */}
-            <p className={`text-sm sm:text-base mb-4 sm:mb-6 ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
-              {plan.description}
-            </p>
-
-            {/* Features */}
-            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-              <div className="flex items-start gap-3">
-                <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
-                  plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
-                }`}>
-                  <svg className={`w-3 h-3 ${plan.isPremium ? 'text-yellow-700' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+    <>
+      <Dialog open={promoOpen} onOpenChange={setPromoOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Promo Code</DialogTitle>
+            <DialogDescription>
+              Please enter your promo code to continue with the plan purchase.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handlePromoSubmit} className="space-y-4">
+            <Input
+              value={promoCode}
+              onChange={e => setPromoCode(e.target.value)}
+              placeholder="Promo code"
+              autoFocus
+              maxLength={8}
+              className="text-lg"
+              disabled={isSubmitting}
+            />
+            {promoError && <div className="text-red-600 text-sm">{promoError}</div>}
+            <DialogFooter>
+              <Button type="submit" disabled={isSubmitting} className="w-full bg-green-600 hover:bg-green-700 text-white">
+                {isSubmitting ? "Checking..." : "Submit"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
+        {/* Title Section */}
+        <div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Choose Your Plan</h1>
+          <p className="text-sm sm:text-base text-gray-600">Select the perfect plan to start earning today</p>
+        </div>
+        {/* Plans Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {plans.map((plan, index) => (
+            <div
+              key={index}
+              className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border-2 transition-all duration-500 transform hover:scale-105 relative ${
+                plan.isPremium 
+                  ? 'bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 border-yellow-400 hover:border-yellow-500 hover:shadow-2xl shadow-xl' 
+                  : 'bg-white border-gray-200 hover:border-green-500 hover:shadow-2xl'
+              }`}
+            >
+              {/* Premium Badge */}
+              {plan.isPremium && (
+                <div className="absolute -top-2 sm:-top-3 -right-2 sm:-right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 sm:px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                  ⭐ PREMIUM
                 </div>
-                <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
-                  Period: {plan.period}
+              )}
+              {/* Icon */}
+              <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{plan.icon}</div>
+              {/* Plan Name */}
+              <h3 className={`text-xl sm:text-2xl font-bold mb-2 ${plan.isPremium ? 'text-yellow-900' : 'text-gray-900'}`}>
+                {plan.name}
+              </h3>
+              {/* Price */}
+              <div className="mb-3 sm:mb-4">
+                <span className={`text-3xl sm:text-4xl md:text-5xl font-bold ${plan.isPremium ? 'text-yellow-800' : 'text-gray-900'}`}>
+                  {plan.price}
                 </span>
               </div>
-
-              {/* <div className="flex items-start gap-3">
-                <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
-                  plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
-                }`}>
-                  <svg className={`w-3 h-3 ${plan.isPremium ? 'text-yellow-700' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
-                  Daily Product Limit: {plan.productLimit}
-                </span>
-              </div> */}
-            </div>
-
-            {/* Profit Information */}
-            <div className={`rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 ${
-              plan.isPremium ? 'bg-yellow-100 border border-yellow-300' : 'bg-green-50 border border-green-200'
-            }`}>
-              <h4 className={`text-xs sm:text-sm font-bold mb-2 sm:mb-3 ${plan.isPremium ? 'text-yellow-900' : 'text-green-900'}`}>
-                Expected Profit (15-20% Return)
-              </h4>
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
-                    15% Profit:
-                  </span>
-                  <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
-                    {plan.profit15}
+              {/* Description */}
+              <p className={`text-sm sm:text-base mb-4 sm:mb-6 ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+                {plan.description}
+              </p>
+              {/* Features */}
+              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                <div className="flex items-start gap-3">
+                  <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                    plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
+                  }`}>
+                    <svg className={`w-3 h-3 ${plan.isPremium ? 'text-yellow-700' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
+                    Period: {plan.period}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
-                    20% Profit:
-                  </span>
-                  <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
-                    {plan.profit20}
-                  </span>
-                </div>
-                <div className={`mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t ${plan.isPremium ? 'border-yellow-300' : 'border-green-300'}`}>
+              </div>
+              {/* Profit Information */}
+              <div className={`rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 ${
+                plan.isPremium ? 'bg-yellow-100 border border-yellow-300' : 'bg-green-50 border border-green-200'
+              }`}>
+                <h4 className={`text-xs sm:text-sm font-bold mb-2 sm:mb-3 ${plan.isPremium ? 'text-yellow-900' : 'text-green-900'}`}>
+                  Expected Profit (15-20% Return)
+                </h4>
+                <div className="space-y-1.5 sm:space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className={`text-xs font-semibold ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
-                      Profit Range:
+                    <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+                      15% Profit:
                     </span>
-                    <span className={`text-sm sm:text-base font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
-                      {plan.profitRange}
+                    <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                      {plan.profit15}
                     </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
+                      20% Profit:
+                    </span>
+                    <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                      {plan.profit20}
+                    </span>
+                  </div>
+                  <div className={`mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t ${plan.isPremium ? 'border-yellow-300' : 'border-green-300'}`}>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-semibold ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
+                        Profit Range:
+                      </span>
+                      <span className={`text-sm sm:text-base font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
+                        {plan.profitRange}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+              {/* Purchase Button */}
+              <button
+                onClick={() => handlePurchase(plan.name)}
+                className={`w-full font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg text-sm sm:text-base ${
+                  plan.isPremium
+                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                <span>Purchase Plan</span>
+                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </button>
             </div>
-
-            {/* Purchase Button */}
-            <button
-              onClick={() => handlePurchase(plan.name)}
-              className={`w-full font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg text-sm sm:text-base ${
-                plan.isPremium
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              <span>Purchase Plan</span>
-              <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
