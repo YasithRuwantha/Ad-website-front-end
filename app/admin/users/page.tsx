@@ -495,13 +495,40 @@ const openModal = (user: any) => {
           />
         </CardHeader>
         <CardContent>
+          <div className="hidden sm:grid grid-cols-7 gap-4 font-semibold text-gray-700 border-b pb-2 mb-2">
+            <div>Name (Email)</div>
+            <div>Username</div>
+            <div>Status</div>
+            <div>Phone</div>
+            <div>Ads/Day</div>
+            <div>Promo Code</div>
+            <div>Actions</div>
+          </div>
           {isLoading ? (
             <p className="text-center py-8 text-muted-foreground">Loading users...</p>
           ) : filteredUsers.length === 0 ? (
             <p className="text-center text-muted-foreground">No users found.</p>
           ) : (
             filteredUsers.map(u => (
-              <UserRow key={u._id} user={u} openModal={openModal} deleteUser={deleteUser} />
+              <div key={u._id} className="sm:grid sm:grid-cols-7 gap-4 items-center border-b py-2">
+                <div>
+                  <span className="font-semibold break-all">{u.fullName} ({u.email})</span>
+                </div>
+                <div>{u.username || '-'}</div>
+                <div>{u.status}</div>
+                <div>{(() => {
+                  const { countryCode, number, country } = parsePhoneNumber(u.phone)
+                  return country 
+                    ? <span><span className="font-semibold text-green-600">{countryCode}</span> {number} <span className="text-xs text-gray-500">({country})</span></span>
+                    : u.phone
+                })()}</div>
+                <div>{u.adsPerDay || 0}</div>
+                <div>{u.promoCode || '-'}</div>
+                <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                  <Button size="sm" variant="outline" onClick={() => openModal(u)} className="w-full sm:w-auto">Update</Button>
+                  <Button size="sm" variant="destructive" onClick={() => { if (window.confirm(`Are you sure you want to delete this user? This action cannot be undone.`)) { deleteUser(u._id) } }} className="w-full sm:w-auto">Delete</Button>
+                </div>
+              </div>
             ))
           )}
         </CardContent>
@@ -860,6 +887,11 @@ const UserRow = ({ user, openModal, deleteUser }: any) => (
       {user.username && (
         <p className="text-muted-foreground text-xs">
           Username: <span className="font-semibold">{user.username}</span>
+        </p>
+      )}
+      {user.promoCode && (
+        <p className="text-muted-foreground text-xs">
+          Promo Code: <span className="font-semibold">{user.promoCode}</span>
         </p>
       )}
       <p className="text-muted-foreground">
