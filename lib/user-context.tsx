@@ -29,6 +29,7 @@ interface UserContextType {
   addToptup: (id: string, extra: number) => Promise<void>;
   fetchRemainingAttempts: () => Promise<void> // ✅ add this
   getUser: () => Promise<User | null> // ✅ add this
+  refreshLocalStorage: (id: string) => Promise<void>
 
 }
 
@@ -250,6 +251,60 @@ const fetchRemainingAttempts = async () => {
     }
   };
 
+  // Refresh local storage user data
+  const refreshLocalStorage = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/api/user/refreshLocalStorage/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      console.log("refresh local storage : ", res.json)
+
+      if (!res.ok) {
+        console.error("❌ Failed to refresh local storage:", await res.text());
+        return;
+      }
+
+      const data = await res.json();
+
+      // 🟢 Update localStorage
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        user.status = data.status;
+        user.remaining = data.remaining;
+        user.balance = data.balance;
+        user.plan = data.plan;
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      // 🟢 Update React state (if user exists in list)
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === id
+            ? {
+                ...u,
+                status: data.status,
+                remaining: data.remaining,
+                balance: data.balance,
+                plan: data.plan,
+              }
+            : u
+        )
+      );
+
+      console.log("🔄 Local storage refreshed:", data);
+    } catch (err) {
+      console.error("⚠️ Error refreshing local storage:", err);
+    }
+  };
+
+
 
   return (
     <UserContext.Provider 
@@ -263,7 +318,8 @@ const fetchRemainingAttempts = async () => {
         addRemainingAds,
         addToptup,
         fetchRemainingAttempts,
-        getUser
+        getUser,
+        refreshLocalStorage
     }}>
       {children}
     </UserContext.Provider>

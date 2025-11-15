@@ -17,7 +17,7 @@ export default function ProductsPage() {
   const { user } = useAuth()
   const { products, fetchProducts, fetchProductById  } = useProducts()
   const { submitRating, getUserRatings } = useRatings()
-  const { fetchRemainingAttempts } = useUsers()
+  const { fetchRemainingAttempts, refreshLocalStorage } = useUsers()
 
   const router = useRouter()
 
@@ -57,7 +57,7 @@ export default function ProductsPage() {
 
     if (res.ok) {
       const data = await res.json();
-      console.log("Lucky Draw Data:", data);
+      // console.log("Lucky Draw Data:", data);
 
       setLuckyDrawData(data); // ✅ save to state
 
@@ -75,7 +75,7 @@ export default function ProductsPage() {
 
     // 💰 Random earning per ad rating
   const getIncomePerRating = (planName: string) => {
-    console.log("income rating : :", planName)
+    // console.log("income rating : :", planName)
     const plans: any = {
       Starter: [15, 15],
       Basic: [45, 45],
@@ -184,6 +184,16 @@ const handleSubmitRating = async (rating: number, comment: string, earning: stri
   }
 };
 
+  // updating local storage
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user.id) {
+      refreshLocalStorage(user.id);
+    }
+    console.log("local storage updated", user.id)
+    
+  }, []);
+
 
   
 useEffect(() => {
@@ -207,7 +217,7 @@ useEffect(() => {
       return
     }
     
-    console.log("Opening rating modal")
+    // console.log("Opening rating modal")
     setSelectedProduct(product)
     setShowRatingModal(true)
   }
@@ -361,9 +371,9 @@ useEffect(() => {
               return ratingProductId === product._id
             })
             
-            console.log("Product:", product.name, "ID:", product._id)
-            console.log("User Rating found:", userRating)
-            console.log("---")
+            // console.log("Product:", product.name, "ID:", product._id)
+            // console.log("User Rating found:", userRating)
+            // console.log("---")
             
             return (
               <Card key={product._id} className="border-2 border-green-200 hover:border-green-500 hover:shadow-lg transition-all overflow-hidden">

@@ -102,7 +102,7 @@ export function RatingProvider({ children }: { children: React.ReactNode }) {
       }
 
       const data = await res.json()
-      console.log("User ratings fetched:", data)
+      // console.log("User ratings fetched:", data)
       return data
     } catch (err) {
       console.error("Error fetching user ratings:", err)
@@ -176,7 +176,7 @@ export function RatingProvider({ children }: { children: React.ReactNode }) {
       }
 
       const data = await res.json();
-      console.log("User earnings ratings fetched:", data);
+      // console.log("User earnings ratings fetched:", data);
       return data.ratings || [];
     } catch (err) {
       console.error("Error fetching user earnings ratings:", err);
