@@ -150,29 +150,56 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     setProducts((prev) => prev.filter((p) => p._id !== id))
   }
 
-  const fetchAllProducts = async (): Promise<any[]> => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return [];
+  // const fetchAllProducts = async (): Promise<any[]> => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) return [];
 
-      const res = await fetch(`${API_URL}/api/products/all`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  //     const res = await fetch(`${API_URL}/api/products/all`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || "Failed to fetch products");
-      }
+  //     if (!res.ok) {
+  //       const data = await res.json();
+  //       throw new Error(data.message || "Failed to fetch products");
+  //     }
 
+  //     const data = await res.json();
+  //     return data; // ✅ return products
+  //   } catch (err) {
+  //     console.error("❌ Error fetching products:", err);
+  //     return [];
+  //   }
+  // };
+
+  // In ProductsContext.tsx
+
+const fetchAllProducts = async (page: number = 1, limit: number = 50): Promise<{ products: any[]; hasMore: boolean }> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return { products: [], hasMore: false };
+
+    const res = await fetch(`${API_URL}/api/products/all?page=${page}&limit=${limit}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) {
       const data = await res.json();
-      return data; // ✅ return products
-    } catch (err) {
-      console.error("❌ Error fetching products:", err);
-      return [];
+      throw new Error(data.message || "Failed to fetch products");
     }
-  };
+
+    const data = await res.json();
+    return {
+      products: data.products,
+      hasMore: data.hasMore // we'll send this from backend
+    };
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    return { products: [], hasMore: false };
+  }
+};
 
 
   const fetchLuckyOrderProducts = async (): Promise<Product[]> => {
