@@ -109,24 +109,26 @@ export default function UserSidebar() {
           <h1 className="text-2xl font-bold text-gray-900 whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Dashboard</h1>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-hide">
+        <nav className="flex-1 p-4 space-y-6 overflow-y-auto scrollbar-hide">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
             return (
-              <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
-                <Button
-                  variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
-                    isActive
-                      ? "bg-green-600 text-white hover:bg-green-700"
-                      : "text-gray-700 hover:bg-green-50 hover:text-green-600"
-                  }`}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity">{item.label}</span>
-                </Button>
-              </Link>
+              <div key={item.href} className="my-3">
+                <Link href={item.href} onClick={() => setIsOpen(false)}>
+                  <Button
+                    variant={isActive ? "default" : "ghost"}
+                    className={`w-full justify-start gap-3 ${
+                      isActive
+                        ? "bg-green-600 text-white hover:bg-green-700"
+                        : "text-gray-700 hover:bg-green-50 hover:text-green-600"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity">{item.label}</span>
+                  </Button>
+                </Link>
+              </div>
             )
           })}
 
@@ -157,7 +159,7 @@ export default function UserSidebar() {
                     <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
                       <Button
                         variant="ghost"
-                        className={`w-full justify-start text-sm ${
+                        className={`w-full justify-start text-sm my-1 ${
                           isActive
                             ? "bg-green-50 text-green-600 font-semibold"
                             : "text-gray-600 hover:bg-green-50 hover:text-green-600"
@@ -218,7 +220,7 @@ export default function UserSidebar() {
           </div>
         </nav>
 
-        <div className="p-4 border-t border-gray-200">
+        {/* <div className="p-4 border-t border-gray-200">
           <Button
             onClick={handleLogout}
             variant="outline"
@@ -227,7 +229,7 @@ export default function UserSidebar() {
             <LogOut className="w-5 h-5 flex-shrink-0" />
             <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity">Logout</span>
           </Button>
-        </div>
+        </div> */}
       </aside>
 
       {/* Background Overlay for Mobile */}
