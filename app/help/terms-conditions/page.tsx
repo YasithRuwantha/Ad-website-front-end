@@ -93,13 +93,7 @@ export default function TermsConditionsPage() {
                   <p className="text-sm font-semibold text-gray-900">{userName}</p>
                   <p className="text-xs text-gray-500">{userEmail}</p>
                 </div>
-                <button
-                  onClick={() => router.push('/dashboard/profile')}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Settings
-                </button>
+                
                 <button
                   onClick={handleLogout}
                   className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
