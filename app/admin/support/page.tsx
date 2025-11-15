@@ -106,25 +106,25 @@ export default function AdminSupportPage() {
           </Card>
         ) : (
           userList.map((user) => (
-            <Card
+            <div
               key={user.ticketId}
-              className={`border-2 cursor-pointer hover:shadow-lg transition ${user.isSeen ? 'border-green-200 bg-white' : 'border-yellow-400 bg-yellow-50 animate-pulse'}`}
+              className={`rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-md hover:shadow-xl p-6 flex items-center gap-6 ${user.isSeen ? 'border-green-200 bg-white' : 'border-yellow-400 bg-yellow-50 animate-pulse'}`}
               onClick={() => { setSelectedTicket(user.ticketId); setShowChatModal(true); }}
             >
-              <CardContent className="py-4 flex flex-col gap-1">
-                <div className="flex items-center gap-3">
-                  <User className="w-6 h-6 text-green-600" />
-                  <div>
-                    <div className="font-bold text-lg text-gray-900">{user.username || user.userId}</div>
-                    <div className="text-xs text-gray-500">{user.useremail}</div>
-                  </div>
-                  <span className={`ml-auto text-sm font-bold px-4 py-2 rounded-full shadow-sm tracking-wide ${user.isSeen ? 'bg-green-100 text-green-700' : 'bg-yellow-400 text-white'}`}>
-                    {user.isSeen ? 'Seen' : 'Unseen'}
-                  </span>
+              <div className="flex-shrink-0">
+                <User className="w-10 h-10 text-green-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                  <div className="font-bold text-xl text-gray-900 truncate">{user.username || user.userId}</div>
+                  <div className="text-sm text-gray-500 truncate">{user.useremail}</div>
                 </div>
-                <div className="mt-1 text-sm text-gray-700 line-clamp-1">{user.latestMessage}</div>
-              </CardContent>
-            </Card>
+                <div className="mt-2 text-base text-gray-700 line-clamp-1 font-medium">{user.latestMessage}</div>
+              </div>
+              <span className={`ml-4 text-xs font-semibold px-3 py-1 rounded-full shadow-sm tracking-wide ${user.isSeen ? 'bg-green-100 text-green-700' : 'bg-yellow-400 text-white'}`}>
+                {user.isSeen ? 'Seen' : 'Unseen'}
+              </span>
+            </div>
           ))
         )}
       </div>
