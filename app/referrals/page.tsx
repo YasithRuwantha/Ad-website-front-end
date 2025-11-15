@@ -123,13 +123,7 @@ export default function ReferralsPage() {
                   <User className="w-4 h-4" />
                   My Profile
                 </button>
-                <button
-                  onClick={() => router.push('/dashboard/profile')}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 flex items-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Settings
-                </button>
+                
                 <hr className="my-2 border-gray-100" />
                 <button
                   onClick={handleLogout}
