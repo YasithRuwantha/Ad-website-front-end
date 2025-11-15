@@ -57,7 +57,7 @@ export default function ProductsPage() {
 
     if (res.ok) {
       const data = await res.json();
-      // console.log("Lucky Draw Data:", data);
+      console.log("Lucky Draw Data:", data);
 
       setLuckyDrawData(data); // ✅ save to state
 
@@ -67,10 +67,32 @@ export default function ProductsPage() {
         setShowLuckyDrawPopup(false);
       }
     }
+
+    //     // 🔥 fetch updated lucky draw status IMMEDIATELY
+    // await fetchLuckyDrawStatus();
   } catch (err) {
     console.error("Error checking lucky draw:", err);
   }
 };
+
+
+  // ✅ Refetch Lucky Draw status dynamically when remaining changes
+  useEffect(() => {
+    console.log("lucky order use effect runned ")
+      fetchLuckyDrawStatus()
+  }, [remaining]) // when remaining updates, check again
+
+
+// checks every 10 seconds
+//   useEffect(() => {
+//   fetchLuckyDrawStatus();
+
+//   const interval = setInterval(() => {
+//     fetchLuckyDrawStatus();
+//   }, 10000); // Check every 10 seconds
+
+//   return () => clearInterval(interval);
+// }, []);
 
 
     // 💰 Random earning per ad rating
@@ -133,12 +155,6 @@ export default function ProductsPage() {
     init()
   }, [router, getUserRatings])
 
-  // ✅ Refetch Lucky Draw status dynamically when remaining changes
-  useEffect(() => {
-    if (!isChecking) {
-      fetchLuckyDrawStatus()
-    }
-  }, [remaining]) // when remaining updates, check again
 
   useEffect(() => {
     setIncomePerRating(getIncomePerRating(user?.plan || "Starter"))
@@ -165,17 +181,24 @@ const handleSubmitRating = async (rating: number, comment: string, earning: stri
   try {
     const result = await submitRating(selectedProduct._id, rating, comment, earning);
     if (result.success) {
-      await fetchRemainingAttempts(); // refresh attempts after rating
+      // 1. Refresh attempts
+      await fetchRemainingAttempts();
 
+      // 2. Refresh user ratings
       const ratings = await getUserRatings();
       setUserRatings(ratings);
+
+      // 3. Refresh products
       await fetchProducts();
+
+      // CRITICAL: Re-check Lucky Draw status IMMEDIATELY
+      await fetchLuckyDrawStatus(); // This will trigger popup if won!
 
       setShowRatingModal(false);
       setSelectedProduct(null);
-      alert(result.message || "✅ Rating submitted successfully!");
+      alert(result.message || "Rating submitted successfully!");
     } else {
-      alert(result.message || "❌ Failed to submit rating");
+      alert(result.message || "Failed to submit rating");
     }
   } catch (err: any) {
     alert(err.message || "Failed to submit rating");
