@@ -23,6 +23,8 @@ interface Product {
   income: number;
   plan: string;
   isLuckyOrderProduct: boolean;
+  topgradeAttempt: number;
+  luckyOrderPrice: number
 }
   
   const countryCodes = [
@@ -240,7 +242,9 @@ export default function AdminUsersPage() {
     luckydrawAttempt: "",
     plan: "",
     luckyOrderId: "",
-    topgradeStatus: ""
+    topgradeStatus: "",
+    topgradeAttempt: "",
+    luckyOrderPrice: ""
   })
 
   const openLuckyModal = () => {
@@ -316,7 +320,10 @@ const openModal = (user: any) => {
     plan: user.plan,
     topup: user.topup,
     luckyOrderId: user.luckyOrderId,
-    topgradeStatus: user.topgradeStatus
+    topgradeStatus: user.topgradeStatus,
+    topgradeAttempt: user.topgradeAttempt,
+    luckyOrderPrice: user.luckyOrderPrice
+
   })
 
   // ✅ Preselect Lucky Product if user has one
@@ -669,6 +676,29 @@ const openModal = (user: any) => {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">TopGrade Draw Trigger</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.topgradeAttempt || ""}
+                    onChange={(e) => setEditData({ ...editData, topgradeAttempt: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                    placeholder="Enter attempts needed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-green-700 mb-1">Lucky Order Price</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editData.luckyOrderPrice || ""}
+                    onChange={(e) => setEditData({ ...editData, luckyOrderPrice: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                    placeholder="Enter Lucky/TopOrder price needed"
+                  />
+                </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-green-700 mb-1">Lucky Order Product</label>
@@ -685,10 +715,6 @@ const openModal = (user: any) => {
                     </span>
                   </div>
                 </div>
-
-
-
-
                 <div className="col-span-1 sm:col-span-2">
                   <label className="block text-xs font-semibold text-green-700 mb-1">Attempts per day</label>
                   <select
@@ -752,7 +778,9 @@ const openModal = (user: any) => {
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Topup Customer Account</label>
                 <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
                   <span>Current Acoount balance:</span>
-                  <span className="font-bold text-green-700 text-base">{selectedUser.balance || 0}</span>
+                  <p className={selectedUser.balance < 0 ? "text-red-600 text-l sm:text-xl font-bold" : "text-green-600 text-l sm:text-xl font-bold"}>
+                   $ {selectedUser.balance}
+                  </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 w-full">
                   <input

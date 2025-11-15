@@ -104,7 +104,7 @@ const displayedBalance = useMemo(() => {
 
 
   // Determine balance color
-  const balanceColor = displayedBalance < 0 ? "text-red-600" : "text-gray-900"
+  // const balanceColor = tempUser.b < 0 ? "text-red-600" : "text-gray-900"
 
   return (
     <div className="space-y-6">
@@ -148,10 +148,9 @@ const displayedBalance = useMemo(() => {
             <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mb-3">
               <Wallet className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
             </div>
-            <p className={`text-xl sm:text-2xl font-bold ${balanceColor}`}>
-              ${Math.abs(displayedBalance).toFixed(2)}
-              {displayedBalance < 0 && <span className="text-sm ml-1">(Overdue)</span>}
-            </p>
+              <p className={tempUser?.balance < 0 ? "text-red-600 text-xl sm:text-2xl font-bold" : "text-green-600 text-xl sm:text-2xl font-bold"}>
+               $ {tempUser?.balance}
+              </p>
             <p className="text-sm text-gray-600">Main Balance</p>
           </div>
 
