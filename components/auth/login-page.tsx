@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AlertCircle, Home, ChevronRight, Facebook, Twitter, Linkedin, Instagram, Send } from "lucide-react"
 import Image from "next/image"
+import bg1 from '@/public/bg-1.webp'
+import shopifyFullLogo from '@/public/shopifyFullLogo.png'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -306,7 +308,7 @@ export default function LoginPage() {
       </header>
 
       {/* Page Title and Breadcrumb */}
-      <div className="bg-white border-b border-gray-200 py-12">
+      {/* <div className="bg-white border-b border-gray-200 py-12">
         <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Login</h1>
           <div className="flex items-center justify-center gap-2 text-sm">
@@ -316,14 +318,41 @@ export default function LoginPage() {
             <span className="text-green-600 font-medium">Login</span>
           </div>
         </div>
+      </div> */}
+
+      <div className="">
+        {/* Background Image with faded effect */}
+        <Image
+          src={bg1}
+          alt="bg picture"
+          className="object-cover filter  brightness-50"
+          priority
+        />
+
+        {/* Overlay Content */}
+        <div className="pt-70 absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
+          {/* Scroll Button */}
+          <button
+            onClick={() => window.scrollBy({ top: 400, behavior: "smooth" })}
+            className="flex flex-col items-center animate-bounce mt-8"
+          >
+            {/* Downward arrow */}
+            <span className="text-white text-3xl font-bold">↓</span>
+            <span className="mt-1 text-sm uppercase tracking-widest">Scroll Down</span>
+          </button>
+
+        </div>
       </div>
+
+
 
       {/* Main Content - Two Column Layout */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left Column - Login Form */}
           <div className="bg-white p-8 md:p-12 rounded-lg shadow-sm transition-all duration-500 hover:shadow-xl">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+            {/* <h2 className="text-3xl font-bold text-gray-900 mb-2">Shopify</h2> */}
+            <Image src={shopifyFullLogo} className="h-10 w-35 mb-4" alt="shopifylogo"/>
             <p className="text-gray-600 mb-8">Hey Enter your details to get sign in to your account</p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -559,7 +588,7 @@ export default function LoginPage() {
           </div>
 
           {/* Right Column - Image */}
-          <div className="hidden md:block relative h-[600px] rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+          <div className="hidden md:block relative h-full rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
             <video
               src="/videos/signup-promo.mp4"
               autoPlay
