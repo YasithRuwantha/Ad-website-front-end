@@ -204,89 +204,66 @@ export default function PlansPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`rounded-xl p-6 border-2 shadow-sm transition-all hover:shadow-lg hover:scale-[1.02] ${
+              className={`relative rounded-2xl p-8 border shadow-lg transition-all duration-200 bg-white hover:shadow-2xl hover:-translate-y-1 group overflow-hidden ${
                 plan.isPremium
-                  ? "bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-400"
-                  : "bg-white border-gray-200"
+                  ? "border-yellow-400 ring-2 ring-yellow-100"
+                  : "border-gray-200"
               }`}
+              style={{ minHeight: 420 }}
             >
-              {/* Premium Label */}
+              {/* Premium Badge */}
               {plan.isPremium && (
-                <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-3 py-1 rounded-full shadow-md">
+                <span className="absolute top-5 right-5 z-10 bg-yellow-400 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md tracking-wider flex items-center gap-1">
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 17.75l-6.172 3.245 1.179-6.873L2 9.505l6.914-1.004L12 2.25l3.086 6.251L22 9.505l-5.007 4.617 1.179 6.873z" /></svg>
                   PREMIUM
-                </div>
+                </span>
               )}
 
-              {/* Plan Name */}
-              <h3
-                className={`text-2xl font-bold ${
-                  plan.isPremium ? "text-yellow-800" : "text-gray-900"
-                }`}
-              >
-                {plan.name}
-              </h3>
+            
 
-              {/* Price */}
-              <p
-                className={`text-4xl font-bold mt-3 ${
-                  plan.isPremium ? "text-yellow-800" : "text-gray-900"
-                }`}
-              >
-                {plan.price}
-              </p>
+              {/* Plan Name & Price */}
+              <div className="flex flex-col items-center mb-2">
+                <h3 className={`text-2xl font-extrabold tracking-tight ${plan.isPremium ? "text-yellow-700" : "text-green-700"}`}>{plan.name}</h3>
+                <p className={`text-4xl font-black mt-2 ${plan.isPremium ? "text-yellow-700" : "text-green-700"}`}>{plan.price}</p>
+              </div>
 
               {/* Description */}
-              <p
-                className={`mt-3 text-sm ${
-                  plan.isPremium ? "text-yellow-800" : "text-gray-700"
-                }`}
-              >
-                {plan.description}
-              </p>
+              <p className="text-center text-gray-600 mb-4 min-h-[48px]">{plan.description}</p>
 
               {/* Details */}
-              <div className="mt-5 space-y-2 text-sm text-gray-700">
-                <p>Period: {plan.period}</p>
-                <p>Product Limit: {plan.productLimit}</p>
+              <div className="flex justify-center gap-6 mb-4 text-sm">
+                <div className="flex flex-col items-center">
+                  <span className="font-semibold text-gray-800">{plan.period}</span>
+                  <span className="text-gray-400">Period</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-semibold text-gray-800">{plan.productLimit}</span>
+                  <span className="text-gray-400">Product Limit</span>
+                </div>
               </div>
 
               {/* Profit Box */}
-              <div
-                className={`mt-5 p-4 rounded-lg border ${
-                  plan.isPremium
-                    ? "bg-yellow-100 border-yellow-300"
-                    : "bg-green-50 border-green-200"
-                }`}
-              >
-                <h4
-                  className={`font-semibold text-sm ${
-                    plan.isPremium ? "text-yellow-900" : "text-green-900"
-                  }`}
-                >
-                  Expected Profit (15–20%)
-                </h4>
-
-                <div className="mt-2 text-sm space-y-1">
-                  <p>15% Profit: {plan.profit15}</p>
-                  <p>20% Profit: {plan.profit20}</p>
-                  <p className="font-semibold mt-2">
-                    Profit Range: {plan.profitRange}
-                  </p>
+              <div className={`mt-2 p-4 rounded-xl border-2 ${plan.isPremium ? "bg-yellow-50 border-yellow-200" : "bg-green-50 border-green-200"} flex flex-col items-center`}> 
+                <h4 className={`font-semibold text-sm mb-1 ${plan.isPremium ? "text-yellow-800" : "text-green-800"}`}>Expected Profit <span className="font-normal">(15–20%)</span></h4>
+                <div className="flex gap-4 text-base font-bold">
+                  <span className="text-gray-700">{plan.profit15} <span className="font-normal text-xs text-gray-400">15%</span></span>
+                  <span className="text-gray-700">{plan.profit20} <span className="font-normal text-xs text-gray-400">20%</span></span>
                 </div>
+                <span className="text-xs text-gray-500 mt-1">Range: {plan.profitRange}</span>
               </div>
 
               {/* Purchase Button */}
               <Button
                 onClick={() => handlePurchase(plan.name)}
-                className={`w-full mt-6 font-semibold py-3 ${
+                className={`w-full mt-8 font-bold py-3 rounded-full shadow-md transition-all duration-150 text-lg tracking-wide ${
                   plan.isPremium
-                    ? "bg-yellow-600 hover:bg-yellow-700 text-white"
+                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
                     : "bg-green-600 hover:bg-green-700 text-white"
-                }`}
+                } group-hover:scale-105`}
               >
                 Purchase Plan
               </Button>
