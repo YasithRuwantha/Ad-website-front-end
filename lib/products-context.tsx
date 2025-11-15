@@ -75,7 +75,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     
     // ✅ Debug
     for (let [key, value] of formData.entries()) {
-        console.log(key, value);
+        // console.log(key, value);
     }
 
     const res = await fetch(`${API_URL}/api/products/add`, {
@@ -94,7 +94,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   // ✅ Update product - handles both text and image updates
   const updateProduct = async (id: string, updates: Partial<Product> & { imageFile?: File; plan?: string; income?: string, isLuckyOrderProduct?: string }) => {
     const token = localStorage.getItem("token")
-    console.log("update product", updates);
+    // console.log("update product", updates);
     
     const formData = new FormData()
     
@@ -113,7 +113,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     
     // Debug: Log formData contents
     for (let [key, value] of formData.entries()) {
-        console.log(key, value);
+        // console.log(key, value);
     }
     
     const res = await fetch(`${API_URL}/api/products/${id}`, {
