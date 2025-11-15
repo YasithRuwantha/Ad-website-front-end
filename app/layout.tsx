@@ -1,3 +1,4 @@
+import ClientFloatingSupportChatWrapper from "@/components/support/ClientFloatingSupportChatWrapper"
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
@@ -37,6 +38,7 @@ export default function RootLayout({
                 <FundPaymentProvider>
                   <DataProvider>
                     {children}
+                    <ClientFloatingSupportChatWrapper />
                   </DataProvider>
                 </FundPaymentProvider>
               </RatingProvider>

@@ -31,7 +31,7 @@ export default function AddFundsPage() {
   const [successPaymentId, setSuccessPaymentId] = useState<string>("")
 
 
-  const currencies = ["USDT", "LKR"]
+  const currencies = ["USDT", "USD"]
 
   const paymentMethods = [
     {
