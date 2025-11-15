@@ -20,6 +20,7 @@ export default function AdminSupportPage() {
   const [replyImage, setReplyImage] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [filterType, setFilterType] = useState<'all' | 'seen' | 'unseen'>('all')
 
   // Fetch only ticket list (not replies)
   useEffect(() => {
@@ -104,43 +105,88 @@ export default function AdminSupportPage() {
         </div>
       </div>
 
+      {/* Filter Buttons */}
+      <div className="flex gap-2 items-center">
+        <Button
+          variant={filterType === 'all' ? 'default' : 'outline'}
+          className={filterType === 'all' ? 'bg-[#008060] text-white' : ''}
+          onClick={() => setFilterType('all')}
+        >
+          All
+        </Button>
+        <Button
+          variant={filterType === 'unseen' ? 'default' : 'outline'}
+          className={filterType === 'unseen' ? 'bg-yellow-400 text-white' : ''}
+          onClick={() => setFilterType('unseen')}
+        >
+          Unseen
+        </Button>
+        <Button
+          variant={filterType === 'seen' ? 'default' : 'outline'}
+          className={filterType === 'seen' ? 'bg-green-100 text-green-700' : ''}
+          onClick={() => setFilterType('seen')}
+        >
+          Seen
+        </Button>
+      </div>
+
       {/* User list with latest message */}
       <div className="space-y-4">
-        {userList.length === 0 ? (
-          <Card className="border-2 border-green-200">
-            <CardContent className="pt-12 pb-12 text-center">
-              <p className="text-gray-500">No matching open chats</p>
-            </CardContent>
-          </Card>
-        ) : (
+        {
           userList
-            .filter(user =>
-              user.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              user.useremail?.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map(user => (
-              <div
-                key={user.ticketId}
-                className={`rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-md hover:shadow-xl p-6 flex items-center gap-6 ${user.isSeen ? 'border-green-200 bg-white' : 'border-yellow-400 bg-yellow-50 animate-pulse'}`}
-                onClick={() => { setSelectedTicket(user.ticketId); setShowChatModal(true); }}
-              >
-                <div className="flex-shrink-0">
-                  <User className="w-10 h-10 text-green-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-                    <div className="font-bold text-xl text-gray-900 truncate">{user.username || user.userId}</div>
-                    <div className="text-sm text-gray-500 truncate">{user.useremail}</div>
+            .filter(user => {
+              // Search filter
+              const matchesSearch =
+                user.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.useremail?.toLowerCase().includes(searchTerm.toLowerCase());
+              // Seen/unseen filter
+              if (filterType === 'all') return matchesSearch;
+              if (filterType === 'seen') return matchesSearch && user.isSeen;
+              if (filterType === 'unseen') return matchesSearch && !user.isSeen;
+              return matchesSearch;
+            })
+            .length === 0 ? (
+              <Card className="border-2 border-green-200">
+                <CardContent className="pt-12 pb-12 text-center">
+                  <p className="text-gray-500">No matching open chats</p>
+                </CardContent>
+              </Card>
+            ) : (
+              userList
+                .filter(user => {
+                  const matchesSearch =
+                    user.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.useremail?.toLowerCase().includes(searchTerm.toLowerCase());
+                  if (filterType === 'all') return matchesSearch;
+                  if (filterType === 'seen') return matchesSearch && user.isSeen;
+                  if (filterType === 'unseen') return matchesSearch && !user.isSeen;
+                  return matchesSearch;
+                })
+                .map(user => (
+                  <div
+                    key={user.ticketId}
+                    className={`rounded-2xl border-2 cursor-pointer transition-all duration-200 shadow-md hover:shadow-xl p-6 flex items-center gap-6 ${user.isSeen ? 'border-green-200 bg-white' : 'border-yellow-400 bg-yellow-50 animate-pulse'}`}
+                    onClick={() => { setSelectedTicket(user.ticketId); setShowChatModal(true); }}
+                  >
+                    <div className="flex-shrink-0">
+                      <User className="w-10 h-10 text-green-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                        <div className="font-bold text-xl text-gray-900 truncate">{user.username || user.userId}</div>
+                        <div className="text-sm text-gray-500 truncate">{user.useremail}</div>
+                      </div>
+                      <div className="mt-2 text-base text-gray-700 line-clamp-1 font-medium">{user.latestMessage}</div>
+                    </div>
+                    <span className={`ml-4 text-xs font-semibold px-3 py-1 rounded-full shadow-sm tracking-wide ${user.isSeen ? 'bg-green-100 text-green-700' : 'bg-yellow-400 text-white'}`}>
+                      {user.isSeen ? 'Seen' : 'Unseen'}
+                    </span>
                   </div>
-                  <div className="mt-2 text-base text-gray-700 line-clamp-1 font-medium">{user.latestMessage}</div>
-                </div>
-                <span className={`ml-4 text-xs font-semibold px-3 py-1 rounded-full shadow-sm tracking-wide ${user.isSeen ? 'bg-green-100 text-green-700' : 'bg-yellow-400 text-white'}`}>
-                  {user.isSeen ? 'Seen' : 'Unseen'}
-                </span>
-              </div>
-            ))
-        )}
+                ))
+            )
+        }
       </div>
 
       {/* Chat Modal */}
