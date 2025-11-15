@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AlertCircle, Home, ChevronRight, Facebook, Twitter, Linkedin, Instagram, Send } from "lucide-react"
+import Link from "next/link"
 import Image from "next/image"
 import bg1 from '@/public/bg-1.webp'
 import shopifyFullLogo from '@/public/shopifyFullLogo.png'
@@ -289,21 +290,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header with Navigation */}
-      <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4">
+      <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 z-20 relative">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
-            <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
-            <a href="/plans" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</a>
-            <a href="/faq" className="text-green-600 font-medium">FAQ</a>
+            <Link href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</Link>
+            <Link href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</Link>
+            <Link href="/plans" className="text-gray-700 hover:text-green-600 transition-all duration-300">Plan</Link>
+            <Link href="/faq" className="text-green-600 font-medium">FAQ</Link>
           </nav>
-          <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg font-semibold flex items-center gap-2">
-            <span className="text-lg">👤</span>
-            <span>Login</span>
-          </Button>
         </div>
       </header>
 
@@ -330,7 +327,7 @@ export default function LoginPage() {
         />
 
         {/* Overlay Content */}
-        <div className="pt-70 absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
+        <div className="pt-70 absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 z-10">
           {/* Scroll Button */}
           <button
             onClick={() => window.scrollBy({ top: 400, behavior: "smooth" })}

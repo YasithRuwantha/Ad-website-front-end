@@ -1,10 +1,13 @@
 "use client"
 
+
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Target, Users, TrendingUp, User, ChevronDown, LogOut, Settings } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
 import { useAuth } from "@/lib/auth-context"
+import Image from "next/image"
+import shopifyFullLogo from "@/public/shopifyFullLogo.png"
 
 export default function HelpAboutUsPage() {
   const { logout } = useAuth()
@@ -122,36 +125,35 @@ export default function HelpAboutUsPage() {
           <div className="mt-6">
             {/* Hero Section */}
             <div className="text-center mb-8 md:mb-16 animate-fade-in">
-              <div className="inline-block mb-4 md:mb-6">
+              {/* <div className="inline-block mb-4 md:mb-6">
                 <div className="flex justify-center my-6">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-16" />
                 </div>
-              </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 px-4">
-                Welcome to <span className="text-green-600">Shopify</span>
-              </h1>
+              </div> */}
+              <h1 className="flex items-center flex-wrap justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 px-4 gap-2">
+              Welcome to 
+              <Image
+                src={shopifyFullLogo}
+                alt="shopifyfulllog"
+                className="inline-block w-65 h-18 m-5"
+              />
+            </h1>
               <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                 Empowering millions of entrepreneurs worldwide to turn their dreams into successful businesses. 
-                Join us on a journey to make commerce better for everyone! 🚀
+                Join us on a journey to make commerce better for everyone!
               </p>
             </div>
 
             {/* Who We Are Section */}
             <div className="bg-gradient-to-br from-white to-green-50 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-xl mb-8 md:mb-12 border border-green-100 hover:shadow-2xl transition-all duration-300">
               <div className="flex items-center gap-3 mb-4 md:mb-6">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl md:text-2xl">👋</span>
-                </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Who We Are</h2>
               </div>
               <p className="text-gray-700 leading-relaxed text-base md:text-lg mb-4">
-                Hey there! 👋 We're <span className="font-semibold text-green-600">Shopify</span>, and we're passionate about helping people like you succeed in business. 
-                Since 2006, we've been on a mission to make selling online super easy—no coding skills needed!
+                We are <span className="font-semibold text-green-600">Shopify</span>, dedicated to helping entrepreneurs succeed in business. Since 2006, our mission has been to make selling online accessible and straightforward for everyone—no coding required.
               </p>
               <p className="text-gray-700 leading-relaxed text-base md:text-lg mb-4">
-                What started as a small idea in Ottawa, Canada, has grown into something amazing. Today, we're proud to serve 
-                <span className="font-bold text-green-600"> millions of merchants in over 175 countries</span>. 
-                From local shops to global brands, we help everyone bring their ideas to life! 🌍
+                What started as a small idea in Ottawa, Canada, has grown into a global platform. Today, we proudly serve <span className="font-bold text-green-600">millions of merchants in over 175 countries</span>, supporting businesses of all sizes.
               </p>
               <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 mt-4 md:mt-6 border-2 border-green-200">
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 text-center justify-around">
@@ -183,20 +185,18 @@ export default function HelpAboutUsPage() {
                     <Target className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
                   </div>
                   <div>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-4">Our Mission 🎯</h2>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-4">Our Mission</h2>
                     <p className="text-green-50 text-base sm:text-lg md:text-xl leading-relaxed">
-                      <span className="font-semibold">Make commerce better for everyone.</span> Simple as that!
+                      <span className="font-semibold">Make commerce better for everyone.</span>
                     </p>
                   </div>
                 </div>
                 <p className="text-green-50 text-base md:text-lg leading-relaxed mb-4">
-                  We're here to break down barriers and give you all the tools you need to succeed. Whether you're selling 
-                  online, in-person, or both—we've got your back! Our platform makes it easy to start, grow, and manage your 
-                  business, all in one place. 💪
+                  We are committed to breaking down barriers and providing the tools needed for business success. Whether you sell online, in-person, or both, our platform makes it easy to start, grow, and manage your business—all in one place.
                 </p>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 md:p-6 mt-4 md:mt-6 border border-white/20">
                   <p className="text-green-50 text-base md:text-lg italic">
-                    "Because every entrepreneur deserves the chance to succeed, regardless of their technical skills or budget." 💚
+                    Every entrepreneur deserves the chance to succeed, regardless of technical skills or budget.
                   </p>
                 </div>
               </div>
@@ -205,111 +205,67 @@ export default function HelpAboutUsPage() {
             {/* What We Do Section */}
             <div className="bg-white rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-xl mb-8 md:mb-12 border border-gray-100">
               <div className="text-center mb-8 md:mb-12">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4">What We Do ✨</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4">What We Do...</h2>
                 <p className="text-base sm:text-lg md:text-xl text-gray-600">Everything you need to run your business successfully!</p>
               </div>
               
               <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
                 {/* Online Store Creation */}
-                <div className="bg-gradient-to-br from-green-50 to-white rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-green-100 hover:border-green-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-green-600 rounded-xl flex items-center justify-center flex-shrink-0 text-xl md:text-2xl">
-                      🏪
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Build Your Store</h3>
-                      <p className="text-sm md:text-base text-gray-600">
-                        Create a stunning online store without writing a single line of code! Our drag-and-drop builder makes it fun and easy.
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-green-50/80 rounded-2xl shadow-2xl border-2 border-green-500 hover:border-green-700 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 flex flex-col justify-between min-h-[200px] transform hover:scale-[1.03]">
+                  <h3 className="text-2xl font-extrabold text-green-800 mb-3 tracking-tight">Build Your Store</h3>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Create a stunning online store without writing a single line of code. Our drag-and-drop builder makes it simple and efficient.
+                  </p>
                 </div>
 
                 {/* Point of Sale */}
-                <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-blue-100 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 text-xl md:text-2xl">
-                      💳
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Sell Anywhere</h3>
-                      <p className="text-sm md:text-base text-gray-600">
-                        Sell online and in-person seamlessly! Our POS system keeps everything in sync so you can focus on your customers.
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-blue-50/80 rounded-2xl shadow-2xl border-2 border-blue-500 hover:border-blue-700 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 flex flex-col justify-between min-h-[200px] transform hover:scale-[1.03]">
+                  <h3 className="text-2xl font-extrabold text-blue-800 mb-3 tracking-tight">Sell Anywhere</h3>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Sell online and in-person seamlessly. Our POS system keeps everything in sync so you can focus on your customers.
+                  </p>
                 </div>
 
                 {/* Payment Processing */}
-                <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-purple-100 hover:border-purple-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 text-xl md:text-2xl">
-                      💰
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Get Paid Easily</h3>
-                      <p className="text-sm md:text-base text-gray-600">
-                        Accept payments securely with Shopify Payments. Support for all major payment methods and currencies!
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-purple-50/80 rounded-2xl shadow-2xl border-2 border-purple-500 hover:border-purple-700 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 flex flex-col justify-between min-h-[200px] transform hover:scale-[1.03]">
+                  <h3 className="text-2xl font-extrabold text-purple-800 mb-3 tracking-tight">Get Paid Easily</h3>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Accept payments securely with Shopify Payments. Support for all major payment methods and currencies.
+                  </p>
                 </div>
 
                 {/* Marketing & SEO */}
-                <div className="bg-gradient-to-br from-orange-50 to-white rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-orange-100 hover:border-orange-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-600 rounded-xl flex items-center justify-center flex-shrink-0 text-xl md:text-2xl">
-                      📢
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Grow Your Audience</h3>
-                      <p className="text-sm md:text-base text-gray-600">
-                        Powerful marketing tools to attract and keep customers coming back. Email, social media, SEO—we've got it all!
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-orange-50/80 rounded-2xl shadow-2xl border-2 border-orange-500 hover:border-orange-700 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 flex flex-col justify-between min-h-[200px] transform hover:scale-[1.03]">
+                  <h3 className="text-2xl font-extrabold text-orange-800 mb-3 tracking-tight">Grow Your Audience</h3>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Powerful marketing tools to attract and retain customers. Email, social media, SEO—we provide comprehensive solutions.
+                  </p>
                 </div>
 
                 {/* Shipping & Fulfillment */}
-                <div className="bg-gradient-to-br from-teal-50 to-white rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-teal-100 hover:border-teal-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 text-xl md:text-2xl">
-                      📦
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Ship with Ease</h3>
-                      <p className="text-sm md:text-base text-gray-600">
-                        Simplified shipping and order management. Print labels, track packages, and keep customers happy!
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-teal-50/80 rounded-2xl shadow-2xl border-2 border-teal-500 hover:border-teal-700 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 flex flex-col justify-between min-h-[200px] transform hover:scale-[1.03]">
+                  <h3 className="text-2xl font-extrabold text-teal-800 mb-3 tracking-tight">Ship with Ease</h3>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Simplified shipping and order management. Print labels, track packages, and ensure customer satisfaction.
+                  </p>
                 </div>
 
                 {/* Analytics */}
-                <div className="bg-gradient-to-br from-pink-50 to-white rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-pink-100 hover:border-pink-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-pink-600 rounded-xl flex items-center justify-center flex-shrink-0 text-xl md:text-2xl">
-                      📊
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Make Smart Decisions</h3>
-                      <p className="text-sm md:text-base text-gray-600">
-                        Real-time insights and reports to help you understand what's working and grow even faster!
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-pink-50/80 rounded-2xl shadow-2xl border-2 border-pink-500 hover:border-pink-700 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 flex flex-col justify-between min-h-[200px] transform hover:scale-[1.03]">
+                  <h3 className="text-2xl font-extrabold text-pink-800 mb-3 tracking-tight">Make Smart Decisions</h3>
+                  <p className="text-lg text-gray-800 font-medium">
+                    Real-time insights and reports to help you understand what is working and accelerate your growth.
+                  </p>
                 </div>
               </div>
 
               {/* App Ecosystem Highlight */}
               <div className="mt-6 md:mt-8 bg-gradient-to-r from-green-100 to-blue-100 rounded-xl md:rounded-2xl p-6 md:p-8 border-2 border-green-200">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                  <div className="text-4xl md:text-6xl">🎨</div>
                   <div className="flex-1 text-center md:text-left">
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Thousands of Apps at Your Fingertips!</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Thousands of Apps at Your Fingertips</h3>
                     <p className="text-gray-700 text-base md:text-lg">
-                      Customize your store with apps for everything—inventory, marketing, customer service, and more. 
-                      Build exactly the store you've always dreamed of! 🌟
+                      Customize your store with apps for inventory, marketing, customer service, and more. Build the store you envision with our extensive app ecosystem.
                     </p>
                   </div>
                 </div>
@@ -319,16 +275,13 @@ export default function HelpAboutUsPage() {
             {/* Our Technology */}
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 mb-8 md:mb-12 text-white shadow-xl">
               <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6 mb-4 md:mb-6">
-                <div className="text-4xl md:text-6xl">⚡</div>
                 <div>
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-4">Powerful Technology You Can Trust</h2>
                   <p className="text-blue-50 text-base md:text-lg leading-relaxed mb-2 md:mb-4">
-                    Don't worry about the technical stuff—we've got it covered! Our cloud-based platform is built for 
-                    speed, security, and scalability. Whether you're getting 10 orders or 10,000, we can handle it! 💪
+                    Our cloud-based platform is built for speed, security, and scalability. Whether you are processing 10 orders or 10,000, we provide reliable performance.
                   </p>
                   <p className="text-blue-50 text-base md:text-lg leading-relaxed">
-                    Plus, with our APIs and developer tools, you can customize everything to work exactly how you want. 
-                    Connect your favorite apps, integrate with other systems, and make it uniquely yours! 🔧
+                    With our APIs and developer tools, you can customize your experience, connect your favorite apps, and integrate with other systems seamlessly.
                   </p>
                 </div>
               </div>
@@ -345,23 +298,13 @@ export default function HelpAboutUsPage() {
                   <div className="text-gray-600 text-base md:text-lg">Community Members</div>
                 </div>
                 <div className="md:w-2/3">
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Join Our Amazing Community! 🤝</h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Join Our Community</h2>
                   <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-3 md:mb-4">
-                    You're not alone on this journey! Our vibrant community includes merchants, developers, designers, 
-                    and partners from all over the world. We're all here to help each other succeed! 🌟
+                    Our vibrant community includes merchants, developers, designers, and partners from all over the world. We are here to help each other succeed.
                   </p>
                   <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-3 md:mb-4">
-                    <span className="font-semibold text-green-600">Shopify Partner Program</span> connects you with experts 
-                    who can help design, build, and optimize your store. And our App Store? It's packed with thousands of 
-                    apps created by talented developers just like you!
+                    <span className="font-semibold text-green-600">Shopify Partner Program</span> connects you with experts who can help design, build, and optimize your store. Our App Store is filled with thousands of apps created by talented developers.
                   </p>
-                  <div className="flex flex-wrap gap-2 md:gap-3 mt-4 md:mt-6">
-                    <span className="bg-green-100 text-green-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold">👥 Merchants</span>
-                    <span className="bg-blue-100 text-blue-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold">💻 Developers</span>
-                    <span className="bg-purple-100 text-purple-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold">🎨 Designers</span>
-                    <span className="bg-orange-100 text-orange-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold">🤝 Partners</span>
-                    <span className="bg-pink-100 text-pink-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold">🌟 Affiliates</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -372,21 +315,17 @@ export default function HelpAboutUsPage() {
               <div className="absolute bottom-0 left-0 w-48 h-48 md:w-64 md:h-64 bg-teal-700 rounded-full opacity-20 -ml-24 -mb-24 md:-ml-32 md:-mb-32"></div>
               <div className="relative z-10">
                 <div className="text-center mb-6 md:mb-8">
-                  <div className="text-5xl md:text-7xl mb-3 md:mb-4">🚀</div>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4">The Future is Bright!</h2>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4">The Future is Bright</h2>
                 </div>
                 <p className="text-green-50 text-base sm:text-lg md:text-xl leading-relaxed mb-4 md:mb-6 text-center max-w-4xl mx-auto">
-                  We're constantly innovating with cutting-edge technologies like <span className="font-bold">AI</span>, 
-                  <span className="font-bold"> AR/VR shopping experiences</span>, and 
-                  <span className="font-bold"> omnichannel solutions</span> to keep you ahead of the curve!
+                  We are constantly innovating with cutting-edge technologies such as <span className="font-bold">AI</span>, <span className="font-bold">AR/VR shopping experiences</span>, and <span className="font-bold">omnichannel solutions</span> to keep you ahead of the curve.
                 </p>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 border border-white/20">
                   <p className="text-white text-xl md:text-2xl font-semibold text-center mb-3 md:mb-4">
-                    🌍 Our Vision
+                    Our Vision
                   </p>
                   <p className="text-green-50 text-base md:text-lg text-center leading-relaxed">
-                    Every entrepreneur, no matter where they are or who they are, should have the tools and opportunity 
-                    to succeed in the global economy. That's what we're building—together! 💚
+                    Every entrepreneur, regardless of location or background, should have the tools and opportunity to succeed in the global economy. That is what we are building—together.
                   </p>
                 </div>
               </div>

@@ -167,9 +167,6 @@ export default function AboutPage() {
               {/* Online Store Creation */}
               <div className="bg-gradient-to-br from-green-50 to-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-green-100 hover:border-green-300 transition-all duration-300 hover:shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-xl sm:text-2xl">
-                    🏪
-                  </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Build Your Store</h3>
                     <p className="text-sm sm:text-base text-gray-600">
@@ -182,9 +179,6 @@ export default function AboutPage() {
               {/* Point of Sale */}
               <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-blue-100 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-xl sm:text-2xl">
-                    💳
-                  </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Sell Anywhere</h3>
                     <p className="text-sm sm:text-base text-gray-600">
@@ -197,9 +191,6 @@ export default function AboutPage() {
               {/* Payment Processing */}
               <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-purple-100 hover:border-purple-300 transition-all duration-300 hover:shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-xl sm:text-2xl">
-                    💰
-                  </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Get Paid Easily</h3>
                     <p className="text-sm sm:text-base text-gray-600">
@@ -212,9 +203,6 @@ export default function AboutPage() {
               {/* Marketing & SEO */}
               <div className="bg-gradient-to-br from-orange-50 to-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-orange-100 hover:border-orange-300 transition-all duration-300 hover:shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-xl sm:text-2xl">
-                    📢
-                  </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Grow Your Audience</h3>
                     <p className="text-sm sm:text-base text-gray-600">
@@ -227,9 +215,6 @@ export default function AboutPage() {
               {/* Shipping & Fulfillment */}
               <div className="bg-gradient-to-br from-teal-50 to-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-teal-100 hover:border-teal-300 transition-all duration-300 hover:shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-teal-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-xl sm:text-2xl">
-                    📦
-                  </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Ship with Ease</h3>
                     <p className="text-sm sm:text-base text-gray-600">
@@ -242,9 +227,6 @@ export default function AboutPage() {
               {/* Analytics */}
               <div className="bg-gradient-to-br from-pink-50 to-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-pink-100 hover:border-pink-300 transition-all duration-300 hover:shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-xl sm:text-2xl">
-                    📊
-                  </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Make Smart Decisions</h3>
                     <p className="text-sm sm:text-base text-gray-600">
@@ -308,11 +290,11 @@ export default function AboutPage() {
                   apps created by talented developers just like you!
                 </p>
                 <div className="flex flex-wrap gap-2 sm:gap-3 mt-4 sm:mt-6">
-                  <span className="bg-green-100 text-green-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">👥 Merchants</span>
-                  <span className="bg-blue-100 text-blue-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">💻 Developers</span>
-                  <span className="bg-purple-100 text-purple-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">🎨 Designers</span>
-                  <span className="bg-orange-100 text-orange-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">🤝 Partners</span>
-                  <span className="bg-pink-100 text-pink-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">🌟 Affiliates</span>
+                  <span className="bg-green-100 text-green-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold"> Merchants</span>
+                  <span className="bg-blue-100 text-blue-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold"> Developers</span>
+                  <span className="bg-purple-100 text-purple-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold"> Designers</span>
+                  <span className="bg-orange-100 text-orange-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold"> Partners</span>
+                  <span className="bg-pink-100 text-pink-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold"> Affiliates</span>
                 </div>
               </div>
             </div>
