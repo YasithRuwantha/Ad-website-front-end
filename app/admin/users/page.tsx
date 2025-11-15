@@ -235,6 +235,7 @@ export default function AdminUsersPage() {
     username: "",
     email: "",
     phone: "",
+    password: "",
     role: "",
     status: "",
     adsPerDay: "",
@@ -312,6 +313,7 @@ const openModal = (user: any) => {
     username: user.username || "",
     email: user.email,
     phone: user.phone,
+    password: user.password,
     role: user.role,
     status: user.status,
     adsPerDay: user.adsPerDay,
@@ -609,6 +611,16 @@ const openModal = (user: any) => {
                     className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
                   />
                 </div>
+                <div className="flex flex-col items-center">
+                  <label className="block text-xs font-semibold text-gray-600 mb-0.5 self-start">Password</label>
+                  <input
+                    type="text"
+                    placeholder="Password"
+                    value={editData.password}
+                    onChange={(e) => setEditData({ ...editData, password: e.target.value })}
+                    className="w-full max-w-xs px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
               </div>
 
               {/* Account Settings Section */}
@@ -648,7 +660,7 @@ const openModal = (user: any) => {
                     className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
                   >
                     <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+                    <option value="inactive">Deactivate</option>
                   </select>
                 </div>
 
@@ -660,7 +672,7 @@ const openModal = (user: any) => {
                     className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-200"
                   >
                     <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+                    <option value="inactive">Deactivate</option>
                   </select>
                 </div>
 
@@ -733,9 +745,11 @@ const openModal = (user: any) => {
               {/* Remaining Ads */}
               <div className="border-t pt-3 sm:pt-4 mt-3 sm:mt-4 space-y-2">
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Manage Remaining Ads</label>
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                <div className="flex items-center text-xs text-gray-500 mb-2">
                   <span>Current Remaining Ads:</span>
-                  <span className="font-bold text-green-700 text-base">{selectedUser.remaining || 0}</span>
+                  <span className="font-bold text-green-700 text-base pl-5">{selectedUser.remaining || 0}</span>
+                  <span className="pl-20">Finished Remaining Ads:</span>
+                  <span className="font-bold text-green-700 text-base pl-5">{30 - selectedUser.remaining || 0}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 w-full">
                   <input
@@ -776,9 +790,9 @@ const openModal = (user: any) => {
               {/* Topup customser Account */}
               <div className="border-t pt-3 sm:pt-4 mt-3 sm:mt-4 space-y-2">
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Topup Customer Account</label>
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                <div className="flex items-center text-xs text-gray-500 mb-2">
                   <span>Current Acoount balance:</span>
-                  <p className={selectedUser.balance < 0 ? "text-red-600 text-l sm:text-xl font-bold" : "text-green-600 text-l sm:text-xl font-bold"}>
+                  <p className={selectedUser.balance < 0 ? "text-red-600 text-l sm:text-xl font-bold pl-5" : "text-green-600 text-l sm:text-xl font-bold pl-5"}>
                    $ {selectedUser.balance}
                   </p>
                 </div>

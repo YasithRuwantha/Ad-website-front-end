@@ -317,7 +317,7 @@ export default function LoginPage() {
         </div>
       </div> */}
 
-      <div className="">
+      <div className="h-full relative">
         {/* Background Image with faded effect */}
         <Image
           src={bg1}
