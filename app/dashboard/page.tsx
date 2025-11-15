@@ -19,10 +19,20 @@ export default function DashboardPage() {
   const { getUserEarningsRatings } = useRatings()
   const { getUser } = useUsers()
 
-  // For product slideshow
+  // For product slideshow (shuffled)
   const { products } = useProducts ? useProducts() : { products: [] }
   const [slideIndex, setSlideIndex] = useState(0)
-  const slideProducts = products?.slice(0, 10) || [] // Show up to 10 products
+  const [shuffledProducts, setShuffledProducts] = useState<any[]>([])
+
+  // Shuffle products when products change
+  useEffect(() => {
+    if (!products || products.length === 0) return
+    const shuffled = [...products].sort(() => Math.random() - 0.5)
+    setShuffledProducts(shuffled.slice(0, 5))
+    setSlideIndex(0)
+  }, [products])
+
+  const slideProducts = shuffledProducts
 
   useEffect(() => {
     if (!slideProducts.length) return
