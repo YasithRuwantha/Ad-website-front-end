@@ -258,7 +258,7 @@ export default function AdminProductsPage() {
           {normalProducts.length === 0 && !loading && (
             <Card><CardContent className="py-10 text-center text-gray-500">No normal products found</CardContent></Card>
           )}
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {normalProducts.map(p => (
             <ProductCard
               key={p._id}
@@ -267,6 +267,7 @@ export default function AdminProductsPage() {
               onDelete={() => handleDelete(p._id, false)}
             />
           ))}
+          </div>
 
           {normalHasMore && (
             <div className="flex justify-center py-8">
