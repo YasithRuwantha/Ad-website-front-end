@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState, useEffect, useRef } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import CreateTicketModal from "@/components/support/create-ticket-modal"
 import { MessageSquare, Plus, User, ChevronDown, LogOut, Settings, MessageCircle } from "lucide-react"
 import UserSidebar from "@/components/user/user-sidebar"
@@ -32,6 +33,7 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
   const [isUploading, setIsUploading] = useState(false)
   const [unread, setUnread] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
+  const [showChatModal, setShowChatModal] = useState(false)
 
   // There is only one support chat per user
   const supportTicket = tickets.find((t) => t.userId === user?.id)
@@ -223,86 +225,106 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
         </Card>
       </div> */}
 
-      {/* Single support chat UI */}
-  {supportTicket ? (
-        <Card className="border-4 border-[#008060] bg-[#f6f7f8] rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-4xl mx-auto p-2 md:p-6 shadow-2xl">
-          <div className="rounded-t-2xl bg-[#008060] px-4 py-2 flex items-center justify-between">
-            <div className="flex-1 min-w-0">
-              <span className="text-white font-semibold text-base sm:text-lg md:text-2xl line-clamp-1 break-words">{supportTicket.subject}</span>
-              <span className="block text-xs sm:text-sm md:text-base text-[#b6e2d8]">{new Date(supportTicket.createdAt).toLocaleDateString()}</span>
-            </div>
-            <span
-              className={`text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
-                supportTicket.status === "open" ? "bg-[#36c160] text-white" : "bg-yellow-400/80 text-white"
-              }`}
-            >
-              {supportTicket.status.charAt(0).toUpperCase() + supportTicket.status.slice(1)}
-            </span>
+      {/* Only show chat modal if not floating, otherwise always show chat content */}
+      {isFloatingChat ? (
+        <div className="flex flex-col h-[80vh] w-[380px] sm:w-[420px] bg-white rounded-3xl overflow-hidden">
+          <div className="px-6 pt-6 pb-2 border-b border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900">Customer Support Chat</h2>
           </div>
-          <div className="flex flex-col justify-between h-[420px] sm:h-[500px] md:h-[600px]">
-            <div ref={chatRef} className="flex-1 overflow-y-auto px-2 sm:px-4 md:px-8 py-3 sm:py-4 bg-white rounded-b-2xl space-y-2 sm:space-y-3 md:space-y-5 border-b border-[#e1e3e4]">
-              {/* Initial user message */}
-              <div className="flex w-full justify-end">
-                <div className="flex flex-col items-end w-fit max-w-[90vw] sm:max-w-[75vw] md:max-w-md">
-                  <div className="bg-[#008060] text-white rounded-2xl rounded-br-sm px-4 sm:px-5 md:px-8 py-2 sm:py-3 md:py-4 shadow-md mb-2 chat-bubble-user w-fit">
-                    <div className="text-sm sm:text-base md:text-lg font-semibold mb-1 text-right">You</div>
+          <div className="flex-1 overflow-y-auto p-4" style={{ minHeight: 0 }}>
+            {supportTicket ? (
+              <div className="flex flex-col gap-2 pb-2" style={{ minHeight: 0 }}>
+                {/* Customer message bubble */}
+                <div className="flex w-full justify-end">
+                  <div className="bg-[#008060] text-white rounded-2xl rounded-br-sm px-3 md:px-4 py-1.5 md:py-2 shadow mb-1 w-fit max-w-[75vw] md:max-w-md">
+                    <div className="text-xs md:text-sm font-semibold mb-0.5 md:mb-1 text-right">You</div>
                     {supportTicket.message && (
-                      <div className="text-sm sm:text-base md:text-lg break-words">{supportTicket.message}</div>
+                      <div className="text-xs md:text-sm break-words">{supportTicket.message}</div>
                     )}
                     {supportTicket.imageUrl && (
-                      <div className="mt-2 flex flex-col items-end">
+                      <div className="mt-1 md:mt-2 flex flex-col items-end">
                         <a href={supportTicket.imageUrl} target="_blank" rel="noopener noreferrer">
                           <img
                             src={supportTicket.imageUrl}
                             alt="Ticket attachment"
-                            className="max-h-40 sm:max-h-60 md:max-h-80 rounded-lg border border-green-200 cursor-pointer hover:opacity-90 transition w-full max-w-xs sm:max-w-sm"
+                            className="max-h-40 md:max-h-64 rounded-lg border border-[#36c160] cursor-pointer hover:opacity-90 transition"
                           />
                         </a>
-                        <span className="mt-1 text-[10px] sm:text-[11px] md:text-sm text-green-100">Image Attachment</span>
+                        <span className="mt-0.5 md:mt-1 text-[9px] md:text-[10px] text-[#008060]">Image Attachment</span>
                       </div>
                     )}
                   </div>
                 </div>
-              </div>
-              {/* Replies as chat bubbles */}
-              {supportTicket.replies.map((reply) => (
-                <div
-                  key={reply.id}
-                  className={`flex w-full ${reply.isAdmin ? "justify-start" : "justify-end"}`}
-                >
-                  <div className={`flex flex-col ${reply.isAdmin ? "items-start" : "items-end"} w-fit max-w-[90vw] sm:max-w-[75vw] md:max-w-md`}>
+                {/* Replies as chat bubbles */}
+                {supportTicket.replies.map((reply) => (
+                  <div
+                    key={reply.id}
+                    className={`flex w-full ${reply.isAdmin ? "justify-start" : "justify-end"}`}
+                  >
                     <div
-                      className={`px-4 sm:px-5 md:px-8 py-2 sm:py-3 md:py-4 rounded-2xl shadow-md mb-2 break-words chat-bubble w-fit ${
+                      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow mb-1 w-fit break-words max-w-[75vw] md:max-w-md ${
                         reply.isAdmin
-                          ? "bg-white border border-blue-200 text-gray-900 rounded-br-sm"
-                          : "bg-[#008060] text-white rounded-br-sm"
-                      }`}
+                          ? "bg-white border-blue-200 text-blue-700 border" // Remove border if you want no border at all
+                          : "bg-[#008060] text-white"
+                      } ${reply.isAdmin ? "rounded-br-sm" : "rounded-br-sm"}`}
                     >
-                      <div className={`text-sm sm:text-base md:text-lg font-semibold mb-1 ${reply.isAdmin ? "text-blue-700 text-left" : "text-white text-right"}`}>
+                      <div className={`text-xs md:text-sm font-semibold mb-0.5 md:mb-1 ${reply.isAdmin ? "text-blue-700 text-left" : "text-white text-right"}`}>
                         {reply.isAdmin ? "Support Team" : "You"}
                       </div>
                       {reply.message && (
-                        <div className="text-sm sm:text-base md:text-lg">{reply.message}</div>
+                        <div className="text-xs md:text-sm">{reply.message}</div>
                       )}
                       {reply.imageUrl && (
-                        <div className={`mt-2 flex flex-col ${reply.isAdmin ? "items-start" : "items-end"}`}>
+                        <div className={`mt-1 md:mt-2 flex flex-col ${reply.isAdmin ? "items-start" : "items-end"}`}>
                           <a href={reply.imageUrl} target="_blank" rel="noopener noreferrer">
                             <img
                               src={reply.imageUrl}
                               alt="Reply attachment"
-                              className="max-h-40 sm:max-h-60 md:max-h-80 rounded-lg border border-green-200 cursor-pointer hover:opacity-90 transition w-full max-w-xs sm:max-w-sm"
+                              className="max-h-40 md:max-h-64 rounded-lg border border-[#36c160] cursor-pointer hover:opacity-90 transition"
                             />
                           </a>
-                          <span className={`mt-1 text-[10px] sm:text-[11px] md:text-sm ${reply.isAdmin ? 'text-blue-400' : 'text-green-100'}`}>Image Attachment</span>
+                          <span className={`mt-0.5 md:mt-1 text-[9px] md:text-[10px] ${reply.isAdmin ? 'text-blue-400' : 'text-green-100'}`}>Image Attachment</span>
                         </div>
                       )}
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            {/* Reply input area (reuse existing logic) */}
-            <div className="w-full px-2 md:px-4 pb-2 bg-[#f6f7f8] rounded-b-2xl border-t border-[#e1e3e4]">
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8">
+                <MessageCircle className="w-12 h-12 text-green-600/60 mb-4" />
+                <p className="text-base md:text-lg text-gray-700 mb-4">Start a conversation with our support team</p>
+                <input
+                  type="text"
+                  placeholder="Type your message to start..."
+                  value={firstMessage}
+                  onChange={e => setFirstMessage(e.target.value)}
+                  className="w-full max-w-xs px-3 py-2 mb-4 border border-gray-300 rounded-full text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#008060] bg-white"
+                />
+                <Button
+                  className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold shadow-md"
+                  onClick={() => {
+                    if (!firstMessage.trim()) return;
+                    addTicket({
+                      id: Math.random().toString(36).substr(2, 9),
+                      userId: user?.id || "",
+                      subject: "Customer Support",
+                      message: firstMessage,
+                      status: "open",
+                      createdAt: new Date().toISOString(),
+                      replies: [],
+                    });
+                    setFirstMessage("");
+                  }}
+                  disabled={!firstMessage.trim()}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Start Chat
+                </Button>
+              </div>
+            )}
+            {/* Reply input for chatable modal, always at bottom */}
+            <div className="w-full px-2 md:px-4 pb-2 bg-[#f6f7f8] border-t border-[#e1e3e4] mt-2 sticky bottom-0">
               <div className="flex flex-col gap-2 w-full pt-2">
                 <input
                   type="text"
@@ -314,7 +336,7 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
                 <div className="flex flex-row gap-2 w-full items-stretch">
                   <div className="relative flex items-center justify-center">
                     <input
-                      id={`file-upload-${supportTicket.id}`}
+                      id={`file-upload-user-modal-${supportTicket?.id || 'new'}`}
                       type="file"
                       accept="image/*"
                       onChange={e => setReplyImage(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
@@ -324,7 +346,7 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
                     <button
                       type="button"
                       aria-label="Attach photo"
-                      onClick={() => document.getElementById(`file-upload-${supportTicket.id}`)?.click()}
+                      onClick={() => document.getElementById(`file-upload-user-modal-${supportTicket?.id || 'new'}`)?.click()}
                       className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border-2 border-[#008060] text-[#008060] hover:bg-[#e3f1eb] active:bg-[#d1ede3] shadow transition focus:outline-none focus:ring-2 focus:ring-[#008060]"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -337,9 +359,9 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
                   {replyImage && (
                     <span className="text-xs text-gray-700 truncate max-w-[100px] self-center">{replyImage.name}</span>
                   )}
-                  <div className="flex flex-1 justify-end items-end">
+                  <div className="flex flex-1 flex-row justify-end items-end gap-2">
                     <Button
-                      onClick={() => handleReply(supportTicket.id)}
+                      onClick={() => handleReply(supportTicket?.id || '')}
                       disabled={isUploading || (!replyText.trim() && !replyImage)}
                       className="bg-[#008060] hover:bg-[#36c160] text-white px-4 py-2 min-w-[60px] rounded-full shadow-none"
                     >
@@ -356,41 +378,199 @@ export default function SupportPage({ isFloatingChat = false, hideTitle = false 
               )}
             </div>
           </div>
-        </Card>
+        </div>
       ) : (
-        <Card className="border-green-200">
-          <CardContent className="pt-8 pb-8 md:pt-12 md:pb-12 text-center flex flex-col items-center justify-center">
-            <MessageCircle className="w-12 h-12 text-green-600/60 mb-4" />
-            <p className="text-base md:text-lg text-gray-700 mb-4">Start a conversation with our support team</p>
-            <input
-              type="text"
-              placeholder="Type your message to start..."
-              value={firstMessage}
-              onChange={e => setFirstMessage(e.target.value)}
-              className="w-full max-w-xs px-3 py-2 mb-4 border border-gray-300 rounded-full text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#008060] bg-white"
-            />
-            <Button
-              className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold shadow-md"
-              onClick={() => {
-                if (!firstMessage.trim()) return;
-                addTicket({
-                  id: Math.random().toString(36).substr(2, 9),
-                  userId: user?.id || "",
-                  subject: "Customer Support",
-                  message: firstMessage,
-                  status: "open",
-                  createdAt: new Date().toISOString(),
-                  replies: [],
-                });
-                setFirstMessage("");
-              }}
-              disabled={!firstMessage.trim()}
+        <>
+          <div className="flex justify-center items-center min-h-[80vh] w-full">
+            <div
+              className="w-full max-w-4xl min-h-[400px] cursor-pointer border-4 border-[#008060] bg-[#f6f7f8] rounded-3xl shadow-2xl p-16 flex flex-col items-center justify-center hover:shadow-3xl transition-all duration-200"
+              onClick={() => setShowChatModal(true)}
             >
-              <MessageCircle className="w-5 h-5" />
-              Start Chat
-            </Button>
-          </CardContent>
-        </Card>
+              <MessageCircle className="w-24 h-24 text-green-600 mb-8" />
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
+                {supportTicket ? "Open Support Chat" : "Start Support Chat"}
+              </h2>
+              <p className="text-2xl text-gray-700 mb-4 text-center max-w-2xl">
+                {supportTicket ? "Continue your conversation with our support team." : "Start a new conversation with our support team."}
+              </p>
+              <span className="text-xl font-semibold text-[#008060] mt-4">Click to chat</span>
+            </div>
+          </div>
+          <Dialog open={showChatModal} onOpenChange={setShowChatModal}>
+            <DialogContent className="max-w-4xl w-full min-h-[600px]">
+              <DialogHeader>
+                <DialogTitle>Customer Support Chat</DialogTitle>
+              </DialogHeader>
+              {supportTicket ? (
+                <div className="flex flex-col max-h-[70vh]">
+                  <div className="flex-1 overflow-y-auto mb-2">
+                    <div>
+                      <div className="flex flex-col gap-2">
+                        {/* Customer message bubble */}
+                        <div className="flex w-full justify-end">
+                          <div className="flex flex-col items-end w-fit max-w-[75vw] md:max-w-md">
+                            <div className="bg-[#008060] text-white rounded-2xl rounded-br-sm px-3 md:px-4 py-1.5 md:py-2 shadow mb-1 w-fit">
+                              <div className="text-xs md:text-sm font-semibold mb-0.5 md:mb-1 text-right">You</div>
+                              {supportTicket.message && (
+                                <div className="text-xs md:text-sm break-words">{supportTicket.message}</div>
+                              )}
+                              {supportTicket.imageUrl && (
+                                <div className="mt-1 md:mt-2 flex flex-col items-end">
+                                  <a href={supportTicket.imageUrl} target="_blank" rel="noopener noreferrer">
+                                    <img
+                                      src={supportTicket.imageUrl}
+                                      alt="Ticket attachment"
+                                      className="max-h-40 md:max-h-64 rounded-lg border border-[#36c160] cursor-pointer hover:opacity-90 transition"
+                                    />
+                                  </a>
+                                  <span className="mt-0.5 md:mt-1 text-[9px] md:text-[10px] text-[#008060]">Image Attachment</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {/* Replies as chat bubbles */}
+                        {supportTicket.replies.map((reply) => (
+                          <div
+                            key={reply.id}
+                            className={`flex w-full ${reply.isAdmin ? "justify-start" : "justify-end"}`}
+                          >
+                            <div className={`flex flex-col ${reply.isAdmin ? "items-start" : "items-end"} w-fit max-w-[75vw] md:max-w-md`}>
+                              <div
+                                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow mb-1 w-fit break-words ${
+                                  reply.isAdmin
+                                    ? "bg-white border border-blue-200 text-gray-900 rounded-br-sm"
+                                    : "bg-[#008060] text-white rounded-br-sm"
+                                }`}
+                              >
+                                <div className={`text-xs md:text-sm font-semibold mb-0.5 md:mb-1 ${reply.isAdmin ? "text-blue-700 text-left" : "text-white text-right"}`}>
+                                  {reply.isAdmin ? "Support Team" : "You"}
+                                </div>
+                                {reply.message && (
+                                  <div className="text-xs md:text-sm">{reply.message}</div>
+                                )}
+                                {reply.imageUrl && (
+                                  <div className={`mt-1 md:mt-2 flex flex-col ${reply.isAdmin ? "items-start" : "items-end"}`}>
+                                    <a href={reply.imageUrl} target="_blank" rel="noopener noreferrer">
+                                      <img
+                                        src={reply.imageUrl}
+                                        alt="Reply attachment"
+                                        className="max-h-40 md:max-h-64 rounded-lg border border-[#36c160] cursor-pointer hover:opacity-90 transition"
+                                      />
+                                    </a>
+                                    <span className={`mt-0.5 md:mt-1 text-[9px] md:text-[10px] ${reply.isAdmin ? 'text-blue-400' : 'text-green-100'}`}>Image Attachment</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Reply input for chatable modal */}
+                  <div className="w-full px-2 md:px-4 pb-2 bg-[#f6f7f8] rounded-b-2xl border-t border-[#e1e3e4]">
+                    <div className="flex flex-col gap-2 w-full pt-2">
+                      <input
+                        type="text"
+                        placeholder="Type your reply..."
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        className="w-full min-w-0 px-3 py-2 text-sm border border-[#e1e3e4] rounded-full text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#008060] bg-white"
+                      />
+                      <div className="flex flex-row gap-2 w-full items-stretch">
+                        <div className="relative flex items-center justify-center">
+                          <input
+                            id={`file-upload-user-modal-${supportTicket.id}`}
+                            type="file"
+                            accept="image/*"
+                            onChange={e => setReplyImage(e.target.files && e.target.files[0] ? e.target.files[0] : null)}
+                            className="absolute left-0 top-0 w-10 h-10 opacity-0 cursor-pointer z-10"
+                            tabIndex={-1}
+                          />
+                          <button
+                            type="button"
+                            aria-label="Attach photo"
+                            onClick={() => document.getElementById(`file-upload-user-modal-${supportTicket.id}`)?.click()}
+                            className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border-2 border-[#008060] text-[#008060] hover:bg-[#e3f1eb] active:bg-[#d1ede3] shadow transition focus:outline-none focus:ring-2 focus:ring-[#008060]"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                              <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
+                              <circle cx="8.5" cy="10.5" r="1.5" stroke="currentColor" strokeWidth="2" fill="none" />
+                              <path d="M21 19l-5.5-7-4.5 6-3-4L3 19" stroke="currentColor" strokeWidth="2" fill="none" />
+                            </svg>
+                          </button>
+                        </div>
+                        {replyImage && (
+                          <span className="text-xs text-gray-700 truncate max-w-[100px] self-center">{replyImage.name}</span>
+                        )}
+                        <div className="flex flex-1 flex-row justify-end items-end gap-2">
+                          <Button
+                            onClick={() => handleReply(supportTicket.id)}
+                            disabled={isUploading || (!replyText.trim() && !replyImage)}
+                            className="bg-[#008060] hover:bg-[#36c160] text-white px-4 py-2 min-w-[60px] rounded-full shadow-none"
+                          >
+                            {isUploading ? "Sending..." : "Send"}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setReplyText("")
+                              setReplyImage(null)
+                              setShowChatModal(false)
+                            }}
+                            variant="outline"
+                            className="rounded-full border border-[#e1e3e4] px-4 py-2 min-w-[60px]"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                    {replyImage && (
+                      <div className="text-xs text-gray-700 pt-1">Selected: {replyImage.name}</div>
+                    )}
+                    {uploadError && (
+                      <div className="text-xs text-red-600 pt-1">{uploadError}</div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <MessageCircle className="w-12 h-12 text-green-600/60 mb-4" />
+                  <p className="text-base md:text-lg text-gray-700 mb-4">Start a conversation with our support team</p>
+                  <input
+                    type="text"
+                    placeholder="Type your message to start..."
+                    value={firstMessage}
+                    onChange={e => setFirstMessage(e.target.value)}
+                    className="w-full max-w-xs px-3 py-2 mb-4 border border-gray-300 rounded-full text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#008060] bg-white"
+                  />
+                  <Button
+                    className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold shadow-md"
+                    onClick={() => {
+                      if (!firstMessage.trim()) return;
+                      addTicket({
+                        id: Math.random().toString(36).substr(2, 9),
+                        userId: user?.id || "",
+                        subject: "Customer Support",
+                        message: firstMessage,
+                        status: "open",
+                        createdAt: new Date().toISOString(),
+                        replies: [],
+                      });
+                      setFirstMessage("");
+                      setShowChatModal(false);
+                    }}
+                    disabled={!firstMessage.trim()}
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Start Chat
+                  </Button>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </>
       )}
       </div>
       </div>

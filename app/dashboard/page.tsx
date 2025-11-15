@@ -9,12 +9,38 @@ import { useState, useEffect, useMemo } from "react"
 import { useRatings } from "@/lib/rating-context"
 import { useUsers } from "@/lib/user-context"
 
+// For product slideshow demo
+import { useProducts } from "@/lib/products-context"
+
 export default function DashboardPage() {
   const { user } = useAuth()
   const { ads, transactions, ratings } = useData()
   const router = useRouter()
   const { getUserEarningsRatings } = useRatings()
   const { getUser } = useUsers()
+
+  // For product slideshow (shuffled)
+  const { products } = useProducts ? useProducts() : { products: [] }
+  const [slideIndex, setSlideIndex] = useState(0)
+  const [shuffledProducts, setShuffledProducts] = useState<any[]>([])
+
+  // Shuffle products when products change
+  useEffect(() => {
+    if (!products || products.length === 0) return
+    const shuffled = [...products].sort(() => Math.random() - 0.5)
+    setShuffledProducts(shuffled.slice(0, 5))
+    setSlideIndex(0)
+  }, [products])
+
+  const slideProducts = shuffledProducts
+
+  useEffect(() => {
+    if (!slideProducts.length) return
+    const interval = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % slideProducts.length)
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [slideProducts.length])
 
   const userTransactions = transactions.filter((t) => t.userId === user?.id)
 
@@ -82,6 +108,7 @@ const displayedBalance = useMemo(() => {
 
   return (
     <div className="space-y-6">
+      
       {/* Welcome Banner */}
       <div className="bg-gradient-to-r from-green-100 to-green-50 border-2 border-green-500 rounded-lg p-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -164,7 +191,7 @@ const displayedBalance = useMemo(() => {
         )}
       </div>
 
-      {/* Recent Transactions */}
+      {/* Recent Transactions
       <Card className="border-2 border-green-200">
         <CardHeader>
           <CardTitle className="text-gray-900">Recent Transactions</CardTitle>
@@ -192,7 +219,69 @@ const displayedBalance = useMemo(() => {
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
+      {/* Product Slideshow - Professional Large Version */}
+      {slideProducts.length > 0 && (
+        <div className="relative w-full max-w-5xl mx-auto mb-8">
+          <div className="overflow-hidden rounded-2xl border-4 border-green-300 bg-gradient-to-br from-green-50 to-green-100 shadow-xl flex items-center justify-center h-[380px] sm:h-[420px] md:h-[480px] transition-all duration-700">
+            <div className="relative w-full h-full flex items-center justify-center">
+              <img
+                src={slideProducts[slideIndex]?.imageUrl || "/placeholder.svg"}
+                alt={slideProducts[slideIndex]?.name || "Product"}
+                className="absolute inset-0 w-full h-full object-cover object-center opacity-70 scale-105 blur-[1.5px]"
+                style={{ zIndex: 1 }}
+              />
+              {/* Overlay gradient for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-green-900/70 via-green-700/30 to-transparent z-10" />
+              <div className="relative z-20 flex flex-col items-center justify-center w-full h-full px-6">
+                <img
+                  src={slideProducts[slideIndex]?.imageUrl || "/placeholder.svg"}
+                  alt={slideProducts[slideIndex]?.name || "Product"}
+                  className="mx-auto h-40 w-auto object-contain rounded-xl shadow-lg border-2 border-white bg-white/80 mb-4"
+                  style={{ maxWidth: '260px' }}
+                />
+                <div className="font-bold text-2xl sm:text-3xl text-white drop-shadow mb-2 text-center">
+                  {slideProducts[slideIndex]?.name}
+                </div>
+                <div className="text-green-100 text-base sm:text-lg text-center max-w-2xl mb-2">
+                  {slideProducts[slideIndex]?.description?.slice(0, 120) || "No description."}
+                </div>
+                {slideProducts[slideIndex]?.price && (
+                  <div className="text-lg sm:text-xl font-semibold text-yellow-200 bg-green-900/60 rounded px-4 py-1 inline-block mt-2 shadow">
+                    ${slideProducts[slideIndex]?.price}
+                  </div>
+                )}
+              </div>
+              {/* Slide indicators */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+                {slideProducts.map((_, idx) => (
+                  <button
+                    key={idx}
+                    className={`w-3 h-3 rounded-full border-2 ${slideIndex === idx ? 'bg-green-500 border-white' : 'bg-white/60 border-green-300'} transition-all`}
+                    onClick={() => setSlideIndex(idx)}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Slide controls - large and modern */}
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-green-100 border-2 border-green-400 rounded-full p-3 shadow-lg transition-all duration-200 z-40"
+            onClick={() => setSlideIndex((slideIndex - 1 + slideProducts.length) % slideProducts.length)}
+            aria-label="Previous"
+          >
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="#16a34a" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-green-100 border-2 border-green-400 rounded-full p-3 shadow-lg transition-all duration-200 z-40"
+            onClick={() => setSlideIndex((slideIndex + 1) % slideProducts.length)}
+            aria-label="Next"
+          >
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="#16a34a" d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+          </button>
+        </div>
+      )}
     </div>
   )
 }
