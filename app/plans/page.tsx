@@ -34,81 +34,75 @@ export default function PlansPage() {
       name: "Starter",
       price: "$100",
       investment: "$100",
-      description: "Get started with basic ad clicks at no cost!",
+      description: "Get started with basic ad clicks at no cost.",
       period: "Unlimited",
       productLimit: "10",
       profit15: "$15",
       profit20: "$20",
-      profitRange: "$15-$20",
-      icon: "🎯",
+      profitRange: "$15 - $20",
       isPremium: false
     },
     {
       name: "Basic",
       price: "$300",
       investment: "$300",
-      description: "Perfect for beginners looking to grow!",
+      description: "Ideal for beginners aiming to grow steadily.",
       period: "Unlimited",
       productLimit: "20",
       profit15: "$45",
       profit20: "$60",
-      profitRange: "$45-$60",
-      icon: "🚀",
+      profitRange: "$45 - $60",
       isPremium: false
     },
     {
       name: "Beginner",
       price: "$500",
       investment: "$500",
-      description: "Start earning with more opportunities!",
+      description: "Unlock more earning opportunities.",
       period: "Unlimited",
       productLimit: "30",
       profit15: "$75",
       profit20: "$100",
-      profitRange: "$75-$100",
-      icon: "⭐",
+      profitRange: "$75 - $100",
       isPremium: false
     },
     {
       name: "Advanced",
       price: "$1,000",
       investment: "$1,000",
-      description: "Take your earnings to the next level!",
+      description: "A professional-level growth plan.",
       period: "Unlimited",
       productLimit: "50",
       profit15: "$150",
       profit20: "$200",
-      profitRange: "$150-$200",
-      icon: "💎",
+      profitRange: "$150 - $200",
       isPremium: true
     },
     {
       name: "Professional",
       price: "$1,500",
       investment: "$1,500",
-      description: "Professional tier with maximum returns!",
+      description: "Advanced users seeking higher limits and returns.",
       period: "Unlimited",
       productLimit: "75",
       profit15: "$225",
       profit20: "$300",
-      profitRange: "$225-$300",
-      icon: "👑",
+      profitRange: "$225 - $300",
       isPremium: true
     },
     {
       name: "Premium",
       price: "$2,000",
       investment: "$2,000",
-      description: "Ultimate earning potential unlocked!",
+      description: "Maximum-tier plan with top earnings.",
       period: "Unlimited",
       productLimit: "100",
       profit15: "$300",
       profit20: "$400",
-      profitRange: "$300-$400",
-      icon: "🏆",
+      profitRange: "$300 - $400",
       isPremium: true
     }
-  ]
+  ];
 
   const handlePurchase = () => {
     router.push("/")
@@ -118,11 +112,11 @@ export default function PlansPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between text-center md:text-left">
+          <div className="flex items-center gap-2 justify-center md:justify-start w-full md:w-auto mb-2 md:mb-0">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
           </div>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-8 justify-center w-full md:w-auto">
             <a href="/" className="text-gray-700 hover:text-green-600 transition-all duration-300">Home</a>
             <a href="/about" className="text-gray-700 hover:text-green-600 transition-all duration-300">About</a>
             <a href="/plans" className="text-green-600 font-medium">Plan</a>
@@ -132,128 +126,88 @@ export default function PlansPage() {
       </header>
 
       {/* Page Content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
-        {/* Title Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Choose Your Plan</h1>
-          <p className="text-lg text-gray-600">Select the perfect plan to start earning today</p>
+      {/* Plans Section */}
+      <section className="w-full flex flex-col items-center justify-center py-10 px-2 md:px-0">
+        <div className="max-w-2xl w-full text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Choose Your Plan</h1>
+          <p className="text-gray-600 mt-1">Select the plan that best fits your goals.</p>
         </div>
 
-        {/* Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {plans.map((plan, index) => (
-            <div
-              key={index}
-              className={`rounded-2xl p-8 border-2 transition-all duration-500 transform hover:scale-105 relative ${
-                plan.isPremium 
-                  ? 'bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 border-yellow-400 hover:border-yellow-500 hover:shadow-2xl shadow-xl' 
-                  : 'bg-white border-gray-200 hover:border-green-500 hover:shadow-2xl'
-              }`}
-            >
-              {/* Premium Badge */}
-              {plan.isPremium && (
-                <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                  ⭐ PREMIUM
-                </div>
-              )}
-
-              {/* Icon */}
-              <div className="text-5xl mb-4">{plan.icon}</div>
-
-              {/* Plan Name */}
-              <h3 className={`text-2xl font-bold mb-2 ${plan.isPremium ? 'text-yellow-900' : 'text-gray-900'}`}>
-                {plan.name}
-              </h3>
-
-              {/* Price */}
-              <div className="mb-4">
-                <span className={`text-5xl font-bold ${plan.isPremium ? 'text-yellow-800' : 'text-gray-900'}`}>
-                  {plan.price}
-                </span>
-              </div>
-
-              {/* Description */}
-              <p className={`mb-6 ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
-                {plan.description}
-              </p>
-
-              {/* Features */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
-                    plan.isPremium ? 'bg-yellow-200' : 'bg-green-100'
-                  }`}>
-                    <svg className={`w-3 h-3 ${plan.isPremium ? 'text-yellow-700' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className={`text-sm ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
-                    Period: {plan.period}
-                  </span>
-                </div>
-
-              </div>
-
-              {/* Profit Information */}
-              <div className={`rounded-lg p-4 mb-6 ${
-                plan.isPremium ? 'bg-yellow-100 border border-yellow-300' : 'bg-green-50 border border-green-200'
-              }`}>
-                <h4 className={`text-sm font-bold mb-3 ${plan.isPremium ? 'text-yellow-900' : 'text-green-900'}`}>
-                  Expected Profit (15-20% Return)
-                </h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
-                      15% Profit:
-                    </span>
-                    <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
-                      {plan.profit15}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className={`text-xs ${plan.isPremium ? 'text-yellow-800' : 'text-gray-600'}`}>
-                      20% Profit:
-                    </span>
-                    <span className={`text-sm font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
-                      {plan.profit20}
-                    </span>
-                  </div>
-                  <div className={`mt-2 pt-2 border-t ${plan.isPremium ? 'border-yellow-300' : 'border-green-300'}`}>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-semibold ${plan.isPremium ? 'text-yellow-900' : 'text-gray-700'}`}>
-                        Profit Range:
-                      </span>
-                      <span className={`text-base font-bold ${plan.isPremium ? 'text-yellow-900' : 'text-green-700'}`}>
-                        {plan.profitRange}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Purchase Button */}
-              <button
-                onClick={handlePurchase}
-                className={`w-full font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg ${
+        <div className="w-full max-w-7xl flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+            {plans.map((plan, index) => (
+              <div
+                key={index}
+                className={`relative rounded-2xl p-8 border shadow-lg transition-all duration-200 bg-white hover:shadow-2xl hover:-translate-y-1 group overflow-hidden flex flex-col items-center ${
                   plan.isPremium
-                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white'
-                    : 'bg-green-600 hover:bg-green-700 text-white'
+                    ? "border-yellow-400 ring-2 ring-yellow-100"
+                    : "border-gray-200"
                 }`}
+                style={{ minHeight: 420 }}
               >
-                <span>Purchase Plan</span>
-                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </button>
-            </div>
-          ))}
+                {/* Premium Badge */}
+                {plan.isPremium && (
+                  <span className="absolute top-5 right-5 z-10 bg-yellow-400 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md tracking-wider flex items-center gap-1">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 17.75l-6.172 3.245 1.179-6.873L2 9.505l6.914-1.004L12 2.25l3.086 6.251L22 9.505l-5.007 4.617 1.179 6.873z" /></svg>
+                    PREMIUM
+                  </span>
+                )}
+
+                {/* Plan Name & Price */}
+                <div className="flex flex-col items-center mb-2">
+                  <h3 className={`text-2xl font-extrabold tracking-tight ${plan.isPremium ? "text-yellow-700" : "text-green-700"}`}>{plan.name}</h3>
+                  <p className={`text-4xl font-black mt-2 ${plan.isPremium ? "text-yellow-700" : "text-green-700"}`}>{plan.price}</p>
+                </div>
+
+                {/* Description */}
+                <p className="text-center text-gray-600 mb-4 min-h-[48px]">{plan.description}</p>
+
+                {/* Details */}
+                <div className="flex justify-center gap-6 mb-4 text-sm w-full">
+                  <div className="flex flex-col items-center w-1/2">
+                    <span className="font-semibold text-gray-800">{plan.period}</span>
+                    <span className="text-gray-400">Period</span>
+                  </div>
+                  <div className="flex flex-col items-center w-1/2">
+                    <span className="font-semibold text-gray-800">{plan.productLimit}</span>
+                    <span className="text-gray-400">Product Limit</span>
+                  </div>
+                </div>
+
+                {/* Profit Box */}
+                <div className={`mt-2 p-4 rounded-xl border-2 ${plan.isPremium ? "bg-yellow-50 border-yellow-200" : "bg-green-50 border-green-200"} flex flex-col items-center w-full`}> 
+                  <h4 className={`font-semibold text-sm mb-1 ${plan.isPremium ? "text-yellow-800" : "text-green-800"}`}>Expected Profit <span className="font-normal">(15–20%)</span></h4>
+                  <div className="flex gap-4 text-base font-bold">
+                    <span className="text-gray-700">{plan.profit15} <span className="font-normal text-xs text-gray-400">15%</span></span>
+                    <span className="text-gray-700">{plan.profit20} <span className="font-normal text-xs text-gray-400">20%</span></span>
+                  </div>
+                  <span className="text-xs text-gray-500 mt-1">Range: {plan.profitRange}</span>
+                </div>
+
+                {/* Purchase Button */}
+                {/* <button
+                  onClick={handlePurchase}
+                  className={`w-full font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:scale-105 shadow-md hover:shadow-lg ${
+                    plan.isPremium
+                      ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white'
+                      : 'bg-green-600 hover:bg-green-700 text-white'
+                  }`}
+                >
+                  <span>Purchase Plan</span>
+                  <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </button> */}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Footer */}
       <footer ref={footerRef} className="bg-gray-900 text-white mt-auto overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 flex flex-col items-center">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 w-full">
             {/* Brand Section */}
             <div className={`col-span-1 transition-all duration-1000 ease-out ${isFooterVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <div className="flex items-center gap-2 mb-4">
