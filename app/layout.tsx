@@ -18,9 +18,8 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "E-Commerce Platform",
+  title: "Shopify.com",
   description: "Modern e-commerce platform with ads, products, and referrals",
-  generator: "v0.app",
 }
 
 export default function RootLayout({

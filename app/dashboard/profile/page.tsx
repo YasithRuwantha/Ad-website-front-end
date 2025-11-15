@@ -167,6 +167,17 @@ export default function UserProfilePage() {
         <CardContent className="space-y-6">
           {/* Basic Info */}
           <div className="space-y-4">
+
+
+             {/* Temp ID (read-only, always visible) */}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">User ID</label>
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
+                <FileText className="w-5 h-5 text-muted-foreground" />
+                <p className="font-medium">{profile.tempId || "-"}</p>
+              </div>
+            </div>
+
             <div>
               <label className="text-sm font-medium text-muted-foreground">Full Name</label>
               {isEditing ? (
@@ -185,14 +196,6 @@ export default function UserProfilePage() {
               )}
             </div>
 
-            {/* Temp ID (read-only, always visible) */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">User ID</label>
-              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mt-1">
-                <FileText className="w-5 h-5 text-muted-foreground" />
-                <p className="font-medium">{profile.tempId || "-"}</p>
-              </div>
-            </div>
 
             {(profile.firstName || profile.lastName) && (
               <div className="grid grid-cols-2 gap-4">

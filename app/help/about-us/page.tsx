@@ -100,13 +100,6 @@ export default function HelpAboutUsPage() {
                   <User className="w-4 h-4" />
                   My Profile
                 </button>
-                <button
-                  onClick={() => router.push('/dashboard/profile')}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 flex items-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Settings
-                </button>
                 <hr className="my-2 border-gray-100" />
                 <button
                   onClick={handleLogout}
@@ -130,8 +123,8 @@ export default function HelpAboutUsPage() {
             {/* Hero Section */}
             <div className="text-center mb-8 md:mb-16 animate-fade-in">
               <div className="inline-block mb-4 md:mb-6">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-green-600 to-green-700 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                  <span className="text-white font-bold text-2xl md:text-3xl">S</span>
+                <div className="flex justify-center my-6">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-16" />
                 </div>
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 px-4">
