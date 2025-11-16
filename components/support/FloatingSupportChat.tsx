@@ -42,9 +42,16 @@ export default function FloatingSupportChat() {
 
   return (
     <>
-      {/* Floating personality bubble */}
+      {/* Floating personality bubble (clickable) */}
       {!open && (
-        <div className="fixed z-50 bottom-13 right-2 md:bottom-22 md:right-8 flex flex-col items-end animate-fade-in">
+        <div
+          className="fixed z-50 bottom-13 right-2 md:bottom-22 md:right-8 flex flex-col items-end animate-fade-in cursor-pointer"
+          onClick={() => setOpen(true)}
+          tabIndex={0}
+          role="button"
+          aria-label="Open support chat"
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setOpen(true); }}
+        >
           <div
             className="mb-2 flex items-center gap-2 bg-white shadow-lg rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 border border-[#008060] md:mb-4 md:gap-3"
             style={{ marginRight: '2px' }}
@@ -67,33 +74,59 @@ export default function FloatingSupportChat() {
       >
         <Headset className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
       </button>
-      {/* Chat box modal */}
+      {/* Chat box modal with blurred background */}
       {open && (
-        <div
-          ref={chatRef}
-          className="fixed z-[9999] bottom-0 right-0 sm:bottom-6 sm:right-6 pointer-events-auto"
-          style={{ maxHeight: '95vh' }}
-        >
-          <SupportPage isFloatingChat hideTitle />
-          <button
-            className="absolute top-2 right-2 z-50 text-white bg-[#008060] hover:bg-[#36c160] rounded-full w-8 h-8 flex items-center justify-center shadow focus:outline-none focus:ring-2 focus:ring-[#008060]"
+        <div>
+          {/* Blurred overlay */}
+          <div
+            className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-sm transition-all duration-300"
+            aria-hidden="true"
             onClick={() => setOpen(false)}
-            aria-label="Close support chat"
+          />
+          <div
+            ref={chatRef}
+            className="fixed z-[9999] bottom-0 right-0 sm:bottom-6 sm:right-6 pointer-events-auto animate-float-chat-popup bg-white rounded-2xl shadow-xl overflow-hidden"
+            style={{ maxHeight: '95vh' }}
           >
-            ×
-          </button>
+            <SupportPage isFloatingChat hideTitle />
+            <button
+              className="absolute top-2 right-2 z-50 text-white bg-[#008060] hover:bg-[#36c160] rounded-full w-8 h-8 flex items-center justify-center shadow focus:outline-none focus:ring-2 focus:ring-[#008060]"
+              onClick={() => setOpen(false)}
+              aria-label="Close support chat"
+            >
+              ×
+            </button>
+          </div>
+          {/* Creative pop-up animation keyframes */}
+          <style jsx global>{`
+            @keyframes float-chat-popup {
+              0% {
+                opacity: 0;
+                transform: scale(0.7) translateY(60px) rotate(-8deg);
+                filter: blur(8px);
+              }
+              60% {
+                opacity: 1;
+                transform: scale(1.05) translateY(-8px) rotate(2deg);
+                filter: blur(0px);
+              }
+              80% {
+                transform: scale(0.98) translateY(2px) rotate(-1deg);
+              }
+              100% {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotate(0deg);
+                filter: blur(0px);
+              }
+            }
+            .animate-float-chat-popup {
+              animation: float-chat-popup 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+          `}</style>
         </div>
       )}
-      {/* Add keyframes for wiggle animation */}
-      <style jsx global>{`
-        @keyframes wiggle {
-          0%, 100% { transform: rotate(-10deg); }
-          50% { transform: rotate(10deg); }
-        }
-        .animate-wiggle {
-          animation: wiggle 1.2s infinite;
-        }
-      `}</style>
+      {/* Global styles for animations */}
+      {/* Moved all global styles to the root to avoid nested styled-jsx tags */}
     </>
   )
 }

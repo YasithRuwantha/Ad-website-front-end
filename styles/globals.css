@@ -1,5 +1,38 @@
 @import 'tailwindcss';
+
 @import 'tw-animate-css';
+
+/* FloatingSupportChat Animations */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+.animate-wiggle {
+  animation: wiggle 1.2s infinite;
+}
+@keyframes float-chat-popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: blur(0px);
+  }
+  80% {
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+.animate-float-chat-popup {
+  animation: float-chat-popup 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 @custom-variant dark (&:is(.dark *));
 
