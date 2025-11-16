@@ -322,7 +322,7 @@ export default function LoginPage() {
         <Image
           src={bg1}
           alt="bg picture"
-          className="object-cover filter  brightness-50"
+          className="object-cover filter brightness-50 min-h-[340px] h-[340px] w-full md:min-h-0 md:h-auto"
           priority
         />
 

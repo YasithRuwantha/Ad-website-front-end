@@ -25,13 +25,21 @@ import {
   Settings,
 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function UserSidebar() {
   const { logout, user } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+
+  // Notify floating chat to hide/show on mobile sidebar open/close
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('sidebar-toggle', { detail: { isOpen } });
+      window.dispatchEvent(event);
+    }
+  }, [isOpen]);
   const [showHelpCenter, setShowHelpCenter] = useState(false)
   const [showTermsSubmenu, setShowTermsSubmenu] = useState(false)
 
@@ -95,14 +103,36 @@ export default function UserSidebar() {
         {/* Mobile Header with Logo and Profile */}
         <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 bg-white">
           <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg" alt="Shopify" className="h-8" />
-          <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center cursor-pointer"
+          <div
+            className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform duration-200 active:scale-95 hover:scale-105 ring-2 ring-green-300 hover:ring-green-500 focus:outline-none focus:ring-4 focus:ring-green-400 animate-wiggle-once"
+            tabIndex={0}
             onClick={() => {
               router.push('/dashboard/profile')
               setIsOpen(false)
             }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                router.push('/dashboard/profile')
+                setIsOpen(false)
+              }
+            }}
+            aria-label="Go to profile"
           >
-            <User className="w-5 h-5 text-white" />
+            <User className="w-6 h-6 text-white drop-shadow" />
           </div>
+          <style jsx>{`
+            @keyframes wiggle-once {
+              0% { transform: scale(1) rotate(-8deg); }
+              20% { transform: scale(1.08) rotate(8deg); }
+              40% { transform: scale(1.12) rotate(-6deg); }
+              60% { transform: scale(1.08) rotate(6deg); }
+              80% { transform: scale(1.04) rotate(-2deg); }
+              100% { transform: scale(1) rotate(0deg); }
+            }
+            .animate-wiggle-once {
+              animation: wiggle-once 0.7s 1;
+            }
+          `}</style>
         </div>
 
         <div className="p-6 border-b border-gray-200 hidden md:block">
@@ -220,16 +250,16 @@ export default function UserSidebar() {
           </div>
         </nav>
 
-        {/* <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 md:hidden">
           <Button
             onClick={handleLogout}
             variant="outline"
             className="w-full justify-start gap-3 border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600 bg-transparent"
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
-            <span className="whitespace-nowrap md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity">Logout</span>
+            <span className="whitespace-nowrap">Logout</span>
           </Button>
-        </div> */}
+        </div>
       </aside>
 
       {/* Background Overlay for Mobile */}

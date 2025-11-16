@@ -204,6 +204,16 @@ export default function PlansPage() {
         </div>
       </section>
 
+      {/* Back Button */}
+      <div className="mt-8 mb-4 text-center">
+        <a
+          href="/"
+          className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105"
+        >
+          Back to Home
+        </a>
+      </div>
+
       {/* Footer */}
       <footer ref={footerRef} className="bg-gray-900 text-white mt-auto overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 flex flex-col items-center">
@@ -238,6 +248,7 @@ export default function PlansPage() {
                 <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-green-600"></span>
               </h3>
               <ul className="space-y-3">
+                <li><a href="/faq" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">FAQ</a></li>
                 <li><a href="#" className="text-gray-400 hover:text-green-600 transition-all duration-300 text-sm hover:translate-x-1 inline-block">Cookie Policy</a></li>
               </ul>
             </div>
