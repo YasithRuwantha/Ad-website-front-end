@@ -34,7 +34,7 @@ export default function PlansPage() {
       investment: "$100",
       description: "Get started with basic ad clicks at no cost.",
       period: "Unlimited",
-      productLimit: "10",
+      // productLimit: "10",
       profit15: "$15",
       profit20: "$20",
       profitRange: "$15 - $20",
@@ -46,7 +46,7 @@ export default function PlansPage() {
       investment: "$300",
       description: "Ideal for beginners aiming to grow steadily.",
       period: "Unlimited",
-      productLimit: "20",
+      // productLimit: "20",
       profit15: "$45",
       profit20: "$60",
       profitRange: "$45 - $60",
@@ -58,7 +58,7 @@ export default function PlansPage() {
       investment: "$500",
       description: "Unlock more earning opportunities.",
       period: "Unlimited",
-      productLimit: "30",
+      // productLimit: "30",
       profit15: "$75",
       profit20: "$100",
       profitRange: "$75 - $100",
@@ -70,7 +70,7 @@ export default function PlansPage() {
       investment: "$1,000",
       description: "A professional-level growth plan.",
       period: "Unlimited",
-      productLimit: "50",
+      // productLimit: "50",
       profit15: "$150",
       profit20: "$200",
       profitRange: "$150 - $200",
@@ -82,7 +82,7 @@ export default function PlansPage() {
       investment: "$1,500",
       description: "Advanced users seeking higher limits and returns.",
       period: "Unlimited",
-      productLimit: "75",
+      // productLimit: "75",
       profit15: "$225",
       profit20: "$300",
       profitRange: "$225 - $300",
@@ -94,7 +94,7 @@ export default function PlansPage() {
       investment: "$2,000",
       description: "Maximum-tier plan with top earnings.",
       period: "Unlimited",
-      productLimit: "100",
+      // productLimit: "100",
       profit15: "$300",
       profit20: "$400",
       profitRange: "$300 - $400",
@@ -240,10 +240,10 @@ export default function PlansPage() {
                   <span className="font-semibold text-gray-800">{plan.period}</span>
                   <span className="text-gray-400">Period</span>
                 </div>
-                <div className="flex flex-col items-center">
+                {/* <div className="flex flex-col items-center">
                   <span className="font-semibold text-gray-800">{plan.productLimit}</span>
                   <span className="text-gray-400">Product Limit</span>
-                </div>
+                </div> */}
               </div>
 
               {/* Profit Box */}
