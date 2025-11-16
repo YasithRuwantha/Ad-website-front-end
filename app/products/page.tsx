@@ -489,7 +489,7 @@ useEffect(() => {
         luckorder={luckyDrawData?.luckydrawStatus}
         topgradeorder={luckyDrawData?.topgradeStatus}
       >
-        <p>Please Contact the customer Service to Proceed</p>
+        
       </Popup>
 
 
